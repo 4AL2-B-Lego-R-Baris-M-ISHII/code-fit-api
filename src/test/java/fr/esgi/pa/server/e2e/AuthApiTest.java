@@ -18,7 +18,6 @@ import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.port;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-@Disabled
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class AuthApiTest {
     @LocalServerPort
@@ -26,9 +25,6 @@ public class AuthApiTest {
 
     @Autowired
     private UserDao userDao;
-
-    @Autowired
-    private RoleDao roleDao;
 
     @BeforeEach
     void setup() {
@@ -51,6 +47,8 @@ public class AuthApiTest {
                     .post("/api/auth/signup")
                     .then()
                     .statusCode(200);
+            assertThat(userDao.existsByUsername(signUpRequest.getUsername())).isTrue();
+            assertThat(userDao.existsByEmail(signUpRequest.getEmail())).isTrue();
         }
     }
 
@@ -60,9 +58,9 @@ public class AuthApiTest {
         @Test
         void when_user_already_sign_up_send_sign_in_request_should_send_jwt_response() {
             var signUpRequest = new SignUpRequest()
-                    .setUsername("new user name")
-                    .setEmail("newuser@email.com")
-                    .setPassword("newuserpassword");
+                    .setUsername("another user name")
+                    .setEmail("anotheruser@email.com")
+                    .setPassword("anotheruserpassword");
             given()
                     .contentType(ContentType.JSON)
                     .body(signUpRequest)

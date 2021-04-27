@@ -1,5 +1,7 @@
 package fr.esgi.pa.server.unit.infrastructure.dao;
 
+import fr.esgi.pa.server.core.dao.RoleDao;
+import fr.esgi.pa.server.core.exception.AlreadyCreatedException;
 import fr.esgi.pa.server.core.model.RoleName;
 import fr.esgi.pa.server.infrastructure.dao.RoleDaoImpl;
 import fr.esgi.pa.server.infrastructure.dataprovider.entity.RoleEntity;
@@ -12,8 +14,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -60,5 +65,46 @@ class RoleDaoImplTest {
 
             assertThat(result.isPresent()).isFalse();
         }
+    }
+
+    @Nested
+    class CreateRole {
+        @Test
+        void when_role_already_created_should_throw_AlreadyCreatedException() {
+            var roleEntity = new RoleEntity().setId(1L).setName(RoleName.ROLE_USER);
+            when(mockRoleRepository.findByName(RoleName.ROLE_USER)).thenReturn(Optional.of(roleEntity));
+
+            assertThatThrownBy(() -> sut.createRole(RoleName.ROLE_USER))
+                    .isExactlyInstanceOf(AlreadyCreatedException.class)
+                    .hasMessage(RoleDao.class + " : role with name '" + RoleName.ROLE_USER + "' already exists");
+        }
+
+        @Test
+        void when_role_saved_should_return_new_role_id() throws AlreadyCreatedException {
+            var adminRole = new RoleEntity().setName(RoleName.ROLE_ADMIN);
+            var savedRole = new RoleEntity().setId(3L).setName(RoleName.ROLE_ADMIN);
+            when(mockRoleRepository.findByName(RoleName.ROLE_ADMIN)).thenReturn(Optional.empty());
+            when(mockRoleRepository.save(adminRole)).thenReturn(savedRole);
+
+            var result = sut.createRole(RoleName.ROLE_ADMIN);
+
+            assertThat(result).isEqualTo(3L);
+        }
+    }
+
+    @Test
+    void findAll_should_find_all_roles_by_repository() {
+        var userRole = new RoleEntity().setId(1L).setName(RoleName.ROLE_USER);
+        var adminRole = new RoleEntity().setId(2L).setName(RoleName.ROLE_ADMIN);
+        var rolesEntityList = List.of(userRole, adminRole);
+        when(mockRoleRepository.findAll()).thenReturn(rolesEntityList);
+
+        var expectedRoleList = rolesEntityList.stream()
+                .map(roleMapper::entityToDomain)
+                .collect(Collectors.toList());
+
+        var result = sut.findAll();
+
+        assertThat(result).isEqualTo(expectedRoleList);
     }
 }
