@@ -1,4 +1,4 @@
-package fr.esgi.pa.server.infrastructure.dao;
+package fr.esgi.pa.server.infrastructure.dataprovider.dao;
 
 import fr.esgi.pa.server.core.dao.UserDao;
 import fr.esgi.pa.server.core.exception.NotFoundException;

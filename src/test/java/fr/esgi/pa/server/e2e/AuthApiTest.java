@@ -1,12 +1,14 @@
 package fr.esgi.pa.server.e2e;
 
-import fr.esgi.pa.server.core.dao.RoleDao;
 import fr.esgi.pa.server.core.dao.UserDao;
 import fr.esgi.pa.server.infrastructure.entrypoint.request.LoginRequest;
 import fr.esgi.pa.server.infrastructure.entrypoint.request.SignUpRequest;
 import fr.esgi.pa.server.infrastructure.entrypoint.response.JwtResponse;
 import io.restassured.http.ContentType;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;

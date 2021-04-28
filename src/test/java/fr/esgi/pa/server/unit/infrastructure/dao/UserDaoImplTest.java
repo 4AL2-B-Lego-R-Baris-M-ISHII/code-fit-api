@@ -4,7 +4,7 @@ import fr.esgi.pa.server.core.dao.UserDao;
 import fr.esgi.pa.server.core.exception.NotFoundException;
 import fr.esgi.pa.server.core.model.Role;
 import fr.esgi.pa.server.core.model.RoleName;
-import fr.esgi.pa.server.infrastructure.dao.UserDaoImpl;
+import fr.esgi.pa.server.infrastructure.dataprovider.dao.UserDaoImpl;
 import fr.esgi.pa.server.infrastructure.dataprovider.entity.RoleEntity;
 import fr.esgi.pa.server.infrastructure.dataprovider.entity.UserEntity;
 import fr.esgi.pa.server.infrastructure.dataprovider.mapper.RoleMapper;

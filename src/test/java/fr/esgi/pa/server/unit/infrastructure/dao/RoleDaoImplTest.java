@@ -3,7 +3,7 @@ package fr.esgi.pa.server.unit.infrastructure.dao;
 import fr.esgi.pa.server.core.dao.RoleDao;
 import fr.esgi.pa.server.core.exception.AlreadyCreatedException;
 import fr.esgi.pa.server.core.model.RoleName;
-import fr.esgi.pa.server.infrastructure.dao.RoleDaoImpl;
+import fr.esgi.pa.server.infrastructure.dataprovider.dao.RoleDaoImpl;
 import fr.esgi.pa.server.infrastructure.dataprovider.entity.RoleEntity;
 import fr.esgi.pa.server.infrastructure.dataprovider.mapper.RoleMapper;
 import fr.esgi.pa.server.infrastructure.dataprovider.repository.RoleRepository;
