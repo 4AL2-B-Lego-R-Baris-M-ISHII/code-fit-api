@@ -48,7 +48,7 @@ public class AuthApiTest {
                     .when()
                     .post("/api/auth/signup")
                     .then()
-                    .statusCode(200);
+                    .statusCode(201);
             assertThat(userDao.existsByUsername(signUpRequest.getUsername())).isTrue();
             assertThat(userDao.existsByEmail(signUpRequest.getEmail())).isTrue();
         }
@@ -69,7 +69,7 @@ public class AuthApiTest {
                     .when()
                     .post("/api/auth/signup")
                     .then()
-                    .statusCode(200);
+                    .statusCode(201);
 
             var loginRequest = new LoginRequest()
                     .setUsername(signUpRequest.getUsername())
@@ -85,7 +85,7 @@ public class AuthApiTest {
                     .when()
                     .post("/api/auth/signin")
                     .then()
-                    .statusCode(200)
+                    .statusCode(201)
                     .extract()
                     .as(JwtResponse.class);
             assertThat(jwtResponse.getId()).isNotNull();

@@ -2,6 +2,7 @@ package fr.esgi.pa.server.usecase.auth;
 
 import fr.esgi.pa.server.core.dao.RoleDao;
 import fr.esgi.pa.server.core.dao.UserDao;
+import fr.esgi.pa.server.core.exception.AlreadyCreatedException;
 import fr.esgi.pa.server.core.exception.NotFoundException;
 import fr.esgi.pa.server.core.model.Role;
 import fr.esgi.pa.server.core.model.RoleName;
@@ -19,10 +20,22 @@ public class SignUp {
     private final UserDao userDao;
     private final RoleDao roleDao;
 
-    public Long execute(String username, String email, String password, Set<String> roleSetStr) throws NotFoundException {
-        Set<Role> roles = checkSetRoleStrAndMapToSetDomainRole(roleSetStr);
+    public Long execute(String username, String email, String password, Set<String> roleSetStr) throws NotFoundException, AlreadyCreatedException {
+        checkIfUsernameOrEmailNotExist(username, email);
+        var roles = checkSetRoleStrAndMapToSetDomainRole(roleSetStr);
 
         return userDao.createUser(username, email, password, roles);
+    }
+
+    private void checkIfUsernameOrEmailNotExist(String username, String email) throws AlreadyCreatedException {
+        if (userDao.existsByUsername(username)) {
+            var message = String.format("%s : user with username '%s' already created", this.getClass(), username);
+            throw new AlreadyCreatedException(message);
+        }
+        if (userDao.existsByEmail(email)) {
+            var message = String.format("%s : user with email '%s' already created", this.getClass(), email);
+            throw new AlreadyCreatedException(message);
+        }
     }
 
     private Set<Role> checkSetRoleStrAndMapToSetDomainRole(Set<String> roleSetStr) throws NotFoundException {
@@ -38,7 +51,7 @@ public class SignUp {
     }
 
     private Set<Role> ifSetRoleStrNullGetUserRole(Set<String> roleSetStr) throws NotFoundException {
-        if (roleSetStr == null){
+        if (roleSetStr == null) {
             var userRole = roleDao.findByRoleName(RoleName.ROLE_USER);
             userRole.orElseThrow(() -> {
                 var message = String.format("%s : role name '%s' not found", SignUp.class, RoleName.ROLE_USER);

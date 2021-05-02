@@ -2,6 +2,7 @@ package fr.esgi.pa.server.unit.usecase.auth;
 
 import fr.esgi.pa.server.core.dao.RoleDao;
 import fr.esgi.pa.server.core.dao.UserDao;
+import fr.esgi.pa.server.core.exception.AlreadyCreatedException;
 import fr.esgi.pa.server.core.exception.NotFoundException;
 import fr.esgi.pa.server.core.model.Role;
 import fr.esgi.pa.server.core.model.RoleName;
@@ -40,7 +41,26 @@ class SignUpTest {
     }
 
     @Test
-    void when_setRoleStr_null_should_create_user_with_user_role() throws NotFoundException {
+    void when_username_already_exists_should_throw_AlreadyCreatedException() {
+        when(mockUserDao.existsByUsername(username)).thenReturn(true);
+
+        assertThatThrownBy(() -> sut.execute(username, email, userPassword, null))
+                .isExactlyInstanceOf(AlreadyCreatedException.class)
+                .hasMessage(SignUp.class + " : user with username '" + username + "' already created");
+    }
+
+    @Test
+    void when_email_already_exists_should_throw_AlreadyCreatedException() {
+        when(mockUserDao.existsByEmail(email)).thenReturn(true);
+
+        assertThatThrownBy(() -> sut.execute(username, email, userPassword, null))
+                .isExactlyInstanceOf(AlreadyCreatedException.class)
+                .hasMessage(SignUp.class + " : user with email '" + email + "' already created");
+    }
+
+
+    @Test
+    void when_setRoleStr_null_should_create_user_with_user_role() throws NotFoundException, AlreadyCreatedException {
         var userRole = new Role().setId(1L).setName(RoleName.ROLE_USER);
         when(mockRoleDao.findByRoleName(RoleName.ROLE_USER)).thenReturn(Optional.of(userRole));
 
@@ -57,7 +77,7 @@ class SignUpTest {
     }
 
     @Test
-    void when_roleSetStr_contain_user_role_should_create_user_with_user_role() throws NotFoundException {
+    void when_roleSetStr_contain_user_role_should_create_user_with_user_role() throws NotFoundException, AlreadyCreatedException {
         var userRole = new Role().setId(1L).setName(RoleName.ROLE_USER);
         when(mockRoleDao.findByRoleName(RoleName.ROLE_USER)).thenReturn(Optional.of(userRole));
 
@@ -66,7 +86,7 @@ class SignUpTest {
     }
 
     @Test
-    void when_roleSetStr_contain_admin_role_should_create_user_with_admin_role() throws NotFoundException {
+    void when_roleSetStr_contain_admin_role_should_create_user_with_admin_role() throws NotFoundException, AlreadyCreatedException {
         var adminRole = new Role().setId(2L).setName(RoleName.ROLE_ADMIN);
         when(mockRoleDao.findByRoleName(RoleName.ROLE_ADMIN)).thenReturn(Optional.of(adminRole));
 
@@ -75,7 +95,7 @@ class SignUpTest {
     }
 
     @Test
-    void when_roleSetStr_contain_user_and_admin_roles_should_create_user_with_user_and_admin_roles() throws NotFoundException {
+    void when_roleSetStr_contain_user_and_admin_roles_should_create_user_with_user_and_admin_roles() throws NotFoundException, AlreadyCreatedException {
         var userRole = new Role().setId(1L).setName(RoleName.ROLE_USER);
         var adminRole = new Role().setId(2L).setName(RoleName.ROLE_ADMIN);
         when(mockRoleDao.findByRoleName(RoleName.ROLE_USER)).thenReturn(Optional.of(userRole));
@@ -86,12 +106,21 @@ class SignUpTest {
     }
 
     @Test
-    void when_user_created_should_return_id_of_new_user() throws NotFoundException {
+    void when_user_created_should_return_id_of_new_user() throws NotFoundException, AlreadyCreatedException {
         var adminRole = new Role().setId(2L).setName(RoleName.ROLE_ADMIN);
         when(mockRoleDao.findByRoleName(RoleName.ROLE_ADMIN)).thenReturn(Optional.of(adminRole));
         when(mockUserDao.createUser(username, email, userPassword, Set.of(adminRole))).thenReturn(3L);
 
         var result = sut.execute(username, email, userPassword, Set.of("admin"));
         assertThat(result).isEqualTo(3L);
+    }
+
+    @Test
+    void when_set_role_null_and_user_role_not_found_should_throw_not_found_exception() {
+        when(mockRoleDao.findByRoleName(RoleName.ROLE_USER)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> sut.execute(username, email, userPassword, null))
+                .isExactlyInstanceOf(NotFoundException.class)
+                .hasMessage(SignUp.class + " : role name 'ROLE_USER' not found");
     }
 }
