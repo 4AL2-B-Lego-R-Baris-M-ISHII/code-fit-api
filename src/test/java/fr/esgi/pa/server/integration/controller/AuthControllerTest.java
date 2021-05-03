@@ -1,10 +1,10 @@
 package fr.esgi.pa.server.integration.controller;
 
-import fr.esgi.pa.server.core.exception.AlreadyCreatedException;
-import fr.esgi.pa.server.core.exception.NotFoundException;
+import fr.esgi.pa.server.common.exception.AlreadyCreatedException;
+import fr.esgi.pa.server.common.exception.NotFoundException;
 import fr.esgi.pa.server.helper.JsonHelper;
-import fr.esgi.pa.server.infrastructure.entrypoint.request.SignUpRequest;
-import fr.esgi.pa.server.usecase.auth.SignUp;
+import fr.esgi.pa.server.auth.infrastructure.entrypoint.SignUpRequest;
+import fr.esgi.pa.server.auth.usecase.SignUp;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

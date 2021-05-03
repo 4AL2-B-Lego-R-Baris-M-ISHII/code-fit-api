@@ -1,9 +1,9 @@
 package fr.esgi.pa.server.e2e;
 
-import fr.esgi.pa.server.core.dao.UserDao;
-import fr.esgi.pa.server.infrastructure.entrypoint.request.LoginRequest;
-import fr.esgi.pa.server.infrastructure.entrypoint.request.SignUpRequest;
-import fr.esgi.pa.server.infrastructure.entrypoint.response.JwtResponse;
+import fr.esgi.pa.server.user.core.UserDao;
+import fr.esgi.pa.server.auth.infrastructure.entrypoint.LoginRequest;
+import fr.esgi.pa.server.auth.infrastructure.entrypoint.SignUpRequest;
+import fr.esgi.pa.server.auth.infrastructure.entrypoint.JwtResponse;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
