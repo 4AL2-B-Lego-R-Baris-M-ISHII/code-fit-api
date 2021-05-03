@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class UserDaoImpl implements UserDao {
+public class JpaUserDao implements UserDao {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final RoleMapper roleMapper;
@@ -30,7 +30,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     private Long saveUserAndReturnId(String username, String email, String password, Set<Role> roles) {
-        var userToSave = new UserEntity()
+        var userToSave = new JpaUser()
                 .setUsername(username)
                 .setEmail(email)
                 .setPassword(encoder.encode(password))

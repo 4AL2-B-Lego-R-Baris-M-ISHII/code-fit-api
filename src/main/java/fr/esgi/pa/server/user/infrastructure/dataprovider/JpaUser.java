@@ -14,7 +14,7 @@ import java.util.Set;
 @Entity(name = "user")
 @Data
 @Accessors(chain = true)
-public class UserEntity {
+public class JpaUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
