@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class RoleDaoImpl implements RoleDao {
+public class JpaRoleDao implements RoleDao {
     private final RoleRepository roleRepository;
     private final RoleMapper roleMapper;
 
@@ -21,7 +21,7 @@ public class RoleDaoImpl implements RoleDao {
     public Long createRole(RoleName roleName) throws AlreadyCreatedException {
         checkIfRoleAlreadyExists(roleName);
 
-        var roleToSave = new RoleEntity().setName(roleName);
+        var roleToSave = new JpaRole().setName(roleName);
 
         return roleRepository.save(roleToSave).getId();
     }

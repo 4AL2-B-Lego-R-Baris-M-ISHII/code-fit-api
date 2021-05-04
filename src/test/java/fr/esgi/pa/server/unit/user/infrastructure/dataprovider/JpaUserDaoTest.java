@@ -5,7 +5,7 @@ import fr.esgi.pa.server.common.exception.NotFoundException;
 import fr.esgi.pa.server.role.core.Role;
 import fr.esgi.pa.server.role.core.RoleName;
 import fr.esgi.pa.server.user.infrastructure.dataprovider.JpaUserDao;
-import fr.esgi.pa.server.role.infrastructure.dataprovider.RoleEntity;
+import fr.esgi.pa.server.role.infrastructure.dataprovider.JpaRole;
 import fr.esgi.pa.server.user.infrastructure.dataprovider.JpaUser;
 import fr.esgi.pa.server.role.infrastructure.dataprovider.RoleMapper;
 import fr.esgi.pa.server.role.infrastructure.dataprovider.RoleRepository;
@@ -53,7 +53,7 @@ class JpaUserDaoTest {
         @Test
         void when_no_admin_role_founded_should_throw_exception() {
             var adminRole = new Role().setId(1L).setName(RoleName.ROLE_ADMIN);
-            var userRoleEntity = new RoleEntity().setId(1L).setName(RoleName.ROLE_USER);
+            var userRoleEntity = new JpaRole().setId(1L).setName(RoleName.ROLE_USER);
             when(mockRoleRepository.findAll()).thenReturn(List.of(userRoleEntity));
 
             assertThatThrownBy(() -> sut.createUser(username, email, password, Set.of(adminRole)))
