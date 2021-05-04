@@ -3,8 +3,8 @@ package fr.esgi.pa.server.unit.role.infrastructure.dataprovider;
 import fr.esgi.pa.server.role.core.RoleDao;
 import fr.esgi.pa.server.common.exception.AlreadyCreatedException;
 import fr.esgi.pa.server.role.core.RoleName;
-import fr.esgi.pa.server.role.infrastructure.dataprovider.RoleDaoImpl;
-import fr.esgi.pa.server.role.infrastructure.dataprovider.RoleEntity;
+import fr.esgi.pa.server.role.infrastructure.dataprovider.JpaRoleDao;
+import fr.esgi.pa.server.role.infrastructure.dataprovider.JpaRole;
 import fr.esgi.pa.server.role.infrastructure.dataprovider.RoleMapper;
 import fr.esgi.pa.server.role.infrastructure.dataprovider.RoleRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,17 +23,17 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class RoleDaoImplTest {
+class JpaRoleDaoTest {
     @Mock
     private RoleRepository mockRoleRepository;
 
     private final RoleMapper roleMapper = new RoleMapper();
 
-    private RoleDaoImpl sut;
+    private JpaRoleDao sut;
 
     @BeforeEach
     void setup() {
-        sut = new RoleDaoImpl(mockRoleRepository, roleMapper);
+        sut = new JpaRoleDao(mockRoleRepository, roleMapper);
     }
 
     @Nested
@@ -46,7 +46,7 @@ class RoleDaoImplTest {
 
         @Test
         void should_return_role_by_role_name() {
-            var roleEntity = new RoleEntity().setId(1L).setName(RoleName.ROLE_ADMIN);
+            var roleEntity = new JpaRole().setId(1L).setName(RoleName.ROLE_ADMIN);
             when(mockRoleRepository.findByName(RoleName.ROLE_ADMIN)).thenReturn(Optional.of(roleEntity));
 
             var expectedRole = roleMapper.entityToDomain(roleEntity);
@@ -71,7 +71,7 @@ class RoleDaoImplTest {
     class CreateRole {
         @Test
         void when_role_already_created_should_throw_AlreadyCreatedException() {
-            var roleEntity = new RoleEntity().setId(1L).setName(RoleName.ROLE_USER);
+            var roleEntity = new JpaRole().setId(1L).setName(RoleName.ROLE_USER);
             when(mockRoleRepository.findByName(RoleName.ROLE_USER)).thenReturn(Optional.of(roleEntity));
 
             assertThatThrownBy(() -> sut.createRole(RoleName.ROLE_USER))
@@ -81,8 +81,8 @@ class RoleDaoImplTest {
 
         @Test
         void when_role_saved_should_return_new_role_id() throws AlreadyCreatedException {
-            var adminRole = new RoleEntity().setName(RoleName.ROLE_ADMIN);
-            var savedRole = new RoleEntity().setId(3L).setName(RoleName.ROLE_ADMIN);
+            var adminRole = new JpaRole().setName(RoleName.ROLE_ADMIN);
+            var savedRole = new JpaRole().setId(3L).setName(RoleName.ROLE_ADMIN);
             when(mockRoleRepository.findByName(RoleName.ROLE_ADMIN)).thenReturn(Optional.empty());
             when(mockRoleRepository.save(adminRole)).thenReturn(savedRole);
 
@@ -94,8 +94,8 @@ class RoleDaoImplTest {
 
     @Test
     void findAll_should_find_all_roles_by_repository() {
-        var userRole = new RoleEntity().setId(1L).setName(RoleName.ROLE_USER);
-        var adminRole = new RoleEntity().setId(2L).setName(RoleName.ROLE_ADMIN);
+        var userRole = new JpaRole().setId(1L).setName(RoleName.ROLE_USER);
+        var adminRole = new JpaRole().setId(2L).setName(RoleName.ROLE_ADMIN);
         var rolesEntityList = List.of(userRole, adminRole);
         when(mockRoleRepository.findAll()).thenReturn(rolesEntityList);
 

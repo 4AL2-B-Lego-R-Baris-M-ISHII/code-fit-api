@@ -1,6 +1,6 @@
 package fr.esgi.pa.server.auth.infrastructure.security.service;
 
-import fr.esgi.pa.server.user.infrastructure.dataprovider.UserEntity;
+import fr.esgi.pa.server.user.infrastructure.dataprovider.JpaUser;
 import fr.esgi.pa.server.user.infrastructure.dataprovider.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,9 +18,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity userEntity = userRepository.findByUsername(username)
+        JpaUser jpaUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not found with username : " + username));
 
-        return UserDetailsImpl.build(userEntity);
+        return UserDetailsImpl.build(jpaUser);
     }
 }

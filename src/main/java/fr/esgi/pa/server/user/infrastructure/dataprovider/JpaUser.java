@@ -1,6 +1,6 @@
 package fr.esgi.pa.server.user.infrastructure.dataprovider;
 
-import fr.esgi.pa.server.role.infrastructure.dataprovider.RoleEntity;
+import fr.esgi.pa.server.role.infrastructure.dataprovider.JpaRole;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -14,7 +14,7 @@ import java.util.Set;
 @Entity(name = "user")
 @Data
 @Accessors(chain = true)
-public class UserEntity {
+public class JpaUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -36,5 +36,5 @@ public class UserEntity {
     @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<RoleEntity> roles = new HashSet<>();
+    private Set<JpaRole> roles = new HashSet<>();
 }

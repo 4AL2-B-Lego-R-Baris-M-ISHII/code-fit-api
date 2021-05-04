@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Entity(name = "role")
 @Data
 @Accessors(chain = true)
-public class RoleEntity {
+public class JpaRole {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

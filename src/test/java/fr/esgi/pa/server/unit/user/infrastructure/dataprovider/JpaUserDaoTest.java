@@ -4,9 +4,9 @@ import fr.esgi.pa.server.user.core.UserDao;
 import fr.esgi.pa.server.common.exception.NotFoundException;
 import fr.esgi.pa.server.role.core.Role;
 import fr.esgi.pa.server.role.core.RoleName;
-import fr.esgi.pa.server.user.infrastructure.dataprovider.UserDaoImpl;
-import fr.esgi.pa.server.role.infrastructure.dataprovider.RoleEntity;
-import fr.esgi.pa.server.user.infrastructure.dataprovider.UserEntity;
+import fr.esgi.pa.server.user.infrastructure.dataprovider.JpaUserDao;
+import fr.esgi.pa.server.role.infrastructure.dataprovider.JpaRole;
+import fr.esgi.pa.server.user.infrastructure.dataprovider.JpaUser;
 import fr.esgi.pa.server.role.infrastructure.dataprovider.RoleMapper;
 import fr.esgi.pa.server.role.infrastructure.dataprovider.RoleRepository;
 import fr.esgi.pa.server.user.infrastructure.dataprovider.UserRepository;
@@ -26,7 +26,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class UserDaoImplTest {
+class JpaUserDaoTest {
     @Mock
     private UserRepository mockUserRepository;
 
@@ -38,14 +38,14 @@ class UserDaoImplTest {
 
     private final RoleMapper roleMapper = new RoleMapper();
 
-    private UserDaoImpl sut;
+    private JpaUserDao sut;
     private final String username = "user name";
     private final String email = "user@gmail.com";
     private final String password = "userPassword";
 
     @BeforeEach
     void setup() {
-        sut = new UserDaoImpl(mockUserRepository, mockRoleRepository, roleMapper, mockEncoder);
+        sut = new JpaUserDao(mockUserRepository, mockRoleRepository, roleMapper, mockEncoder);
     }
 
     @Nested
@@ -53,7 +53,7 @@ class UserDaoImplTest {
         @Test
         void when_no_admin_role_founded_should_throw_exception() {
             var adminRole = new Role().setId(1L).setName(RoleName.ROLE_ADMIN);
-            var userRoleEntity = new RoleEntity().setId(1L).setName(RoleName.ROLE_USER);
+            var userRoleEntity = new JpaRole().setId(1L).setName(RoleName.ROLE_USER);
             when(mockRoleRepository.findAll()).thenReturn(List.of(userRoleEntity));
 
             assertThatThrownBy(() -> sut.createUser(username, email, password, Set.of(adminRole)))
@@ -75,12 +75,12 @@ class UserDaoImplTest {
         void when_user_saved_should_return_new_user_id() throws NotFoundException {
             var userRole = new Role().setId(1L).setName(RoleName.ROLE_USER);
             var passwordEncoded = "passwordEncoded";
-            var userToSave = new UserEntity()
+            var userToSave = new JpaUser()
                     .setUsername(username)
                     .setEmail(email)
                     .setPassword(passwordEncoded)
                     .setRoles(Set.of(roleMapper.domainToEntity(userRole)));
-            var savedUser = new UserEntity()
+            var savedUser = new JpaUser()
                     .setId(1L);
 
             when(mockRoleRepository.findAll()).thenReturn(List.of(roleMapper.domainToEntity(userRole)));
