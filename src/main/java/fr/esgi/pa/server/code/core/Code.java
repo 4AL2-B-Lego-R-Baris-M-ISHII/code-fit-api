@@ -1,13 +1,18 @@
 package fr.esgi.pa.server.code.core;
 
+import fr.esgi.pa.server.language.core.Language;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 @Data
 @Accessors(chain = true)
-public class Result {
+public class Code {
 
-    private TypeResult result;
+    private Long id;
+
+    private CodeState codeState;
 
     private String output;
+
+    private Language language;
 }

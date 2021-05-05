@@ -8,7 +8,7 @@ import javax.validation.constraints.Size;
 
 @Data
 @Accessors(chain = true)
-public class CompileRequest {
+public class CodeRequest {
     @NotBlank
     private String content;
 
