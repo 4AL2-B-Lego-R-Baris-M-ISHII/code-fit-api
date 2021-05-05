@@ -1,4 +1,4 @@
-package fr.esgi.pa.server.auth.infrastructure.entrypoint;
+package fr.esgi.pa.server.code.infrastructure.entrypoint;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -8,12 +8,11 @@ import javax.validation.constraints.Size;
 
 @Data
 @Accessors(chain = true)
-public class LoginRequest {
+public class CompileRequest {
     @NotBlank
-    @Size(max = 20)
-    private String username;
+    private String content;
 
     @NotBlank
-    @Size(max = 120)
-    private String password;
+    @Size(max = 10)
+    private String language;
 }
