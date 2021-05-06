@@ -6,6 +6,9 @@ target/
 
 **/resources/application.properties
 
+device/compiler/c_compiler/launch.sh
+device/compiler/c_compiler/main.c
+
 ### STS ###
 .apt_generated
 .classpath
