@@ -1,4 +1,4 @@
-package fr.esgi.pa.server.common.exception;
+package fr.esgi.pa.server.common.core.exception;
 
 public class AlreadyCreatedException extends Exception {
     public AlreadyCreatedException(String message) {

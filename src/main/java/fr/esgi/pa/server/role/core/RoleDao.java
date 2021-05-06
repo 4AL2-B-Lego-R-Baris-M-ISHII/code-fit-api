@@ -1,6 +1,6 @@
 package fr.esgi.pa.server.role.core;
 
-import fr.esgi.pa.server.common.exception.AlreadyCreatedException;
+import fr.esgi.pa.server.common.core.exception.AlreadyCreatedException;
 
 import java.util.List;
 import java.util.Optional;

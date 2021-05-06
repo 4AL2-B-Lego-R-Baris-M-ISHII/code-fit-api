@@ -1,7 +1,7 @@
 package fr.esgi.pa.server.helper;
 
 import fr.esgi.pa.server.auth.infrastructure.security.jwt.JwtUtils;
-import fr.esgi.pa.server.common.exception.NotFoundException;
+import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.role.core.Role;
 import fr.esgi.pa.server.user.core.UserDao;
 import lombok.RequiredArgsConstructor;

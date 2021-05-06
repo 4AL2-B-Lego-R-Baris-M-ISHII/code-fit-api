@@ -1,9 +1,7 @@
 package fr.esgi.pa.server.e2e;
 
-import fr.esgi.pa.server.code.core.Code;
-import fr.esgi.pa.server.code.core.CodeState;
 import fr.esgi.pa.server.code.infrastructure.entrypoint.CodeRequest;
-import fr.esgi.pa.server.common.exception.NotFoundException;
+import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.helper.AuthHelper;
 import fr.esgi.pa.server.role.core.RoleDao;
 import fr.esgi.pa.server.role.core.RoleName;

@@ -1,7 +1,7 @@
 package fr.esgi.pa.server.user.infrastructure.dataprovider;
 
 import fr.esgi.pa.server.user.core.UserDao;
-import fr.esgi.pa.server.common.exception.NotFoundException;
+import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.role.core.Role;
 import fr.esgi.pa.server.role.infrastructure.dataprovider.RoleMapper;
 import fr.esgi.pa.server.role.infrastructure.dataprovider.RoleRepository;

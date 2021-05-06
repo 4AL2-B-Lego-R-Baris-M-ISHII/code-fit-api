@@ -1,7 +1,7 @@
 package fr.esgi.pa.server.unit.language.infrastructure.dataprovider;
 
-import fr.esgi.pa.server.common.exception.AlreadyCreatedException;
-import fr.esgi.pa.server.common.exception.NotFoundException;
+import fr.esgi.pa.server.common.core.exception.AlreadyCreatedException;
+import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.language.core.LanguageName;
 import fr.esgi.pa.server.language.infrastructure.dataprovider.JpaLanguage;
 import fr.esgi.pa.server.language.infrastructure.dataprovider.JpaLanguageDao;
@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 

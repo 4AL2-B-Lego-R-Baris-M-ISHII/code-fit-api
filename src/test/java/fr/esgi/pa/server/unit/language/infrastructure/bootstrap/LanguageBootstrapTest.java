@@ -1,6 +1,6 @@
 package fr.esgi.pa.server.unit.language.infrastructure.bootstrap;
 
-import fr.esgi.pa.server.common.exception.AlreadyCreatedException;
+import fr.esgi.pa.server.common.core.exception.AlreadyCreatedException;
 import fr.esgi.pa.server.language.core.LanguageDao;
 import fr.esgi.pa.server.language.core.LanguageName;
 import fr.esgi.pa.server.language.infrastructure.bootstrap.LanguageBootstrap;

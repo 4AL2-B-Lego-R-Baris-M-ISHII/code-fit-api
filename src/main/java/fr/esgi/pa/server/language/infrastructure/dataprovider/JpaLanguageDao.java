@@ -1,7 +1,7 @@
 package fr.esgi.pa.server.language.infrastructure.dataprovider;
 
-import fr.esgi.pa.server.common.exception.AlreadyCreatedException;
-import fr.esgi.pa.server.common.exception.NotFoundException;
+import fr.esgi.pa.server.common.core.exception.AlreadyCreatedException;
+import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.language.core.Language;
 import fr.esgi.pa.server.language.core.LanguageDao;
 import fr.esgi.pa.server.language.core.LanguageName;

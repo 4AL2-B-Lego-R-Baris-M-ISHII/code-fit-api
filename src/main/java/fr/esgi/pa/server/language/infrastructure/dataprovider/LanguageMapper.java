@@ -1,6 +1,6 @@
 package fr.esgi.pa.server.language.infrastructure.dataprovider;
 
-import fr.esgi.pa.server.common.mapper.MapperEntityToDomain;
+import fr.esgi.pa.server.common.core.mapper.MapperEntityToDomain;
 import fr.esgi.pa.server.language.core.Language;
 import org.springframework.stereotype.Component;
 
