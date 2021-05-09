@@ -17,6 +17,7 @@ import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Disabled
 @SpringBootTest
 class CCompilerTest {
 
@@ -80,7 +81,6 @@ class CCompilerTest {
         assertThat(result.getOutput()).isNotEqualTo("Hello World!");
     }
 
-    @Disabled
     @Test
     void when_content_code_infinite_loop_should_return_fail_code_with_time_limit_error() throws IOException, InterruptedException {
         var helloWorldContent = "#include <stdio.h>\n" +
