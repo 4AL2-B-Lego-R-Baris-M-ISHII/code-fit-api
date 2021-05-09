@@ -1,4 +1,4 @@
-package fr.esgi.pa.server.process.core;
+package fr.esgi.pa.server.common.core.utils.process;
 
 import lombok.Data;
 import lombok.experimental.Accessors;

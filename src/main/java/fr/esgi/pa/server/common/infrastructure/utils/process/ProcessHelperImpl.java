@@ -1,7 +1,7 @@
-package fr.esgi.pa.server.process.infrastructure;
+package fr.esgi.pa.server.common.infrastructure.utils.process;
 
-import fr.esgi.pa.server.process.core.ProcessHelper;
-import fr.esgi.pa.server.process.core.ProcessResult;
+import fr.esgi.pa.server.common.core.utils.process.ProcessHelper;
+import fr.esgi.pa.server.common.core.utils.process.ProcessResult;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
