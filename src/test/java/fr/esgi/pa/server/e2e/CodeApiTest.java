@@ -1,8 +1,11 @@
 package fr.esgi.pa.server.e2e;
 
+import fr.esgi.pa.server.code.core.Code;
+import fr.esgi.pa.server.code.core.CodeState;
 import fr.esgi.pa.server.code.infrastructure.entrypoint.CodeRequest;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.helper.AuthHelper;
+import fr.esgi.pa.server.language.core.LanguageName;
 import fr.esgi.pa.server.role.core.RoleDao;
 import fr.esgi.pa.server.role.core.RoleName;
 import io.restassured.http.ContentType;
@@ -61,22 +64,29 @@ public class CodeApiTest {
             var content = "#include <stdio.h>\n" +
                     "int main() {\n" +
                     "   // printf() displays the string inside quotation\n" +
-                    "   printf(\"Hello World\")\n" +
+                    "   printf(\"Hello World\");\n" +
                     "   return 0;\n" +
                     "}";
             var codeRequest = new CodeRequest()
                     .setLanguage("C")
                     .setContent(content);
-            given()
+            var code = given()
                     .header("Authorization", "Bearer " + jwtUser)
                     .contentType(ContentType.JSON)
                     .body(codeRequest)
                     .when()
                     .post("/api/code")
                     .then()
-                    .statusCode(200);
+                    .statusCode(200)
+                    .extract()
+                    .as(Code.class);
 
-            // TODO : assert language status, name and content
+            assertThat(code).isNotNull();
+            assertThat(code.getLanguage()).isNotNull();
+            assertThat(code.getCodeState()).isEqualTo(CodeState.SUCCESS);
+            assertThat(code.getOutput()).isEqualTo("Hello World");
+            assertThat(code.getLanguage().getLanguageName()).isEqualTo(LanguageName.C);
+            assertThat(code.getCodeState()).isEqualTo(CodeState.SUCCESS);
         }
     }
 }

@@ -1,5 +1,6 @@
 package fr.esgi.pa.server.helper;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JsonHelper {
@@ -9,5 +10,14 @@ public class JsonHelper {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static <T> T jsonToObject(String json, Class<T> concernedClass) {
+        try {
+            return new ObjectMapper().readValue(json, concernedClass);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
