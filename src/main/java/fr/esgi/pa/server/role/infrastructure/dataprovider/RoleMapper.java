@@ -1,7 +1,7 @@
 package fr.esgi.pa.server.role.infrastructure.dataprovider;
 
-import fr.esgi.pa.server.common.mapper.MapperDomainToEntity;
-import fr.esgi.pa.server.common.mapper.MapperEntityToDomain;
+import fr.esgi.pa.server.common.core.mapper.MapperDomainToEntity;
+import fr.esgi.pa.server.common.core.mapper.MapperEntityToDomain;
 import fr.esgi.pa.server.role.core.Role;
 import org.springframework.stereotype.Component;
 

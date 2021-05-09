@@ -1,9 +1,9 @@
-package fr.esgi.pa.server.common.exception;
+package fr.esgi.pa.server.common.infrastructure.exception;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.esgi.pa.server.common.exception.AlreadyCreatedException;
-import fr.esgi.pa.server.common.exception.NotFoundException;
+import fr.esgi.pa.server.common.core.exception.AlreadyCreatedException;
+import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

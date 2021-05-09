@@ -1,7 +1,7 @@
 package fr.esgi.pa.server.integration.controller;
 
-import fr.esgi.pa.server.common.exception.AlreadyCreatedException;
-import fr.esgi.pa.server.common.exception.NotFoundException;
+import fr.esgi.pa.server.common.core.exception.AlreadyCreatedException;
+import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.helper.JsonHelper;
 import fr.esgi.pa.server.auth.infrastructure.entrypoint.SignUpRequest;
 import fr.esgi.pa.server.auth.usecase.SignUp;

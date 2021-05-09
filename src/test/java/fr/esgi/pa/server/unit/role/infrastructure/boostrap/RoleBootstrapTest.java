@@ -1,7 +1,7 @@
 package fr.esgi.pa.server.unit.role.infrastructure.boostrap;
 
 import fr.esgi.pa.server.role.core.RoleDao;
-import fr.esgi.pa.server.common.exception.AlreadyCreatedException;
+import fr.esgi.pa.server.common.core.exception.AlreadyCreatedException;
 import fr.esgi.pa.server.role.core.RoleName;
 import fr.esgi.pa.server.log.core.Log;
 import fr.esgi.pa.server.role.infrastructure.bootstrap.RoleBootstrap;
@@ -43,7 +43,7 @@ class RoleBootstrapTest {
     @Test
     void on_when_role_already_create_should_log_info() throws AlreadyCreatedException {
         when(mockRoleDao.createRole(RoleName.ROLE_USER)).thenThrow(new AlreadyCreatedException("exception"));
-        when(mockRoleDao.createRole(RoleName.ROLE_ADMIN)).thenReturn(anyLong());
+        when(mockRoleDao.createRole(RoleName.ROLE_ADMIN)).thenReturn(2L);
 
         sut.on(mockApplicationReadyEvent);
 

@@ -1,6 +1,6 @@
 package fr.esgi.pa.server.role.infrastructure.dataprovider;
 
-import fr.esgi.pa.server.common.exception.AlreadyCreatedException;
+import fr.esgi.pa.server.common.core.exception.AlreadyCreatedException;
 import fr.esgi.pa.server.role.core.Role;
 import fr.esgi.pa.server.role.core.RoleDao;
 import fr.esgi.pa.server.role.core.RoleName;

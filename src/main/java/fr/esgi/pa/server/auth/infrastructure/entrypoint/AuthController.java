@@ -1,7 +1,7 @@
 package fr.esgi.pa.server.auth.infrastructure.entrypoint;
 
-import fr.esgi.pa.server.common.exception.AlreadyCreatedException;
-import fr.esgi.pa.server.common.exception.NotFoundException;
+import fr.esgi.pa.server.common.core.exception.AlreadyCreatedException;
+import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.auth.infrastructure.security.jwt.JwtUtils;
 import fr.esgi.pa.server.auth.infrastructure.security.service.UserDetailsImpl;
 import fr.esgi.pa.server.auth.usecase.SignUp;
