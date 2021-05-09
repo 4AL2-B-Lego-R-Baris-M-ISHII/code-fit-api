@@ -43,13 +43,13 @@ public class CCompiler implements Compiler {
 
     @Override
     public Code compile(String content, Language language, String idCompilation) throws IOException, InterruptedException {
-        var dockerFile = C_COMPILER_FOLDER + File.separator + "Dockerfile";
+        String dockerFile = getFilePath("Dockerfile");
         if (!fileReader.isFileExist(dockerFile)) {
             var message = String.format("%s : docker file of compiler not found", this.getClass());
             throw new FileNotFoundException(message);
         }
         var mainFile = "main." + language.getFileExtension();
-        var filePath = C_COMPILER_FOLDER + File.separator + mainFile;
+        String filePath = getFilePath(mainFile);
         fileWriter.writeContentToFile(content, filePath);
         createCLaunchScript(mainFile);
 
@@ -59,6 +59,10 @@ public class CCompiler implements Compiler {
         }
 
         return launchScriptAndGetResultOfCode(idCompilation, language);
+    }
+
+    private String getFilePath(String fileName) {
+        return C_COMPILER_FOLDER + File.separator + fileName;
     }
 
     private void createCLaunchScript(String mainFile) throws IOException {

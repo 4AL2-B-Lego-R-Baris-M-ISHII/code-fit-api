@@ -4,6 +4,7 @@ import fr.esgi.pa.server.code.core.Code;
 import fr.esgi.pa.server.code.core.CodeState;
 import fr.esgi.pa.server.code.infrastructure.entrypoint.CodeRequest;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
+import fr.esgi.pa.server.common.core.utils.process.ProcessHelper;
 import fr.esgi.pa.server.helper.AuthHelper;
 import fr.esgi.pa.server.language.core.LanguageName;
 import fr.esgi.pa.server.role.core.RoleDao;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
+import java.io.IOException;
 import java.util.Set;
 
 import static io.restassured.RestAssured.given;
@@ -29,6 +31,9 @@ public class CodeApiTest {
 
     @Autowired
     private AuthHelper authHelper;
+
+    @Autowired
+    private ProcessHelper processHelper;
 
     @LocalServerPort
     private int localPort;
@@ -54,6 +59,15 @@ public class CodeApiTest {
                 e.printStackTrace();
             }
         });
+    }
+
+    @AfterAll
+    void afterAll() throws IOException, InterruptedException {
+        var deleteImagesProcess = processHelper.createCommandProcess(new String[]{
+                "docker", "image", "prune", "-a", "-f"});
+        if (deleteImagesProcess.waitFor() != 0) {
+            System.err.println("Problem delete all images");
+        }
     }
 
     @DisplayName("METHOD POST /api/code")
