@@ -6,7 +6,7 @@ import fr.esgi.pa.server.code.core.Compiler;
 import fr.esgi.pa.server.common.core.utils.io.FileReader;
 import fr.esgi.pa.server.common.core.utils.io.FileWriter;
 import fr.esgi.pa.server.language.core.Language;
-import fr.esgi.pa.server.process.core.ProcessHelper;
+import fr.esgi.pa.server.common.core.utils.process.ProcessHelper;
 import org.springframework.stereotype.Component;
 
 import java.io.File;

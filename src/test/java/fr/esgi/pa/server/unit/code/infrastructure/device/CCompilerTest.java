@@ -1,14 +1,13 @@
 package fr.esgi.pa.server.unit.code.infrastructure.device;
 
-import fr.esgi.pa.server.code.core.Code;
 import fr.esgi.pa.server.code.core.CodeState;
 import fr.esgi.pa.server.code.infrastructure.device.CCompiler;
 import fr.esgi.pa.server.common.core.utils.io.FileReader;
 import fr.esgi.pa.server.common.core.utils.io.FileWriter;
 import fr.esgi.pa.server.language.core.Language;
 import fr.esgi.pa.server.language.core.LanguageName;
-import fr.esgi.pa.server.process.core.ProcessHelper;
-import fr.esgi.pa.server.process.core.ProcessResult;
+import fr.esgi.pa.server.common.core.utils.process.ProcessHelper;
+import fr.esgi.pa.server.common.core.utils.process.ProcessResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
