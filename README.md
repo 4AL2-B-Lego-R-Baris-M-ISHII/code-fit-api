@@ -1,7 +1,20 @@
-## Server
+## Code-fit api
 
-The name probably change after few days.
+Code-fit api is a school's annual project of 4AL2 Group 4
 
-This is a school's annual project.
+The goal of this api is to purpose code exercise for user and improve their development skills
 
-4AL2 Groupe 4
+This API can :
+- Show the list of language that can be used
+- Show the list of exercises to do 
+- Compile code of user in specific language
+- Manage the success and error of compilation
+- Send if the exercise of the code is achieved and all tests passed or not
+- Show stats of exercises that are done and their quality
+
+4AL2 Group 4 ESGI 2020/2021
+
+To start the application
+```
+mvn clean package && mvn spring-boot:run
+```
