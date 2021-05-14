@@ -6,8 +6,8 @@ target/
 
 **/resources/application.properties
 
-device/compiler/c_compiler/launch.sh
-device/compiler/c_compiler/main.c
+device/compiler/c_compiler/tmp/launch.sh
+device/compiler/c_compiler/tmp/main.c
 
 ### STS ###
 .apt_generated
