@@ -1,5 +1,6 @@
 package fr.esgi.pa.server.code.infrastructure.device;
 
+import fr.esgi.pa.server.common.core.utils.io.FileFactory;
 import fr.esgi.pa.server.common.core.utils.process.ProcessHelper;
 import fr.esgi.pa.server.common.core.utils.process.ProcessResult;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import java.io.File;
 @RequiredArgsConstructor
 public class DockerCompileRunnerImpl implements DockerCompileRunner {
     private final ProcessHelper processHelper;
+    private final FileFactory fileFactory;
 
     @SneakyThrows
     @Override
@@ -37,15 +39,16 @@ public class DockerCompileRunnerImpl implements DockerCompileRunner {
     @SneakyThrows
     private boolean isBuildImage(String folderPath, String imageName) {
         var dockerBuildCommand = new String[]{"docker", "image", "build", folderPath, "-t", imageName};
-        var process = processHelper.createCommandProcess(dockerBuildCommand);
+        var process = processHelper.launchCommandAndGetProcess(dockerBuildCommand);
         return process.waitFor() == 0;
     }
 
     @SneakyThrows
     private ProcessResult mountContainer(String folderPath, String imageName, String containerName) {
         var dockerFilePath = folderPath + File.separator + "Dockerfile";
-        var dockerFile = new File(dockerFilePath);
-        var absolutePath = dockerFile.getAbsolutePath().replaceFirst("Dockerfile", "") + File.separator + "tmp";
+        var dockerFile = fileFactory.createFile(dockerFilePath);
+        var dockerFileAbsolutPath = dockerFile.getAbsolutePath();
+        var absolutePath = dockerFileAbsolutPath.replaceFirst("Dockerfile", "") + "tmp";
         var mountArg = "type=bind,source=" + absolutePath + ",target=/app";
         var dockerRunCommand = new String[]{"docker", "run", "--name", containerName, "--mount", mountArg, imageName};
         return processHelper.launchCommandProcess(dockerRunCommand);

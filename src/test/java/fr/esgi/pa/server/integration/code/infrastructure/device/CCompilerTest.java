@@ -30,11 +30,11 @@ class CCompilerTest {
 
     @AfterAll
     void afterAll() throws InterruptedException, IOException {
-        var deleteContainerProcess = processHelper.createCommandProcess(new String[]{"docker", "container", "rm", containerName});
+        var deleteContainerProcess = processHelper.launchCommandAndGetProcess(new String[]{"docker", "container", "rm", containerName});
         if (deleteContainerProcess.waitFor() != 0) {
             System.err.println("Problem delete container '" + containerName + "'");
         }
-        var deleteImagesProcess = processHelper.createCommandProcess(new String[]{"docker", "rmi", imageName});
+        var deleteImagesProcess = processHelper.launchCommandAndGetProcess(new String[]{"docker", "rmi", imageName});
         if (deleteImagesProcess.waitFor() != 0) {
             System.err.println("Problem delete image '" + imageName + "'");
         }
