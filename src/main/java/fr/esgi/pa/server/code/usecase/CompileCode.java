@@ -9,8 +9,6 @@ import fr.esgi.pa.server.language.core.LanguageName;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-
 @Service
 @RequiredArgsConstructor
 public class CompileCode {
@@ -23,13 +21,12 @@ public class CompileCode {
         var compiler = compilerRepository.findByLanguage(foundLanguage);
 
         try {
-            return compiler.compile(codeContent, foundLanguage, "code_" + foundLanguage.getFileExtension());
-        } catch (IOException | InterruptedException exception) {
+            return compiler.compile(codeContent, foundLanguage, "code_" + foundLanguage.getFileExtension(), "code_container");
+        } catch (RuntimeException exception) {
             var message = String.format(
-                    "%s : Problem compilation of language '%s' get exception '%s'",
+                    "%s : Problem compilation of language '%s'",
                     this.getClass(),
-                    languageName,
-                    exception.getClass());
+                    languageName);
             throw new CompilationException(message);
         }
     }
