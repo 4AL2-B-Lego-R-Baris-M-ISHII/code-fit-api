@@ -6,7 +6,7 @@ EXPOSE 8080
 
 USER root
 
-ADD . .
+ADD tmp .
 
 RUN chmod a+x ./main.c
 RUN chmod a+x ./launch.sh

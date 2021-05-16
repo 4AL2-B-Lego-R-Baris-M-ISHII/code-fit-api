@@ -63,7 +63,7 @@ public class CodeApiTest {
 
     @AfterAll
     void afterAll() throws IOException, InterruptedException {
-        var deleteImagesProcess = processHelper.createCommandProcess(new String[]{
+        var deleteImagesProcess = processHelper.launchCommandAndGetProcess(new String[]{
                 "docker", "image", "prune", "-a", "-f"});
         if (deleteImagesProcess.waitFor() != 0) {
             System.err.println("Problem delete all images");
