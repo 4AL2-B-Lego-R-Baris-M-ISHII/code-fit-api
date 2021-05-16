@@ -6,6 +6,7 @@ import fr.esgi.pa.server.code.infrastructure.device.CCompiler;
 import fr.esgi.pa.server.code.infrastructure.device.CodeStateHelper;
 import fr.esgi.pa.server.code.infrastructure.device.DockerCompileRunner;
 import fr.esgi.pa.server.code.infrastructure.device.ScriptCompilerContent;
+import fr.esgi.pa.server.common.core.utils.io.FileDeleter;
 import fr.esgi.pa.server.common.core.utils.io.FileReader;
 import fr.esgi.pa.server.common.core.utils.io.FileWriter;
 import fr.esgi.pa.server.common.core.utils.process.ProcessResult;
@@ -36,6 +37,9 @@ class CCompilerTest {
     private FileWriter mockFileWriter;
 
     @Mock
+    private FileDeleter mockFileDeleter;
+
+    @Mock
     private DockerCompileRunner mockDockerCompilerRunner;
 
     @Mock
@@ -43,7 +47,7 @@ class CCompilerTest {
 
     private CCompiler sut;
 
-    private String content = "content";
+    private final String content = "content";
     private Language cLanguage;
 
     private String dockerFile;
@@ -55,7 +59,7 @@ class CCompilerTest {
         cLanguage = new Language().setId(1L).setLanguageName(LanguageName.C).setFileExtension("c");
 
         dockerFile = CCompiler.C_COMPILER_FOLDER + File.separator + "Dockerfile";
-        sut = new CCompiler(mockFileReader, mockFileWriter, mockDockerCompilerRunner, mockCodeStateHelper);
+        sut = new CCompiler(mockFileReader, mockFileWriter, mockFileDeleter, mockDockerCompilerRunner, mockCodeStateHelper);
     }
 
     @Test
@@ -78,7 +82,8 @@ class CCompilerTest {
         var contentScript = ScriptCompilerContent.getScriptC(mainFile, 500, 7);
         doNothing().when(mockFileWriter).writeContentToFile(contentScript, scriptPath);
         var processResult = new ProcessResult().setStatus(0).setOut("output");
-        when(mockDockerCompilerRunner.start("toto", CCompiler.C_COMPILER_FOLDER, imageName, containerName)).thenReturn(processResult);
+        when(mockDockerCompilerRunner.start(CCompiler.C_COMPILER_FOLDER, imageName, containerName)).thenReturn(processResult);
+        when(mockFileDeleter.removeAllFiles(CCompiler.C_COMPILER_TEMP_FOLDER)).thenReturn(true);
         when(mockCodeStateHelper.getCodeState(0)).thenReturn(CodeState.SUCCESS);
 
         var result = sut.compile(content, cLanguage, imageName, containerName);

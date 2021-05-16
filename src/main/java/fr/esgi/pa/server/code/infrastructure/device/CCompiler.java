@@ -3,6 +3,7 @@ package fr.esgi.pa.server.code.infrastructure.device;
 import fr.esgi.pa.server.code.core.Code;
 import fr.esgi.pa.server.code.core.CodeState;
 import fr.esgi.pa.server.code.core.Compiler;
+import fr.esgi.pa.server.common.core.utils.io.FileDeleter;
 import fr.esgi.pa.server.common.core.utils.io.FileReader;
 import fr.esgi.pa.server.common.core.utils.io.FileWriter;
 import fr.esgi.pa.server.language.core.Language;
@@ -19,6 +20,7 @@ import java.io.IOException;
 public class CCompiler implements Compiler {
     private final FileReader fileReader;
     private final FileWriter fileWriter;
+    private final FileDeleter fileDeleter;
     private final DockerCompileRunner dockerCompileRunner;
     private final CodeStateHelper codeStateHelper;
 
@@ -45,6 +47,7 @@ public class CCompiler implements Compiler {
         createCLaunchScript(mainFile);
 
         var processResult = dockerCompileRunner.start(C_COMPILER_FOLDER, imageName, containerName);
+        fileDeleter.removeAllFiles(C_COMPILER_TEMP_FOLDER);
         CodeState codeState = codeStateHelper.getCodeState(processResult.getStatus());
         return new Code()
                 .setLanguage(language)
