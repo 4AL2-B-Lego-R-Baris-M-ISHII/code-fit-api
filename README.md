@@ -18,3 +18,5 @@ To start the application
 ```
 mvn clean package && mvn spring-boot:run
 ```
+
+To see swagger page and send request to api : [URL]/swagger-ui/
