@@ -1,7 +1,7 @@
 package fr.esgi.pa.server.integration.code.infrastructure.device;
 
 import fr.esgi.pa.server.code.infrastructure.device.CCompiler;
-import fr.esgi.pa.server.code.infrastructure.device.CompilerRepositoryImpl;
+import fr.esgi.pa.server.code.infrastructure.device.repository.CompilerRepositoryImpl;
 import fr.esgi.pa.server.language.core.Language;
 import fr.esgi.pa.server.language.core.LanguageName;
 import org.junit.jupiter.api.BeforeEach;

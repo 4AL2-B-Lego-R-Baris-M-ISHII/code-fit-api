@@ -1,4 +1,4 @@
-package fr.esgi.pa.server.code.infrastructure.device;
+package fr.esgi.pa.server.code.infrastructure.device.utils;
 
 public class ScriptCompilerContent {
     public static String getScriptC(String fileName, Integer memoryLimit, Integer timeLimit) {

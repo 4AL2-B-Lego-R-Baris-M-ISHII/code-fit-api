@@ -1,4 +1,4 @@
-package fr.esgi.pa.server.code.infrastructure.device;
+package fr.esgi.pa.server.code.infrastructure.device.helper;
 
 import fr.esgi.pa.server.code.core.CodeState;
 import org.springframework.stereotype.Component;
