@@ -63,10 +63,13 @@ public class CodeApiTest {
 
     @AfterAll
     void afterAll() throws IOException, InterruptedException {
-        var deleteImagesProcess = processHelper.launchCommandAndGetProcess(new String[]{
-                "docker", "image", "prune", "-a", "-f"});
+        var deleteContainerProcess = processHelper.launchCommandAndGetProcess(new String[]{"docker", "container", "rm", "code_container"});
+        if (deleteContainerProcess.waitFor() != 0) {
+            System.err.println("Problem delete container 'code_container'");
+        }
+        var deleteImagesProcess = processHelper.launchCommandAndGetProcess(new String[]{"docker", "rmi", "code_c"});
         if (deleteImagesProcess.waitFor() != 0) {
-            System.err.println("Problem delete all images");
+            System.err.println("Problem delete image 'code_c'");
         }
     }
 
