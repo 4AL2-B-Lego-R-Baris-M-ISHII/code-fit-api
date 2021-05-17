@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Set;
 
 import static io.restassured.RestAssured.given;
@@ -63,13 +64,17 @@ public class CodeApiTest {
 
     @AfterAll
     void afterAll() throws IOException, InterruptedException {
-        var deleteContainerProcess = processHelper.launchCommandAndGetProcess(new String[]{"docker", "container", "rm", "code_container"});
-        if (deleteContainerProcess.waitFor() != 0) {
-            System.err.println("Problem delete container 'code_container'");
-        }
-        var deleteImagesProcess = processHelper.launchCommandAndGetProcess(new String[]{"docker", "rmi", "code_c"});
-        if (deleteImagesProcess.waitFor() != 0) {
-            System.err.println("Problem delete image 'code_c'");
+        var listLanguageExt = Arrays.asList("c", "java");
+
+        for (String languageExt:  listLanguageExt) {
+            var deleteContainerProcess = processHelper.launchCommandAndGetProcess(new String[]{"docker", "container", "rm", "code_container_" + languageExt});
+            if (deleteContainerProcess.waitFor() != 0) {
+                System.err.printf("Problem delete container 'code_container_%s'%n", languageExt);
+            }
+            var deleteImagesProcess = processHelper.launchCommandAndGetProcess(new String[]{"docker", "rmi", "code_image_" + languageExt});
+            if (deleteImagesProcess.waitFor() != 0) {
+                System.err.printf("Problem delete image 'code_image_%s'%n", languageExt);
+            }
         }
     }
 
@@ -77,7 +82,7 @@ public class CodeApiTest {
     @Nested
     class PostCompileCode {
         @Test
-        void should_send_result_compiled_code() {
+        void should_send_result_compiled_c_code() {
             var content = "#include <stdio.h>\n" +
                     "int main() {\n" +
                     "   // printf() displays the string inside quotation\n" +
@@ -103,6 +108,35 @@ public class CodeApiTest {
             assertThat(code.getCodeState()).isEqualTo(CodeState.SUCCESS);
             assertThat(code.getOutput()).isEqualTo("Hello World");
             assertThat(code.getLanguage().getLanguageName()).isEqualTo(LanguageName.C);
+            assertThat(code.getCodeState()).isEqualTo(CodeState.SUCCESS);
+        }
+
+        @Test
+        void should_send_result_compiled_java_code() {
+            var content = "public class main {\n" +
+                    "    public static void main(String[] args) {\n" +
+                    "        System.out.println(\"Hello World\");\n" +
+                    "    }\n" +
+                    "}";
+            var codeRequest = new CodeRequest()
+                    .setLanguage("JAVA")
+                    .setContent(content);
+            var code = given()
+                    .header("Authorization", "Bearer " + jwtUser)
+                    .contentType(ContentType.JSON)
+                    .body(codeRequest)
+                    .when()
+                    .post("/api/code")
+                    .then()
+                    .statusCode(200)
+                    .extract()
+                    .as(Code.class);
+
+            assertThat(code).isNotNull();
+            assertThat(code.getLanguage()).isNotNull();
+            assertThat(code.getCodeState()).isEqualTo(CodeState.SUCCESS);
+            assertThat(code.getOutput()).isEqualTo("Hello World\n");
+            assertThat(code.getLanguage().getLanguageName()).isEqualTo(LanguageName.JAVA);
             assertThat(code.getCodeState()).isEqualTo(CodeState.SUCCESS);
         }
     }

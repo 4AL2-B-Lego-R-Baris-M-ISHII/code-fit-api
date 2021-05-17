@@ -21,7 +21,7 @@ public class CompileCode {
         var compiler = compilerRepository.findByLanguage(foundLanguage);
 
         try {
-            return compiler.compile(codeContent, foundLanguage, "code_" + foundLanguage.getFileExtension(), "code_container");
+            return compiler.compile(codeContent, foundLanguage, "code_image_" + foundLanguage.getFileExtension(), "code_container_" + foundLanguage.getFileExtension());
         } catch (RuntimeException exception) {
             var message = String.format(
                     "%s : Problem compilation of language '%s'",
