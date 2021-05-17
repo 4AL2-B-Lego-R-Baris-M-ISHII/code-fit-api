@@ -15,8 +15,8 @@ class JavaCompilerTest {
 
     @Autowired
     private JavaCompiler sut;
-    private final String imageName = "compile_docker_test";
-    private final String containerName = "containerName";
+    private final String imageName = "compile_docker_test_java";
+    private final String containerName = "containerName_java";
 
     @Test
     void when_content_code_correct_should_return_success_code_and_output() {

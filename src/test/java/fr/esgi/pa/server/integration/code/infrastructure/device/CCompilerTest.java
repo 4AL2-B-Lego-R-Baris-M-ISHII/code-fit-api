@@ -25,8 +25,8 @@ class CCompilerTest {
 
     @Autowired
     private CCompiler sut;
-    private final String imageName = "compile_docker_test";
-    private final String containerName = "containerName";
+    private final String imageName = "compile_docker_test_c";
+    private final String containerName = "containerNameC";
 
     @AfterAll
     void afterAll() throws InterruptedException, IOException {
