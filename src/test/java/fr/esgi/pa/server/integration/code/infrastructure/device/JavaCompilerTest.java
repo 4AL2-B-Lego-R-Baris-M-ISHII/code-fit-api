@@ -1,7 +1,7 @@
 package fr.esgi.pa.server.integration.code.infrastructure.device;
 
 import fr.esgi.pa.server.code.core.CodeState;
-import fr.esgi.pa.server.code.infrastructure.device.JavaCompiler;
+import fr.esgi.pa.server.code.infrastructure.device.compiler.JavaCompiler;
 import fr.esgi.pa.server.language.core.Language;
 import fr.esgi.pa.server.language.core.LanguageName;
 import org.junit.jupiter.api.Test;
