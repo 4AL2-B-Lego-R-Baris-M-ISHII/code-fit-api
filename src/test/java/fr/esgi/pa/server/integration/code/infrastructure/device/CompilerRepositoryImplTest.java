@@ -1,7 +1,8 @@
 package fr.esgi.pa.server.integration.code.infrastructure.device;
 
-import fr.esgi.pa.server.code.infrastructure.device.CCompiler;
-import fr.esgi.pa.server.code.infrastructure.device.CompilerRepositoryImpl;
+import fr.esgi.pa.server.code.infrastructure.device.compiler.CCompiler;
+import fr.esgi.pa.server.code.infrastructure.device.compiler.JavaCompiler;
+import fr.esgi.pa.server.code.infrastructure.device.repository.CompilerRepositoryImpl;
 import fr.esgi.pa.server.language.core.Language;
 import fr.esgi.pa.server.language.core.LanguageName;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,5 +29,11 @@ class CompilerRepositoryImplTest {
     void when_language_name_is_c_should_get_CCompiler() {
         var result = sut.findByLanguage(new Language().setLanguageName(LanguageName.C));
         assertThat(result).isInstanceOf(CCompiler.class);
+    }
+
+    @Test
+    void when_language_name_is_java_should_get_JavaCompiler() {
+        var result = sut.findByLanguage(new Language().setLanguageName(LanguageName.JAVA));
+        assertThat(result).isInstanceOf(JavaCompiler.class);
     }
 }

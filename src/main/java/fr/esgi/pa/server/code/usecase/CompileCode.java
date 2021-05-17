@@ -2,7 +2,7 @@ package fr.esgi.pa.server.code.usecase;
 
 import fr.esgi.pa.server.code.core.Code;
 import fr.esgi.pa.server.code.core.CompilationException;
-import fr.esgi.pa.server.code.infrastructure.device.CompilerRepository;
+import fr.esgi.pa.server.code.infrastructure.device.repository.CompilerRepository;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.language.core.LanguageDao;
 import fr.esgi.pa.server.language.core.LanguageName;
@@ -21,7 +21,7 @@ public class CompileCode {
         var compiler = compilerRepository.findByLanguage(foundLanguage);
 
         try {
-            return compiler.compile(codeContent, foundLanguage, "code_" + foundLanguage.getFileExtension(), "code_container");
+            return compiler.compile(codeContent, foundLanguage, "code_image_" + foundLanguage.getFileExtension(), "code_container_" + foundLanguage.getFileExtension());
         } catch (RuntimeException exception) {
             var message = String.format(
                     "%s : Problem compilation of language '%s'",
