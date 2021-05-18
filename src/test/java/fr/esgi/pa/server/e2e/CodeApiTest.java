@@ -81,7 +81,6 @@ public class CodeApiTest {
     @DisplayName("METHOD POST /api/code")
     @Nested
     class PostCompileCode {
-        @Disabled
         @Test
         void should_send_result_compiled_c_code() {
             var content = "#include <stdio.h>\n" +

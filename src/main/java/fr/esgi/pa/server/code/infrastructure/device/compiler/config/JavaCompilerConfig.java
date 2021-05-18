@@ -8,16 +8,18 @@ import java.io.File;
 @Data
 @Configuration
 public class JavaCompilerConfig implements CompilerConfig {
+    private final String folderPath = "device" + File.separator +
+            "compiler" + File.separator +
+            "java_compiler";
+    private final String folderTmpPath = folderPath + File.separator + "tmp";
     @Override
     public String getFolderPath() {
-        return "device" + File.separator +
-                "compiler" + File.separator +
-                "java_compiler";
+        return folderPath;
     }
 
     @Override
     public String getFolderTmpPath() {
-        return getFolderPath() + File.separator + "tmp";
+        return folderTmpPath;
     }
 
     @Override
