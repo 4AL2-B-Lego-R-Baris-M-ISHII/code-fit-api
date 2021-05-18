@@ -24,9 +24,10 @@ public class CompileCode {
             return compiler.compile(codeContent, foundLanguage, "code_image_" + foundLanguage.getFileExtension(), "code_container_" + foundLanguage.getFileExtension());
         } catch (RuntimeException exception) {
             var message = String.format(
-                    "%s : Problem compilation of language '%s'",
+                    "%s : Problem compilation of language '%s', cause : '%s'",
                     this.getClass(),
-                    languageName);
+                    languageName,
+                    exception.getMessage());
             throw new CompilationException(message);
         }
     }

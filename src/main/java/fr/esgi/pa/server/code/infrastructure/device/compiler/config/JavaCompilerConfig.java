@@ -1,9 +1,11 @@
 package fr.esgi.pa.server.code.infrastructure.device.compiler.config;
 
+import lombok.Data;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.File;
 
+@Data
 @Configuration
 public class JavaCompilerConfig implements CompilerConfig {
     @Override

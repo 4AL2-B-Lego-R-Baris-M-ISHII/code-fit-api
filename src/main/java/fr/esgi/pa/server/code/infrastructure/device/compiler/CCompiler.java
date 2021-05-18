@@ -36,35 +36,40 @@ public class CCompiler implements Compiler {
     private static final int TIME_LIMIT = 7;
     private static final int MEMORY_LIMIT = 500;
 
-    @SneakyThrows
     @Override
     public Code compile(String content, Language language, String imageName, String containerName) {
-        String dockerFile = getFilePath(C_COMPILER_FOLDER, "Dockerfile");
-        if (!fileReader.isFileExist(dockerFile)) {
-            var message = String.format("%s : docker file of compiler not found", this.getClass());
-            throw new FileNotFoundException(message);
-        }
-        var mainFile = "main." + language.getFileExtension();
-        String filePath = getFilePath(C_COMPILER_TEMP_FOLDER, mainFile);
-        fileWriter.writeContentToFile(content, filePath);
-        createCLaunchScript(mainFile);
-
-        var processResult = dockerCompileRunner.start(C_COMPILER_FOLDER, imageName, containerName);
-        fileDeleter.removeAllFiles(C_COMPILER_TEMP_FOLDER);
-        CodeState codeState = codeStateHelper.getCodeState(processResult.getStatus());
-        return new Code()
-                .setLanguage(language)
-                .setCodeState(codeState)
-                .setOutput(processResult.getOut());
+        return null;
     }
-
-    private String getFilePath(String folderPath, String fileName) {
-        return folderPath + File.separator + fileName;
-    }
-
-    private void createCLaunchScript(String mainFile) throws IOException {
-        String launchScriptPath = C_COMPILER_TEMP_FOLDER + File.separator + "launch.sh";
-        String content = ScriptCompilerContent.getScriptC(mainFile, MEMORY_LIMIT, TIME_LIMIT);
-        fileWriter.writeContentToFile(content, launchScriptPath);
-    }
+//
+//    @SneakyThrows
+//    @Override
+//    public Code compile(String content, Language language, String imageName, String containerName) {
+//        String dockerFile = getFilePath(C_COMPILER_FOLDER, "Dockerfile");
+//        if (!fileReader.isFileExist(dockerFile)) {
+//            var message = String.format("%s : docker file of compiler not found", this.getClass());
+//            throw new FileNotFoundException(message);
+//        }
+//        var mainFile = "main." + language.getFileExtension();
+//        String filePath = getFilePath(C_COMPILER_TEMP_FOLDER, mainFile);
+//        fileWriter.writeContentToFile(content, filePath);
+//        createCLaunchScript(mainFile);
+//
+//        var processResult = dockerCompileRunner.start(C_COMPILER_FOLDER, imageName, containerName);
+//        fileDeleter.removeAllFiles(C_COMPILER_TEMP_FOLDER);
+//        CodeState codeState = codeStateHelper.getCodeState(processResult.getStatus());
+//        return new Code()
+//                .setLanguage(language)
+//                .setCodeState(codeState)
+//                .setOutput(processResult.getOut());
+//    }
+//
+//    private String getFilePath(String folderPath, String fileName) {
+//        return folderPath + File.separator + fileName;
+//    }
+//
+//    private void createCLaunchScript(String mainFile) throws IOException {
+//        String launchScriptPath = C_COMPILER_TEMP_FOLDER + File.separator + "launch.sh";
+//        String content = ScriptCompilerContent.getScriptC(mainFile, MEMORY_LIMIT, TIME_LIMIT);
+//        fileWriter.writeContentToFile(content, launchScriptPath);
+//    }
 }

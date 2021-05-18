@@ -24,8 +24,8 @@ class JavaCompilerTest {
 
     @Autowired
     private JavaCompiler sut;
-    private final String imageName = "compile_docker_test_java";
-    private final String containerName = "containerName_java";
+    private final String imageName = "code_image_java";
+    private final String containerName = "code_container_java";
 
     @AfterAll
     void afterAll() throws InterruptedException, IOException {
@@ -52,6 +52,7 @@ class JavaCompilerTest {
                 .setLanguageName(LanguageName.JAVA)
                 .setFileExtension("java");
         var result = sut.compile(helloWorldContent, language, imageName, containerName);
+
         assertThat(result).isNotNull();
         assertThat(result.getCodeState()).isEqualTo(CodeState.SUCCESS);
         assertThat(result.getOutput().trim()).isEqualTo("Hello World");
