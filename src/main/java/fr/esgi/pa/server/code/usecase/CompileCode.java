@@ -21,12 +21,13 @@ public class CompileCode {
         var compiler = compilerRepository.findByLanguage(foundLanguage);
 
         try {
-            return compiler.compile(codeContent, foundLanguage, "code_image_" + foundLanguage.getFileExtension(), "code_container_" + foundLanguage.getFileExtension());
+            return compiler.compile(codeContent, foundLanguage);
         } catch (RuntimeException exception) {
             var message = String.format(
-                    "%s : Problem compilation of language '%s'",
+                    "%s : Problem compilation of language '%s', cause : '%s'",
                     this.getClass(),
-                    languageName);
+                    languageName,
+                    exception.getMessage());
             throw new CompilationException(message);
         }
     }
