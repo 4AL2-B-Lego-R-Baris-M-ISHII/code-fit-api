@@ -1,4 +1,4 @@
-package fr.esgi.pa.server.integration.code.infrastructure.device;
+package fr.esgi.pa.server.integration.code.infrastructure.device.repository;
 
 import fr.esgi.pa.server.code.infrastructure.device.compiler.CCompiler;
 import fr.esgi.pa.server.code.infrastructure.device.compiler.JavaCompiler;

@@ -4,20 +4,13 @@ import fr.esgi.pa.server.code.core.Code;
 import fr.esgi.pa.server.code.core.CodeState;
 import fr.esgi.pa.server.code.core.Compiler;
 import fr.esgi.pa.server.code.infrastructure.device.compile_runner.DockerCompileRunner;
-import fr.esgi.pa.server.code.infrastructure.device.compiler.config.JavaCompilerConfig;
 import fr.esgi.pa.server.code.infrastructure.device.helper.CodeStateHelper;
-import fr.esgi.pa.server.code.infrastructure.device.utils.ScriptCompilerContent;
+import fr.esgi.pa.server.code.infrastructure.device.repository.CompilerConfigRepository;
 import fr.esgi.pa.server.common.core.utils.io.FileDeleter;
-import fr.esgi.pa.server.common.core.utils.io.FileReader;
-import fr.esgi.pa.server.common.core.utils.io.FileWriter;
 import fr.esgi.pa.server.language.core.Language;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
@@ -25,11 +18,12 @@ public class JavaCompiler implements Compiler {
     private final DockerCompileRunner dockerCompileRunner;
     private final CodeStateHelper codeStateHelper;
     private final FileDeleter fileDeleter;
+    private final CompilerConfigRepository compilerConfigRepository;
 
     @SneakyThrows
     @Override
-    public Code compile(String content, Language language, String imageName, String containerName) {
-        var compilerConfig = new JavaCompilerConfig();
+    public Code compile(String content, Language language) {
+        var compilerConfig = compilerConfigRepository.findByLanguageName(language.getLanguageName());
         var processResult = dockerCompileRunner.start(compilerConfig, content, language);
         CodeState codeState = codeStateHelper.getCodeState(processResult.getStatus());
         fileDeleter.removeAllFiles(compilerConfig.getFolderTmpPath());

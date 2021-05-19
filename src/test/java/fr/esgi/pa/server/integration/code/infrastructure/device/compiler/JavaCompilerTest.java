@@ -1,4 +1,4 @@
-package fr.esgi.pa.server.integration.code.infrastructure.device;
+package fr.esgi.pa.server.integration.code.infrastructure.device.compiler;
 
 import fr.esgi.pa.server.code.core.CodeState;
 import fr.esgi.pa.server.code.infrastructure.device.compiler.JavaCompiler;
@@ -51,7 +51,7 @@ class JavaCompilerTest {
                 .setId(2L)
                 .setLanguageName(LanguageName.JAVA)
                 .setFileExtension("java");
-        var result = sut.compile(helloWorldContent, language, imageName, containerName);
+        var result = sut.compile(helloWorldContent, language);
 
         assertThat(result).isNotNull();
         assertThat(result.getCodeState()).isEqualTo(CodeState.SUCCESS);
@@ -70,7 +70,7 @@ class JavaCompilerTest {
                 .setId(2L)
                 .setLanguageName(LanguageName.JAVA)
                 .setFileExtension("java");
-        var result = sut.compile(helloWorldContent, language, imageName, this.containerName);
+        var result = sut.compile(helloWorldContent, language);
         assertThat(result).isNotNull();
         assertThat(result.getCodeState()).isEqualTo(CodeState.COMPILATION_ERROR);
         assertThat(result.getOutput().trim()).isNotEqualTo("Hello World!");
@@ -89,7 +89,7 @@ class JavaCompilerTest {
                 .setId(2L)
                 .setLanguageName(LanguageName.JAVA)
                 .setFileExtension("java");
-        var result = sut.compile(helloWorldContent, language, imageName, this.containerName);
+        var result = sut.compile(helloWorldContent, language);
         assertThat(result).isNotNull();
         assertThat(result.getCodeState()).isEqualTo(CodeState.RUNTIME_ERROR);
     }
@@ -107,7 +107,7 @@ class JavaCompilerTest {
                 .setId(2L)
                 .setLanguageName(LanguageName.JAVA)
                 .setFileExtension("java");
-        var result = sut.compile(helloWorldContent, language, imageName, this.containerName);
+        var result = sut.compile(helloWorldContent, language);
         assertThat(result).isNotNull();
         assertThat(result.getCodeState()).isEqualTo(CodeState.RUNTIME_ERROR);
     }
