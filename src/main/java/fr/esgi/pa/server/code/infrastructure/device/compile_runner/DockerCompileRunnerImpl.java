@@ -2,7 +2,6 @@ package fr.esgi.pa.server.code.infrastructure.device.compile_runner;
 
 import fr.esgi.pa.server.code.infrastructure.device.compiler.config.CompilerConfig;
 import fr.esgi.pa.server.code.infrastructure.device.utils.ScriptCompilerContent;
-import fr.esgi.pa.server.common.core.utils.io.FileDeleter;
 import fr.esgi.pa.server.common.core.utils.io.FileFactory;
 import fr.esgi.pa.server.common.core.utils.io.FileReader;
 import fr.esgi.pa.server.common.core.utils.io.FileWriter;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
 
 @Component
 @RequiredArgsConstructor
@@ -25,49 +23,51 @@ public class DockerCompileRunnerImpl implements DockerCompileRunner {
     private final FileFactory fileFactory;
     private final FileReader fileReader;
     private final FileWriter fileWriter;
+    private final ScriptCompilerContent scriptCompilerContent;
 
     @SneakyThrows
     @Override
     public ProcessResult start(CompilerConfig compilerConfig, String content, Language language) {
-        verifyIfDockerFileExists(compilerConfig, language);
+        var folderPath = compilerConfig.getFolderPath();
+        verifyIfDockerFileExists(folderPath, language);
 
-        String mainFile = writeMainFile(compilerConfig, content, language);
+        var folderTmpPath = compilerConfig.getFolderTmpPath();
+        String mainFile = writeMainFile(folderTmpPath, content, language);
+        writeScriptToRunCompiler(compilerConfig, folderTmpPath, language, mainFile);
 
-        writeScriptToRunCompiler(compilerConfig, language, mainFile);
-
-        var containerName = "code_container_" + language.getFileExtension();
+        var containerName = String.format("code_container_%s", language.getFileExtension());
         var dockerRunCommand = new String[]{"docker", "start", containerName, "-i"};
         var startResult = processHelper.launchCommandProcess(dockerRunCommand);
         if (isContainerAlreadyCreated(startResult)) {
             return startResult;
         }
         var imageName = "code_image_" + language.getFileExtension();
-        if (!isBuildImage(compilerConfig.getFolderPath(), imageName)) {
-            var message = String.format("%s : problem docker run", this.getClass());
+        if (!isBuildImage(folderPath, imageName)) {
+            var message = String.format("%s : problem docker image build", this.getClass());
             throw new RuntimeException(message);
         }
 
-        return mountContainer(compilerConfig, imageName, containerName);
+        return mountContainer(folderTmpPath, imageName, containerName);
     }
 
-    private void verifyIfDockerFileExists(CompilerConfig compilerConfig, Language language) throws FileNotFoundException {
-        var dockerFile = getFilePath(compilerConfig.getFolderPath(), "Dockerfile");
+    private void verifyIfDockerFileExists(String folderPath, Language language) throws FileNotFoundException {
+        var dockerFile = getFilePath(folderPath, "Dockerfile");
         if (!fileReader.isFileExist(dockerFile)) {
             var message = String.format("%s : docker file of compiler '%s' not found", this.getClass(), language.getLanguageName());
             throw new FileNotFoundException(message);
         }
     }
 
-    private String writeMainFile(CompilerConfig compilerConfig, String content, Language language) throws IOException {
+    private String writeMainFile(String folderTmpPath, String content, Language language) throws IOException {
         var mainFile = "main." + language.getFileExtension();
-        var filePath = getFilePath(compilerConfig.getFolderTmpPath(), mainFile);
+        var filePath = getFilePath(folderTmpPath, mainFile);
         fileWriter.writeContentToFile(content, filePath);
         return mainFile;
     }
 
-    private void writeScriptToRunCompiler(CompilerConfig compilerConfig, Language language, String mainFile) throws IOException {
-        String launchScriptPath = compilerConfig.getFolderTmpPath() + File.separator + "launch.sh";
-        String scriptContent = ScriptCompilerContent.getScriptByLanguage(language, mainFile, compilerConfig);
+    private void writeScriptToRunCompiler(CompilerConfig compilerConfig, String folderTmpPath, Language language, String mainFile) throws IOException {
+        String launchScriptPath = getFilePath(folderTmpPath, "launch.sh");
+        String scriptContent = scriptCompilerContent.getScriptByLanguage(language, mainFile, compilerConfig);
         fileWriter.writeContentToFile(scriptContent, launchScriptPath);
     }
 
@@ -88,8 +88,8 @@ public class DockerCompileRunnerImpl implements DockerCompileRunner {
     }
 
     @SneakyThrows
-    private ProcessResult mountContainer(CompilerConfig compilerConfig, String imageName, String containerName) {
-        var absolutePath = fileFactory.createFile(compilerConfig.getFolderTmpPath()).getAbsolutePath();
+    private ProcessResult mountContainer(String folderTmpPath, String imageName, String containerName) {
+        var absolutePath = fileFactory.createFile(folderTmpPath).getAbsolutePath();
         var mountArg = "type=bind,source=" + absolutePath + ",target=/app";
         var dockerRunCommand = new String[]{"docker", "run", "--name", containerName, "--mount", mountArg, imageName};
 
