@@ -26,18 +26,16 @@ class CCompilerTest {
 
     @Autowired
     private CCompiler sut;
-    private final String imageName = "compile_docker_test_c";
-    private final String containerName = "containerNameC";
 
     @AfterAll
     void afterAll() throws InterruptedException, IOException {
-        var deleteContainerProcess = processHelper.launchCommandAndGetProcess(new String[]{"docker", "container", "rm", containerName});
+        var deleteContainerProcess = processHelper.launchCommandAndGetProcess(new String[]{"docker", "container", "rm", "code_container_c"});
         if (deleteContainerProcess.waitFor() != 0) {
-            System.err.println("Problem delete container '" + containerName + "'");
+            System.err.println("Problem delete container '" + "code_container_c" + "'");
         }
-        var deleteImagesProcess = processHelper.launchCommandAndGetProcess(new String[]{"docker", "rmi", imageName});
+        var deleteImagesProcess = processHelper.launchCommandAndGetProcess(new String[]{"docker", "rmi", "code_image_c"});
         if (deleteImagesProcess.waitFor() != 0) {
-            System.err.println("Problem delete image '" + imageName + "'");
+            System.err.println("Problem delete image '" + "code_image_c" + "'");
         }
     }
 
@@ -50,7 +48,7 @@ class CCompilerTest {
                 "   return 0;\n" +
                 "}";
         var language = new Language().setId(1L).setLanguageName(LanguageName.C).setFileExtension("c");
-        var result = sut.compile(helloWorldContent, language, imageName, containerName);
+        var result = sut.compile(helloWorldContent, language);
 
         assertThat(result).isNotNull();
         assertThat(result.getCodeState()).isEqualTo(CodeState.SUCCESS);
@@ -66,7 +64,7 @@ class CCompilerTest {
                 "   return 0;\n" +
                 "}";
         var language = new Language().setId(1L).setLanguageName(LanguageName.C).setFileExtension("c");
-        var result = sut.compile(helloWorldContent, language, imageName, this.containerName);
+        var result = sut.compile(helloWorldContent, language);
 
         assertThat(result).isNotNull();
         assertThat(result.getCodeState()).isEqualTo(CodeState.COMPILATION_ERROR);
@@ -82,7 +80,7 @@ class CCompilerTest {
                 "   return 0;\n" +
                 "}";
         var language = new Language().setId(1L).setLanguageName(LanguageName.C).setFileExtension("c");
-        var result = sut.compile(helloWorldContent, language, imageName, this.containerName);
+        var result = sut.compile(helloWorldContent, language);
 
         assertThat(result).isNotNull();
         assertThat(result.getCodeState()).isEqualTo(CodeState.TIME_LIMIT_EXCEED);
@@ -96,7 +94,7 @@ class CCompilerTest {
                 "   return 1;\n" +
                 "}";
         var language = new Language().setId(1L).setLanguageName(LanguageName.C).setFileExtension("c");
-        var result = sut.compile(helloWorldContent, language, imageName, this.containerName);
+        var result = sut.compile(helloWorldContent, language);
 
         assertThat(result).isNotNull();
         assertThat(result.getCodeState()).isEqualTo(CodeState.RUNTIME_ERROR);
@@ -111,7 +109,7 @@ class CCompilerTest {
                 "   return 0;\n" +
                 "}";
         var language = new Language().setId(1L).setLanguageName(LanguageName.C).setFileExtension("c");
-        var result = sut.compile(helloWorldContent, language, imageName, this.containerName);
+        var result = sut.compile(helloWorldContent, language);
 
         assertThat(result).isNotNull();
         assertThat(result.getCodeState()).isEqualTo(CodeState.SUCCESS);

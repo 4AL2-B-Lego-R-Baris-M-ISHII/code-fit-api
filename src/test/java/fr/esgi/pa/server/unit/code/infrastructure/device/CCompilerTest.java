@@ -2,41 +2,26 @@ package fr.esgi.pa.server.unit.code.infrastructure.device;
 
 import fr.esgi.pa.server.code.core.Code;
 import fr.esgi.pa.server.code.core.CodeState;
-import fr.esgi.pa.server.code.infrastructure.device.compiler.CCompiler;
-import fr.esgi.pa.server.code.infrastructure.device.helper.CodeStateHelper;
 import fr.esgi.pa.server.code.infrastructure.device.compile_runner.DockerCompileRunner;
-import fr.esgi.pa.server.code.infrastructure.device.utils.ScriptCompilerContent;
+import fr.esgi.pa.server.code.infrastructure.device.compiler.CCompiler;
+import fr.esgi.pa.server.code.infrastructure.device.compiler.config.CompilerConfig;
+import fr.esgi.pa.server.code.infrastructure.device.helper.CodeStateHelper;
+import fr.esgi.pa.server.code.infrastructure.device.repository.CompilerConfigRepository;
 import fr.esgi.pa.server.common.core.utils.io.FileDeleter;
-import fr.esgi.pa.server.common.core.utils.io.FileReader;
-import fr.esgi.pa.server.common.core.utils.io.FileWriter;
 import fr.esgi.pa.server.common.core.utils.process.ProcessResult;
 import fr.esgi.pa.server.language.core.Language;
 import fr.esgi.pa.server.language.core.LanguageName;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CCompilerTest {
-
-    @Mock
-    private FileReader mockFileReader;
-
-    @Mock
-    private FileWriter mockFileWriter;
-
     @Mock
     private FileDeleter mockFileDeleter;
 
@@ -46,27 +31,61 @@ class CCompilerTest {
     @Mock
     private CodeStateHelper mockCodeStateHelper;
 
+    @Mock
+    private CompilerConfigRepository mockCompilerConfigRepository;
+
+    @Mock
+    private CompilerConfig mockCompilerConfig;
+
     private CCompiler sut;
 
     private final String content = "content";
     private Language cLanguage;
 
-    private final String imageName = "id_c_compiler";
-    private final String containerName = "container_name";
-
     @BeforeEach
     void setup() {
         cLanguage = new Language().setId(1L).setLanguageName(LanguageName.C).setFileExtension("c");
 
-        sut = new CCompiler(mockFileDeleter, mockDockerCompilerRunner, mockCodeStateHelper);
+        sut = new CCompiler(mockFileDeleter, mockDockerCompilerRunner, mockCodeStateHelper, mockCompilerConfigRepository);
     }
 
-    @Disabled
     @Test
-    void when_docker_file_not_exist_should_throw_exception() {
+    void when_get_process_result_of_compile_runner_should_get_code_state_of_process() {
+        when(mockCompilerConfigRepository.findByLanguageName(cLanguage.getLanguageName())).thenReturn(mockCompilerConfig);
+        var processResult = new ProcessResult().setStatus(0).setOut("output");
+        when(mockDockerCompilerRunner.start(mockCompilerConfig, content, cLanguage)).thenReturn(processResult);
 
-        assertThatThrownBy(() -> sut.compile(content, cLanguage, imageName, containerName))
-                .isExactlyInstanceOf(FileNotFoundException.class)
-                .hasMessage(CCompiler.class + " : docker file of compiler not found");
+        sut.compile(content, cLanguage);
+
+        verify(mockCodeStateHelper).getCodeState(0);
+    }
+
+    @Test
+    void when_get_code_state_of_process_should_delete_all_files_on_concerned_tmp_folder() {
+        when(mockCompilerConfigRepository.findByLanguageName(cLanguage.getLanguageName())).thenReturn(mockCompilerConfig);
+        var processResult = new ProcessResult().setStatus(0).setOut("output");
+        when(mockDockerCompilerRunner.start(mockCompilerConfig, content, cLanguage)).thenReturn(processResult);
+        when(mockCodeStateHelper.getCodeState(0)).thenReturn(CodeState.SUCCESS);
+        when(mockCompilerConfig.getFolderTmpPath()).thenReturn("folder/tmp/path");
+
+        sut.compile(content, cLanguage);
+
+        verify(mockFileDeleter, times(1)).removeAllFiles("folder/tmp/path");
+    }
+
+    @Test
+    void when_get_process_result_and_all_concerned_files_deleted_should_return_code() {
+        when(mockCompilerConfigRepository.findByLanguageName(cLanguage.getLanguageName())).thenReturn(mockCompilerConfig);
+        var processResult = new ProcessResult().setStatus(0).setOut("output");
+        when(mockDockerCompilerRunner.start(mockCompilerConfig, content, cLanguage)).thenReturn(processResult);
+        when(mockCodeStateHelper.getCodeState(0)).thenReturn(CodeState.SUCCESS);
+        when(mockCompilerConfig.getFolderTmpPath()).thenReturn("folder/tmp/path");
+        mockFileDeleter.removeAllFiles("folder/tmp/path");
+
+        var result = sut.compile(content, cLanguage);
+
+        var expectedCode = new Code().setLanguage(cLanguage).setCodeState(CodeState.SUCCESS).setOutput("output");
+
+        assertThat(result).isEqualTo(expectedCode);
     }
 }
