@@ -9,7 +9,6 @@ import fr.esgi.pa.server.code.infrastructure.device.repository.CompilerConfigRep
 import fr.esgi.pa.server.common.core.utils.io.FileDeleter;
 import fr.esgi.pa.server.language.core.Language;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -20,7 +19,6 @@ public class JavaCompiler implements Compiler {
     private final FileDeleter fileDeleter;
     private final CompilerConfigRepository compilerConfigRepository;
 
-    @SneakyThrows
     @Override
     public Code compile(String content, Language language) {
         var compilerConfig = compilerConfigRepository.findByLanguageName(language.getLanguageName());
