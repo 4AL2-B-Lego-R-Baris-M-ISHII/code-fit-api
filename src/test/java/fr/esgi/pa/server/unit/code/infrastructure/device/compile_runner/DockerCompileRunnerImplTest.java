@@ -10,6 +10,7 @@ import fr.esgi.pa.server.common.core.utils.process.ProcessHelper;
 import fr.esgi.pa.server.common.core.utils.process.ProcessResult;
 import fr.esgi.pa.server.language.core.Language;
 import fr.esgi.pa.server.language.core.LanguageName;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -79,6 +80,22 @@ class DockerCompileRunnerImplTest {
         assertThatThrownBy(() -> sut.start(mockCompilerConfig, "content", currentLanguage))
                 .isExactlyInstanceOf(FileNotFoundException.class)
                 .hasMessage(String.format("%s : docker file of compiler '%s' not found", sut.getClass(), currentLanguage.getLanguageName()));
+    }
+
+    @SneakyThrows
+    @Test
+    void when_create_directories_of_folderTmpPath_throw_exception_should_throw() {
+        var folderPath = "folder/path";
+        when(mockCompilerConfig.getFolderPath()).thenReturn(folderPath);
+        var dockerFilePath = folderPath + File.separator + "Dockerfile";
+        when(mockFileReader.isFileExist(dockerFilePath)).thenReturn(true);
+        var folderTmpPath = folderPath + "/tmp";
+        when(mockCompilerConfig.getFolderTmpPath()).thenReturn(folderTmpPath);
+        when(mockFileReader.isFileExist(folderTmpPath)).thenReturn(false);
+        doThrow(IOException.class).when(mockFileWriter).createDirectories(folderTmpPath);
+
+        assertThatThrownBy(() -> sut.start(mockCompilerConfig, "content", currentLanguage))
+                .isExactlyInstanceOf(IOException.class);
     }
 
     @DisplayName("when docker start command is launch")
@@ -211,7 +228,7 @@ class DockerCompileRunnerImplTest {
         }
 
         @Test
-        void should_get_absolute_path_of_folder_tmp_path() {
+        void should_get_absolute_path_of_folder_tmp_path() throws IOException, InterruptedException {
             when(mockFileFactory.createFile(folderTmpPath)).thenReturn(mockFile);
 
             sut.start(mockCompilerConfig, "content", currentLanguage);
