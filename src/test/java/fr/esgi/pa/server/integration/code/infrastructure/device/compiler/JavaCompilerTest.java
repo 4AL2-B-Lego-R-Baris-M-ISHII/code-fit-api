@@ -26,15 +26,15 @@ class JavaCompilerTest {
 
     @Autowired
     private JavaCompiler sut;
-    private final String imageName = "code_image_java";
-    private final String containerName = "code_container_java";
 
     @AfterAll
     void afterAll() throws InterruptedException, IOException {
+        String containerName = "code_container_java";
         var deleteContainerProcess = processHelper.launchCommandAndGetProcess(new String[]{"docker", "container", "rm", containerName});
         if (deleteContainerProcess.waitFor() != 0) {
             System.err.println("Problem delete container '" + containerName + "'");
         }
+        String imageName = "code_image_java";
         var deleteImagesProcess = processHelper.launchCommandAndGetProcess(new String[]{"docker", "rmi", imageName});
         if (deleteImagesProcess.waitFor() != 0) {
             System.err.println("Problem delete image '" + imageName + "'");

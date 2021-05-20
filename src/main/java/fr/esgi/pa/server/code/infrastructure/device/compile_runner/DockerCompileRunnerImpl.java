@@ -32,6 +32,9 @@ public class DockerCompileRunnerImpl implements DockerCompileRunner {
         verifyIfDockerFileExists(folderPath, language);
 
         var folderTmpPath = compilerConfig.getFolderTmpPath();
+        if (!fileReader.isFileExist(folderTmpPath)) {
+            fileWriter.createDirectories(folderTmpPath);
+        }
         String mainFile = writeMainFile(folderTmpPath, content, language);
         writeScriptToRunCompiler(compilerConfig, folderTmpPath, language, mainFile);
 
