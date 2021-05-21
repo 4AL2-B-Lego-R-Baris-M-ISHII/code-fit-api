@@ -1,4 +1,4 @@
-package fr.esgi.pa.server.integration.controller;
+package fr.esgi.pa.server.integration.auth.infrastructure.entrypoint;
 
 import fr.esgi.pa.server.common.core.exception.AlreadyCreatedException;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;

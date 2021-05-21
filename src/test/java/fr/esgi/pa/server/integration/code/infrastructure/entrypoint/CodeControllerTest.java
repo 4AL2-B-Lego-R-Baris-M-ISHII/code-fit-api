@@ -1,4 +1,4 @@
-package fr.esgi.pa.server.integration.controller;
+package fr.esgi.pa.server.integration.code.infrastructure.entrypoint;
 
 import fr.esgi.pa.server.code.core.Code;
 import fr.esgi.pa.server.code.core.CodeState;
