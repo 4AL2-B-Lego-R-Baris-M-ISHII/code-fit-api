@@ -1,8 +1,8 @@
 package fr.esgi.pa.server.auth.infrastructure.security;
 
+import fr.esgi.pa.server.auth.infrastructure.security.jwt.AuthEntryPointJwt;
 import fr.esgi.pa.server.auth.infrastructure.security.jwt.AuthTokenFilter;
 import fr.esgi.pa.server.auth.infrastructure.security.service.UserDetailsServiceImpl;
-import fr.esgi.pa.server.auth.infrastructure.security.jwt.AuthEntryPointJwt;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
