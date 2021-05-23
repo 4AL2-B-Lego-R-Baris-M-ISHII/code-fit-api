@@ -1,6 +1,7 @@
 package fr.esgi.pa.server.helper;
 
 import fr.esgi.pa.server.auth.infrastructure.security.jwt.JwtUtils;
+import fr.esgi.pa.server.auth.infrastructure.security.service.UserDetailsImpl;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.role.core.Role;
 import fr.esgi.pa.server.user.core.UserDao;
@@ -20,7 +21,7 @@ public class AuthHelper {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
 
-    public String createUserAndGetJwt(
+    public AuthDataHelper createUserAndGetJwt(
             String username,
             String email,
             String password,
@@ -32,6 +33,8 @@ public class AuthHelper {
         );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return jwtUtils.generateJwtToken(authentication);
+        String token = jwtUtils.generateJwtToken(authentication);
+        UserDetailsImpl user = (UserDetailsImpl) authentication.getPrincipal();
+        return new AuthDataHelper().setUser(user).setToken(token);
     }
 }

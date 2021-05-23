@@ -5,6 +5,7 @@ import fr.esgi.pa.server.code.core.CodeState;
 import fr.esgi.pa.server.code.infrastructure.entrypoint.CodeRequest;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.common.core.utils.process.ProcessHelper;
+import fr.esgi.pa.server.helper.AuthDataHelper;
 import fr.esgi.pa.server.helper.AuthHelper;
 import fr.esgi.pa.server.language.core.LanguageName;
 import fr.esgi.pa.server.role.core.RoleDao;
@@ -39,7 +40,7 @@ public class CodeApiTest {
     @LocalServerPort
     private int localPort;
 
-    private String jwtUser;
+    private AuthDataHelper authData;
 
     @BeforeEach
     void setup() {
@@ -51,10 +52,10 @@ public class CodeApiTest {
         var userRole = roleDao.findByRoleName(RoleName.ROLE_USER);
         userRole.ifPresent(presentUserRole -> {
             try {
-                jwtUser = authHelper.createUserAndGetJwt(
-                        "user",
-                        "user@name.fr",
-                        "password",
+                authData = authHelper.createUserAndGetJwt(
+                        "codeapitest",
+                        "codeapitest@name.fr",
+                        "codeapitest_password",
                         Set.of(presentUserRole));
             } catch (NotFoundException e) {
                 e.printStackTrace();
@@ -93,7 +94,7 @@ public class CodeApiTest {
                     .setLanguage("C")
                     .setContent(content);
             var code = given()
-                    .header("Authorization", "Bearer " + jwtUser)
+                    .header("Authorization", "Bearer " + authData.getToken())
                     .contentType(ContentType.JSON)
                     .body(codeRequest)
                     .when()
@@ -122,7 +123,7 @@ public class CodeApiTest {
                     .setLanguage("JAVA")
                     .setContent(content);
             var code = given()
-                    .header("Authorization", "Bearer " + jwtUser)
+                    .header("Authorization", "Bearer " + authData.getToken())
                     .contentType(ContentType.JSON)
                     .body(codeRequest)
                     .when()
