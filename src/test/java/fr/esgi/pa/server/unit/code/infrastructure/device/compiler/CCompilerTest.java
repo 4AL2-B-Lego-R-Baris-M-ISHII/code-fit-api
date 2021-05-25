@@ -2,7 +2,7 @@ package fr.esgi.pa.server.unit.code.infrastructure.device.compiler;
 
 import fr.esgi.pa.server.code.core.Code;
 import fr.esgi.pa.server.code.core.CodeState;
-import fr.esgi.pa.server.code.infrastructure.device.compile_runner.DockerCompileRunner;
+import fr.esgi.pa.server.code.infrastructure.device.compile_runner.CompileRunner;
 import fr.esgi.pa.server.code.infrastructure.device.compiler.CCompiler;
 import fr.esgi.pa.server.code.infrastructure.device.compiler.config.CompilerConfig;
 import fr.esgi.pa.server.code.infrastructure.device.helper.CodeStateHelper;
@@ -26,7 +26,7 @@ class CCompilerTest {
     private FileDeleter mockFileDeleter;
 
     @Mock
-    private DockerCompileRunner mockDockerCompilerRunner;
+    private CompileRunner mockDockerCompilerRunner;
 
     @Mock
     private CodeStateHelper mockCodeStateHelper;

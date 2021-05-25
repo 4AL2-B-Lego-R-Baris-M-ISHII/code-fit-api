@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -21,6 +22,7 @@ public class JpaUserDao implements UserDao {
     private final RoleMapper roleMapper;
     private final PasswordEncoder encoder;
 
+    @Transactional
     @Override
     public Long createUser(String username, String email, String password, Set<Role> roles) throws NotFoundException {
         var foundRoles = getAllRoles();
