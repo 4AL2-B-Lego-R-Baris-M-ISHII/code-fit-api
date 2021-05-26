@@ -15,4 +15,5 @@ public class Exercise {
     private Set<ExerciseCase> cases;
     private String solution;
     private Language language;
+    private Long userId;
 }

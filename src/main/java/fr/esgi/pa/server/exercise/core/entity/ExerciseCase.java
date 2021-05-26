@@ -1,6 +1,5 @@
 package fr.esgi.pa.server.exercise.core.entity;
 
-import fr.esgi.pa.server.language.core.Language;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -13,6 +12,6 @@ public class ExerciseCase {
     private String solution;
     private Boolean isValid;
     private Set<ExerciseTest> tests;
-    private Language language;
     private Exercise exercise;
+    private Long languageId;
 }
