@@ -11,4 +11,6 @@ public interface UserDao {
     Boolean existsByUsername(String username);
 
     Boolean existsByEmail(String email);
+
+    User findById(Long userId) throws NotFoundException;
 }

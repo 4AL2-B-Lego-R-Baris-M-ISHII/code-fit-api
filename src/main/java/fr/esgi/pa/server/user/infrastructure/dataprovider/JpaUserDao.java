@@ -1,5 +1,6 @@
 package fr.esgi.pa.server.user.infrastructure.dataprovider;
 
+import fr.esgi.pa.server.user.core.User;
 import fr.esgi.pa.server.user.core.UserDao;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.role.core.Role;
@@ -20,6 +21,7 @@ public class JpaUserDao implements UserDao {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final RoleMapper roleMapper;
+    private final UserMapper userMapper;
     private final PasswordEncoder encoder;
 
     @Transactional
@@ -69,5 +71,14 @@ public class JpaUserDao implements UserDao {
     @Override
     public Boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    @Override
+    public User findById(Long userId) throws NotFoundException {
+        var foundUser = userRepository.findById(userId).orElseThrow(() -> {
+            var message = String.format("%s : User with user id '%d' not found", this.getClass(), userId);
+            return new NotFoundException(message);
+        });
+        return userMapper.entityToDomain(foundUser);
     }
 }
