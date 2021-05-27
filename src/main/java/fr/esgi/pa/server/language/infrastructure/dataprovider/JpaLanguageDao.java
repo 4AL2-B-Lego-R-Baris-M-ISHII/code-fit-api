@@ -5,6 +5,7 @@ import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.language.core.Language;
 import fr.esgi.pa.server.language.core.LanguageDao;
 import fr.esgi.pa.server.language.core.LanguageName;
+import fr.esgi.pa.server.language.core.exception.IncorrectLanguageNameException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,13 +31,24 @@ public class JpaLanguageDao implements LanguageDao {
     }
 
     @Override
-    public Language findByName(LanguageName languageName) throws NotFoundException {
+    public Language findByLanguageName(LanguageName languageName) throws NotFoundException {
         return languageRepository.findByName(languageName)
                 .map(languageMapper::entityToDomain)
                 .orElseThrow(() -> {
                     var message = String.format("%s : language name '%s' not found", this.getClass(), languageName);
                     return new NotFoundException(message);
                 });
+    }
+
+    @Override
+    public Language findByStrLanguage(String strLanguage) throws IncorrectLanguageNameException, NotFoundException {
+        try {
+            var languageName = LanguageName.valueOf(strLanguage);
+            return findByLanguageName(languageName);
+        } catch (IllegalArgumentException ignored) {
+            var message = String.format("%s : Language '%s' is incorrect", this.getClass(), strLanguage);
+            throw new IncorrectLanguageNameException(message);
+        }
     }
 
     @Override

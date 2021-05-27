@@ -1,7 +1,9 @@
 package fr.esgi.pa.server.exercise.infrastructure.entrypoint;
 
+import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.request.SaveExerciseRequest;
 import fr.esgi.pa.server.exercise.usecase.SaveOneExercise;
+import fr.esgi.pa.server.language.core.exception.IncorrectLanguageNameException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +26,7 @@ public class ExerciseController {
     @PostMapping
     public ResponseEntity<URI> saveOne(
             @RequestAttribute("userId") String userId,
-            @Valid @RequestBody SaveExerciseRequest request) {
+            @Valid @RequestBody SaveExerciseRequest request) throws NotFoundException, IncorrectLanguageNameException {
         var newExerciseId = saveOneExercise.execute(
                 request.getTitle(),
                 request.getDescription(),

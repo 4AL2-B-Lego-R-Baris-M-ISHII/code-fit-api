@@ -17,7 +17,7 @@ public class CompileCode {
 
     public Code execute(String codeContent, String strLanguage) throws NotFoundException, CompilationException {
         var languageName = LanguageName.valueOf(strLanguage);
-        var foundLanguage = languageDao.findByName(languageName);
+        var foundLanguage = languageDao.findByLanguageName(languageName);
         var compiler = compilerRepository.findByLanguage(foundLanguage);
 
         try {

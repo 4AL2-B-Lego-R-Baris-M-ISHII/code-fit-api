@@ -119,7 +119,7 @@ public class ExerciseApiTest {
 
         @Test
         void should_create_exercise() throws NotFoundException {
-            var foundLanguage = languageDao.findByName(LanguageName.JAVA);
+            var foundLanguage = languageDao.findByLanguageName(LanguageName.JAVA);
 
         }
     }

@@ -1,11 +1,11 @@
 package fr.esgi.pa.server.user.infrastructure.dataprovider;
 
-import fr.esgi.pa.server.user.core.User;
-import fr.esgi.pa.server.user.core.UserDao;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.role.core.Role;
 import fr.esgi.pa.server.role.infrastructure.dataprovider.RoleMapper;
 import fr.esgi.pa.server.role.infrastructure.dataprovider.RoleRepository;
+import fr.esgi.pa.server.user.core.User;
+import fr.esgi.pa.server.user.core.UserDao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -80,5 +80,10 @@ public class JpaUserDao implements UserDao {
             return new NotFoundException(message);
         });
         return userMapper.entityToDomain(foundUser);
+    }
+
+    @Override
+    public Boolean existsById(Long userId) {
+        return userRepository.existsById(userId);
     }
 }
