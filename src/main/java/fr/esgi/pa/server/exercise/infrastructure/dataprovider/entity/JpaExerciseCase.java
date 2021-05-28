@@ -5,6 +5,7 @@ import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.Set;
 
 @Entity(name = "exercise_case")
 @Data
@@ -24,4 +25,9 @@ public class JpaExerciseCase {
 
     @ManyToOne
     private JpaExercise exercise;
+
+    private Boolean isValid;
+
+    @OneToMany(mappedBy = "currentCase")
+    private Set<JpaExerciseTest> tests;
 }
