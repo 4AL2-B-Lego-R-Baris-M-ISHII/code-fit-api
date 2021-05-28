@@ -28,7 +28,7 @@ public class SaveOneExercise {
         Language foundLanguage = languageDao.findByStrLanguage(language);
 
         // TODO : create exercise
-        exerciseDao.saveExercise(title, description, foundLanguage, userId);
+        exerciseDao.createExercise(title, description, userId);
         return null;
     }
 }

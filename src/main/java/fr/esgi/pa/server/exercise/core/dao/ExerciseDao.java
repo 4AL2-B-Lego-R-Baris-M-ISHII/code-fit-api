@@ -1,7 +1,8 @@
 package fr.esgi.pa.server.exercise.core.dao;
 
-import fr.esgi.pa.server.language.core.Language;
+import fr.esgi.pa.server.common.core.exception.NotFoundException;
+import fr.esgi.pa.server.exercise.core.entity.Exercise;
 
 public interface ExerciseDao {
-    Long saveExercise(String title, String description, Language language, Long userId);
+    Exercise createExercise(String title, String description, Long userId) throws NotFoundException;
 }

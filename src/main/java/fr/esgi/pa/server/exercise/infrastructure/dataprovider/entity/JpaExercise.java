@@ -1,4 +1,4 @@
-package fr.esgi.pa.server.exercise.infrastructure.dataprovider;
+package fr.esgi.pa.server.exercise.infrastructure.dataprovider.entity;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -6,6 +6,7 @@ import lombok.experimental.Accessors;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.Set;
 
 @Entity(name = "exercise")
 @Data
@@ -24,10 +25,9 @@ public class JpaExercise {
     private String description;
 
     @NotBlank
-    @Column(columnDefinition = "TEXT")
-    private String solution;
+    @Column(name = "user_id")
+    private Long userId;
 
-    @NotBlank
-    @Column(name = "language_id")
-    private Long languageId;
+    @OneToMany(mappedBy = "exercise")
+    private Set<JpaExerciseCase> cases;
 }

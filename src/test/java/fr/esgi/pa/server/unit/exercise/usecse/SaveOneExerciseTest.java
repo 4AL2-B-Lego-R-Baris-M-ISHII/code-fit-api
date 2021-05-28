@@ -68,6 +68,6 @@ class SaveOneExerciseTest {
 
         sut.execute(title, description, languageStr, 3L);
 
-        verify(mockExerciseDao, times(1)).saveExercise(title, description, language, 3L);
+        verify(mockExerciseDao, times(1)).createExercise(title, description, 3L);
     }
 }
