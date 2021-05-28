@@ -1,5 +1,6 @@
 package fr.esgi.pa.server.exercise.core.entity;
 
+import fr.esgi.pa.server.language.core.Language;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
