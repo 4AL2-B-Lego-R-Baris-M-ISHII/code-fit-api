@@ -58,56 +58,7 @@ public class JpaDefaultExercise implements DefaultExercise {
                         "        }\n" +
                         "    }\n" +
                         "}");
-        var savedTest = exerciseTestRepository.save(testToSave);
-
-        return savedExercise.getId();//toto.map(this::mapJpaToDomainExerciseWithSubProperties).orElse(null);
+        exerciseTestRepository.save(testToSave);
+        return savedExercise.getId();
     }
-
-//    private JpaExercise prepareDefaultExercise(String title, String description, Language language, Long userId) {
-//        var defaultTest = new JpaExerciseTest()
-//                .setContent("public class Main {\n" +
-//                        "    public static void main(String[] args) throws Exception {\n" +
-//                        "        var result = Solution.exercise1(\"toto\");\n" +
-//                        "        if (result == null || !result.equals(\"toto\")) {\n" +
-//                        "            throw new Exception(\"error expectations\");\n" +
-//                        "        }\n" +
-//                        "    }\n" +
-//                        "}");
-//        var defaultCase = new JpaExerciseCase()
-//                .setTests(Set.of(defaultTest))
-//                .setLanguageId(language.getId())
-//                .setIsValid(false)
-//                .setStartContent("class Solution {\n" +
-//                        "    public static String exercise1(String test) {\n" +
-//                        "        // CODE HERE\n" +
-//                        "        return null;\n" +
-//                        "    }\n" +
-//                        "}\n")
-//                .setSolution("class Solution {\n" +
-//                        "    public static String exercise1(String test) {\n" +
-//                        "        // CODE HERE\n" +
-//                        "        return test;\n" +
-//                        "    }\n" +
-//                        "}\n");
-//        return new JpaExercise()
-//                .setTitle(title)
-//                .setDescription(description)
-//                .setUserId(userId)
-//                .setCases(Set.of(defaultCase));
-//    }
-
-//    private Exercise mapJpaToDomainExerciseWithSubProperties(JpaExercise savedExercise) {
-//        var setCases = savedExercise.getCases()
-//                .stream()
-//                .map(currentCase -> {
-//                    var setTests = currentCase.getTests().stream()
-//                            .map(exerciseTestMapper::entityToDomain)
-//                            .collect(Collectors.toSet());
-//                    return exerciseCaseMapper.entityToDomain(currentCase)
-//                            .setTests(setTests);
-//                })
-//                .collect(Collectors.toSet());
-//        return exerciseMapper.entityToDomain(savedExercise)
-//                .setCases(setCases);
-//    }
 }
