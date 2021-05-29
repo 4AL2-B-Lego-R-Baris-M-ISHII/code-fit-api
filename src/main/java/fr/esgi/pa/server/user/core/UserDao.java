@@ -15,4 +15,6 @@ public interface UserDao {
     User findById(Long userId) throws NotFoundException;
 
     Boolean existsById(Long userId);
+
+    void deleteById(Long userId);
 }

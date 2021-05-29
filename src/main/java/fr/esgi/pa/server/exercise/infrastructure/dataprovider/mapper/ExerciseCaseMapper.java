@@ -4,6 +4,7 @@ import fr.esgi.pa.server.common.core.mapper.MapperEntityToDomain;
 import fr.esgi.pa.server.exercise.core.entity.ExerciseCase;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.entity.JpaExerciseCase;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class ExerciseCaseMapper implements MapperEntityToDomain<JpaExerciseCase, ExerciseCase> {

@@ -86,4 +86,9 @@ public class JpaUserDao implements UserDao {
     public Boolean existsById(Long userId) {
         return userRepository.existsById(userId);
     }
+
+    @Override
+    public void deleteById(Long userId) {
+        userRepository.deleteById(userId);
+    }
 }

@@ -8,6 +8,5 @@ import lombok.experimental.Accessors;
 public class ExerciseTest {
     private Long id;
     private String content;
-    private String expectedOutput;
     private ExerciseCase exerciseCase;
 }

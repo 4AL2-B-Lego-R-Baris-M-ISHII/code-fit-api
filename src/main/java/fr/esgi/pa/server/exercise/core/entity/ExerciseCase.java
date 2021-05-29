@@ -1,6 +1,5 @@
 package fr.esgi.pa.server.exercise.core.entity;
 
-import fr.esgi.pa.server.language.core.Language;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -11,6 +10,7 @@ import java.util.Set;
 public class ExerciseCase {
     private Long id;
     private String solution;
+    private String startContent;
     private Boolean isValid;
     private Set<ExerciseTest> tests;
     private Exercise exercise;

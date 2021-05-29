@@ -25,10 +25,11 @@ public class SaveOneExercise {
             var message = String.format("%s : User with id '%d' not exists", this.getClass(), userId);
             throw new NotFoundException(message);
         }
+        // TODO : create exercise
+        var createdExercise = exerciseDao.createExercise(title, description, userId);
+
         Language foundLanguage = languageDao.findByStrLanguage(language);
 
-        // TODO : create exercise
-        exerciseDao.createExercise(title, description, userId);
         return null;
     }
 }

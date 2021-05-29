@@ -15,12 +15,13 @@ public class UserMapper implements MapperEntityToDomain<JpaUser, User> {
 
     @Override
     public User entityToDomain(JpaUser entity) {
+        var roles = entity.getRoles().stream()
+                .map(roleMapper::entityToDomain)
+                .collect(Collectors.toSet());
         return new User()
                 .setId(entity.getId())
                 .setUsername(entity.getUsername())
                 .setPassword(entity.getPassword())
-                .setRoles(entity.getRoles().stream()
-                        .map(roleMapper::entityToDomain)
-                        .collect(Collectors.toSet()));
+                .setRoles(roles);
     }
 }

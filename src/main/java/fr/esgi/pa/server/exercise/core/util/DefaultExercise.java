@@ -1,4 +1,4 @@
-package fr.esgi.pa.server.exercise.core;
+package fr.esgi.pa.server.exercise.core.util;
 
 import fr.esgi.pa.server.exercise.core.entity.Exercise;
 import fr.esgi.pa.server.language.core.Language;
