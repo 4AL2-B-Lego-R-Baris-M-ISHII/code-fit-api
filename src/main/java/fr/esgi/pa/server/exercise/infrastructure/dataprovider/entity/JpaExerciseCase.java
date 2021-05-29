@@ -3,13 +3,10 @@ package fr.esgi.pa.server.exercise.infrastructure.dataprovider.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Entity(name = "exercise_case")
 @JsonIgnoreProperties({ "exercise" })
@@ -32,25 +29,9 @@ public class JpaExerciseCase {
     @Column(name = "language_id")
     private Long languageId;
 
-    @ManyToOne
-    @JoinColumn(name = "exercise_id")
-    private JpaExercise exercise;
+
+    @Column(name = "exercise_id")
+    private Long exerciseId;
 
     private Boolean isValid;
-
-    @OneToMany(mappedBy = "currentCase")
-    @Fetch(FetchMode.SUBSELECT)
-    private List<JpaExerciseTest> tests;
-
-    @Override
-    public String toString() {
-        return "JpaExerciseCase{" +
-                "id=" + id +
-                ", solution='" + solution + '\'' +
-                ", startContent='" + startContent + '\'' +
-                ", languageId=" + languageId +
-                ", isValid=" + isValid +
-                ", tests=" + tests +
-                '}';
-    }
 }

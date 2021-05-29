@@ -1,6 +1,5 @@
 package fr.esgi.pa.server.exercise.core.entity;
 
-import fr.esgi.pa.server.language.core.Language;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -12,7 +11,6 @@ public class Exercise {
     private Long id;
     private String title;
     private String description;
-    private Set<ExerciseCase> cases;
     private String solution;
     private Long userId;
 }

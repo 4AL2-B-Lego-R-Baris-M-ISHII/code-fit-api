@@ -18,15 +18,6 @@ public class JpaExerciseTest {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    @ManyToOne
-    @JoinColumn(name = "exercise_case_id")
-    private JpaExerciseCase currentCase;
-
-    @Override
-    public String toString() {
-        return "JpaExerciseTest{" +
-                "id=" + id +
-                ", content='" + content + '\'' +
-                '}';
-    }
+    @Column(name = "exercise_case_id")
+    private Long exerciseCaseId;
 }

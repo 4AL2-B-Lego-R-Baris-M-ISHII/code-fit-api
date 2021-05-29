@@ -8,5 +8,5 @@ import lombok.experimental.Accessors;
 public class ExerciseTest {
     private Long id;
     private String content;
-    private ExerciseCase exerciseCase;
+    private Long exerciseCaseId;
 }

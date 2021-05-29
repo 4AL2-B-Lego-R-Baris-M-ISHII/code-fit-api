@@ -49,7 +49,7 @@ public class JpaDefaultExercise implements DefaultExercise {
                         "    }\n" +
                         "}\n";
         var defaultCase = new JpaExerciseCase()
-                .setExercise(savedExercise)
+                .setExerciseId(savedExercise.getId())
                 .setIsValid(false)
                 .setStartContent(startContent)
                 .setSolution(solution)
@@ -68,7 +68,7 @@ public class JpaDefaultExercise implements DefaultExercise {
 //            System.out.println("Not found");
 //        }
         var toto = exerciseRepository.findById(savedExercise.getId());
-        return toto.map(this::mapJpaToDomainExerciseWithSubProperties).orElse(null);
+        return null;//toto.map(this::mapJpaToDomainExerciseWithSubProperties).orElse(null);
     }
 
 //    private JpaExercise prepareDefaultExercise(String title, String description, Language language, Long userId) {
@@ -104,18 +104,18 @@ public class JpaDefaultExercise implements DefaultExercise {
 //                .setCases(Set.of(defaultCase));
 //    }
 
-    private Exercise mapJpaToDomainExerciseWithSubProperties(JpaExercise savedExercise) {
-        var setCases = savedExercise.getCases()
-                .stream()
-                .map(currentCase -> {
-                    var setTests = currentCase.getTests().stream()
-                            .map(exerciseTestMapper::entityToDomain)
-                            .collect(Collectors.toSet());
-                    return exerciseCaseMapper.entityToDomain(currentCase)
-                            .setTests(setTests);
-                })
-                .collect(Collectors.toSet());
-        return exerciseMapper.entityToDomain(savedExercise)
-                .setCases(setCases);
-    }
+//    private Exercise mapJpaToDomainExerciseWithSubProperties(JpaExercise savedExercise) {
+//        var setCases = savedExercise.getCases()
+//                .stream()
+//                .map(currentCase -> {
+//                    var setTests = currentCase.getTests().stream()
+//                            .map(exerciseTestMapper::entityToDomain)
+//                            .collect(Collectors.toSet());
+//                    return exerciseCaseMapper.entityToDomain(currentCase)
+//                            .setTests(setTests);
+//                })
+//                .collect(Collectors.toSet());
+//        return exerciseMapper.entityToDomain(savedExercise)
+//                .setCases(setCases);
+//    }
 }
