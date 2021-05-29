@@ -7,6 +7,7 @@ import fr.esgi.pa.server.exercise.infrastructure.dataprovider.mapper.ExerciseTes
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.repository.ExerciseCaseRepository;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.repository.ExerciseRepository;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.repository.ExerciseTestRepository;
+import fr.esgi.pa.server.exercise.infrastructure.dataprovider.util.DefaultExerciseHelper;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.util.JpaDefaultExercise;
 import fr.esgi.pa.server.language.core.Language;
 import fr.esgi.pa.server.language.core.LanguageName;
@@ -36,9 +37,12 @@ class JpaDefaultExerciseTest {
     @Mock
     private ExerciseTestRepository mockExerciseTestRepository;
 
+    @Mock
+    private DefaultExerciseHelper mockDefaultExerciseHelper;
+
     @BeforeEach
     void setup() {
-        sut = new JpaDefaultExercise(mockExerciseRepository, mockExerciseCaseRepository, mockExerciseTestRepository);
+        sut = new JpaDefaultExercise(mockExerciseRepository, mockExerciseCaseRepository, mockExerciseTestRepository, mockDefaultExerciseHelper);
     }
 
     @Test

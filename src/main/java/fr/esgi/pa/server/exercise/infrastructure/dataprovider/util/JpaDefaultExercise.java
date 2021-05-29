@@ -19,46 +19,44 @@ public class JpaDefaultExercise implements DefaultExercise {
     private final ExerciseRepository exerciseRepository;
     private final ExerciseCaseRepository exerciseCaseRepository;
     private final ExerciseTestRepository exerciseTestRepository;
+    private final DefaultExerciseHelper defaultExerciseHelper;
 
     @Override
     @Transactional
     public Long createDefaultExercise(String title, String description, Language language, Long userId) {
-        JpaExercise defaultExercise = new JpaExercise()
-                .setTitle(title)
-                .setDescription(description)
-                .setUserId(userId);
-        var savedExercise = exerciseRepository.save(defaultExercise);
+        var savedExercise = saveExercise(title, description, userId);
 
-        var startContent = "class Solution {\n" +
-                "    public static String exercise1(String test) {\n" +
-                "        // CODE HERE\n" +
-                "        return null;\n" +
-                "    }\n" +
-                "}\n";
-        var solution = "class Solution {\n" +
-                "    public static String exercise1(String test) {\n" +
-                "        // CODE HERE\n" +
-                "        return test;\n" +
-                "    }\n" +
-                "}\n";
+        var defaultValues = defaultExerciseHelper.getValuesByLanguage(language);
+        var savedCase = saveExerciseCase(language, savedExercise, defaultValues);
+
+        saveExerciseTest(defaultValues, savedCase);
+        return savedExercise.getId();
+    }
+
+    private void saveExerciseTest(DefaultExerciseValues defaultValues, JpaExerciseCase savedCase) {
+        var testToSave = new JpaExerciseTest()
+                .setExerciseCaseId(savedCase.getId())
+                .setContent(defaultValues.getTestContent());
+        exerciseTestRepository.save(testToSave);
+    }
+
+    private JpaExerciseCase saveExerciseCase(Language language, JpaExercise savedExercise, DefaultExerciseValues defaultValues) {
+        var startContent = defaultValues.getStartContent();
+        var solution = defaultValues.getSolution();
         var defaultCase = new JpaExerciseCase()
                 .setExerciseId(savedExercise.getId())
                 .setIsValid(false)
                 .setStartContent(startContent)
                 .setSolution(solution)
                 .setLanguageId(language.getId());
-        var savedCase = exerciseCaseRepository.save(defaultCase);
-        var testToSave = new JpaExerciseTest()
-                .setExerciseCaseId(savedCase.getId())
-                .setContent("public class Main {\n" +
-                        "    public static void main(String[] args) throws Exception {\n" +
-                        "        var result = Solution.exercise1(\"toto\");\n" +
-                        "        if (result == null || !result.equals(\"toto\")) {\n" +
-                        "            throw new Exception(\"error expectations\");\n" +
-                        "        }\n" +
-                        "    }\n" +
-                        "}");
-        exerciseTestRepository.save(testToSave);
-        return savedExercise.getId();
+        return exerciseCaseRepository.save(defaultCase);
+    }
+
+    private JpaExercise saveExercise(String title, String description, Long userId) {
+        JpaExercise defaultExercise = new JpaExercise()
+                .setTitle(title)
+                .setDescription(description)
+                .setUserId(userId);
+        return exerciseRepository.save(defaultExercise);
     }
 }

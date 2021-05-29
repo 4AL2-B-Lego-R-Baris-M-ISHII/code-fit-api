@@ -46,11 +46,6 @@ class JpaDefaultExerciseTest {
 
     private User admin;
 
-    @BeforeEach
-    void setup() {
-        sut = new JpaDefaultExercise(exerciseRepository, exerciseCaseRepository, exerciseTestRepository);
-    }
-
     @BeforeAll
     void initAll() throws NotFoundException {
         var adminRole = roleDao.findByRoleName(RoleName.ROLE_ADMIN);
@@ -77,7 +72,7 @@ class JpaDefaultExerciseTest {
                 "            throw new Exception(\"error expectations\");\n" +
                 "        }\n" +
                 "    }\n" +
-                "}";
+                "}\n";
         var startContent = "class Solution {\n" +
                 "    public static String exercise1(String test) {\n" +
                 "        // CODE HERE\n" +
