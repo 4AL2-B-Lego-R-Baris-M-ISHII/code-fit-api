@@ -1,12 +1,9 @@
 package fr.esgi.pa.server.integration.exercise.infrastructure.dataprovider.util;
 
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
-import fr.esgi.pa.server.exercise.core.entity.ExerciseTest;
-import fr.esgi.pa.server.exercise.infrastructure.dataprovider.mapper.ExerciseCaseMapper;
-import fr.esgi.pa.server.exercise.infrastructure.dataprovider.mapper.ExerciseMapper;
-import fr.esgi.pa.server.exercise.infrastructure.dataprovider.mapper.ExerciseTestMapper;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.repository.ExerciseCaseRepository;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.repository.ExerciseRepository;
+import fr.esgi.pa.server.exercise.infrastructure.dataprovider.repository.ExerciseTestRepository;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.util.JpaDefaultExercise;
 import fr.esgi.pa.server.language.core.LanguageDao;
 import fr.esgi.pa.server.language.core.LanguageName;
@@ -42,18 +39,17 @@ class JpaDefaultExerciseTest {
     private ExerciseCaseRepository exerciseCaseRepository;
 
     @Autowired
-    private ExerciseTestMapper exerciseTestMapper;
-
-    @Autowired
-    private ExerciseCaseMapper exerciseCaseMapper;
-
-    @Autowired
-    private ExerciseMapper exerciseMapper;
+    private ExerciseTestRepository exerciseTestRepository;
 
     @Autowired
     private JpaDefaultExercise sut;
 
     private User admin;
+
+    @BeforeEach
+    void setup() {
+        sut = new JpaDefaultExercise(exerciseRepository, exerciseCaseRepository, exerciseTestRepository);
+    }
 
     @BeforeAll
     void initAll() throws NotFoundException {
@@ -69,11 +65,6 @@ class JpaDefaultExerciseTest {
         if (admin != null) {
             userDao.deleteById(admin.getId());
         }
-    }
-
-    @BeforeEach
-    void setup() {
-        sut = new JpaDefaultExercise(exerciseRepository, exerciseCaseRepository, exerciseTestMapper, exerciseCaseMapper, exerciseMapper);
     }
 
     @Test
@@ -100,30 +91,31 @@ class JpaDefaultExerciseTest {
                 "    }\n" +
                 "}\n";
 
-        var result = sut.createDefaultExercise("title", "description", java, admin.getId());
+        var newExerciseId = sut.createDefaultExercise("title", "description", java, admin.getId());
+        var maybeNewExercise = exerciseRepository.findById(newExerciseId);
+        assertThat(maybeNewExercise.isPresent()).isTrue();
+        var newExercise = maybeNewExercise.get();
+        assertThat(newExercise.getId()).isEqualTo(newExerciseId);
+        assertThat(newExercise.getUserId()).isEqualTo(admin.getId());
+        assertThat(newExercise.getTitle()).isEqualTo("title");
+        assertThat(newExercise.getDescription()).isEqualTo("description");
 
-        assertThat(result).isNotNull();
-        var createdExercise = exerciseRepository.findById(result.getId())
-                .orElse(null);
-        assertThat(createdExercise).isNotNull();
-        assertThat(createdExercise.getId()).isNotNull();
-        assertThat(createdExercise.getTitle()).isEqualTo("title");
-        assertThat(createdExercise.getDescription()).isEqualTo("description");
-        assertThat(createdExercise.getUserId()).isEqualTo(admin.getId());
-        assertThat(createdExercise.getCases()).isNotNull();
-        assertThat(createdExercise.getCases().size()).isEqualTo(1);
+        var setCases = exerciseCaseRepository.findAllByExerciseId(newExerciseId);
+        assertThat(setCases.size()).isEqualTo(1);
+        var expectedCase = new ArrayList<>(setCases).get(0);
+        assertThat(expectedCase.getId()).isNotNull();
+        assertThat(expectedCase.getSolution()).isEqualTo(solution);
+        assertThat(expectedCase.getStartContent()).isEqualTo(startContent);
+        assertThat(expectedCase.getExerciseId()).isEqualTo(newExerciseId);
+        assertThat(expectedCase.getIsValid()).isFalse();
+        assertThat(expectedCase.getLanguageId()).isEqualTo(java.getId());
 
-        var firstCase = new ArrayList<>(createdExercise.getCases()).get(0);
-        assertThat(firstCase).isNotNull();
-        assertThat(firstCase.getId()).isNotNull();
-        assertThat(firstCase.getStartContent()).isEqualTo(startContent);
-        assertThat(firstCase.getSolution()).isEqualTo(solution);
-        assertThat(firstCase.getTests()).isNotNull();
-        assertThat(firstCase.getTests().size()).isEqualTo(1);
-
-        var firstTest = new ArrayList<>(firstCase.getTests()).get(0);
-        assertThat(firstTest).isNotNull();
-        assertThat(firstTest.getId()).isNotNull();
-        assertThat(firstTest.getContent()).isEqualTo(testContent);
+        var setTests = exerciseTestRepository.findAllByExerciseCaseId(expectedCase.getId());
+        assertThat(setTests.size()).isEqualTo(1);
+        var expectedTest = new ArrayList<>(setTests).get(0);
+        assertThat(expectedTest).isNotNull();
+        assertThat(expectedTest.getId()).isNotNull();
+        assertThat(expectedTest.getContent()).isEqualTo(testContent);
+        assertThat(expectedTest.getExerciseCaseId()).isEqualTo(expectedCase.getId());
     }
 }

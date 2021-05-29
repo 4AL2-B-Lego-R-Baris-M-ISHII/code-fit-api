@@ -1,13 +1,12 @@
 package fr.esgi.pa.server.unit.exercise.infrastructure.dataprovider.util;
 
-import fr.esgi.pa.server.exercise.infrastructure.dataprovider.entity.JpaExercise;
-import fr.esgi.pa.server.exercise.infrastructure.dataprovider.entity.JpaExerciseCase;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.entity.JpaExerciseTest;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.mapper.ExerciseCaseMapper;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.mapper.ExerciseMapper;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.mapper.ExerciseTestMapper;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.repository.ExerciseCaseRepository;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.repository.ExerciseRepository;
+import fr.esgi.pa.server.exercise.infrastructure.dataprovider.repository.ExerciseTestRepository;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.util.JpaDefaultExercise;
 import fr.esgi.pa.server.language.core.Language;
 import fr.esgi.pa.server.language.core.LanguageName;
@@ -18,11 +17,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Set;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class JpaDefaultExerciseTest {
@@ -39,9 +33,12 @@ class JpaDefaultExerciseTest {
     @Mock
     private ExerciseCaseRepository mockExerciseCaseRepository;
 
+    @Mock
+    private ExerciseTestRepository mockExerciseTestRepository;
+
     @BeforeEach
     void setup() {
-        sut = new JpaDefaultExercise(mockExerciseRepository, mockExerciseCaseRepository, exerciseTestMapper, exerciseCaseMapper, exerciseMapper);
+        sut = new JpaDefaultExercise(mockExerciseRepository, mockExerciseCaseRepository, mockExerciseTestRepository);
     }
 
     @Test
