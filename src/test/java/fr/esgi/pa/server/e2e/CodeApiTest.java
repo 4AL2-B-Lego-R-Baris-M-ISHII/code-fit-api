@@ -112,6 +112,7 @@ public class CodeApiTest {
             assertThat(code.getCodeState()).isEqualTo(CodeState.SUCCESS);
         }
 
+        @Disabled
         @Test
         void should_send_result_compiled_java_code() {
             var content = "public class main {\n" +

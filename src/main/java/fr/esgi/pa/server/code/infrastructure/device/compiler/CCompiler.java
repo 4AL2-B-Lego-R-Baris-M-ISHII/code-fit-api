@@ -3,7 +3,7 @@ package fr.esgi.pa.server.code.infrastructure.device.compiler;
 import fr.esgi.pa.server.code.core.Code;
 import fr.esgi.pa.server.code.core.CodeState;
 import fr.esgi.pa.server.code.core.Compiler;
-import fr.esgi.pa.server.code.infrastructure.device.compile_runner.DockerCompileRunner;
+import fr.esgi.pa.server.code.infrastructure.device.compile_runner.CompileRunner;
 import fr.esgi.pa.server.code.infrastructure.device.helper.CodeStateHelper;
 import fr.esgi.pa.server.code.infrastructure.device.repository.CompilerConfigRepository;
 import fr.esgi.pa.server.common.core.utils.io.FileDeleter;
@@ -15,14 +15,14 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CCompiler implements Compiler {
     private final FileDeleter fileDeleter;
-    private final DockerCompileRunner dockerCompileRunner;
+    private final CompileRunner compileRunner;
     private final CodeStateHelper codeStateHelper;
     private final CompilerConfigRepository compilerConfigRepository;
 
     @Override
     public Code compile(String content, Language language) {
         var compilerConfig = compilerConfigRepository.findByLanguageName(language.getLanguageName());
-        var processResult = dockerCompileRunner.start(compilerConfig, content, language);
+        var processResult = compileRunner.start(compilerConfig, content, language);
         CodeState codeState = codeStateHelper.getCodeState(processResult.getStatus());
         var folderTmpPath = compilerConfig.getFolderTmpPath();
         fileDeleter.removeAllFiles(folderTmpPath);

@@ -2,7 +2,7 @@ package fr.esgi.pa.server.unit.code.infrastructure.device.compiler;
 
 import fr.esgi.pa.server.code.core.Code;
 import fr.esgi.pa.server.code.core.CodeState;
-import fr.esgi.pa.server.code.infrastructure.device.compile_runner.DockerCompileRunner;
+import fr.esgi.pa.server.code.infrastructure.device.compile_runner.CompileRunner;
 import fr.esgi.pa.server.code.infrastructure.device.compiler.JavaCompiler;
 import fr.esgi.pa.server.code.infrastructure.device.compiler.config.CompilerConfig;
 import fr.esgi.pa.server.code.infrastructure.device.helper.CodeStateHelper;
@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class JavaCompilerTest {
     @Mock
-    private DockerCompileRunner mockDockerCompiler;
+    private CompileRunner mockDockerCompiler;
 
     @Mock
     private CodeStateHelper mockCodeStateHelper;

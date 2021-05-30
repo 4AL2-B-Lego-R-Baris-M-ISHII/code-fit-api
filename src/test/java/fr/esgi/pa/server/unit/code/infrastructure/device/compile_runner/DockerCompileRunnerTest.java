@@ -1,6 +1,6 @@
 package fr.esgi.pa.server.unit.code.infrastructure.device.compile_runner;
 
-import fr.esgi.pa.server.code.infrastructure.device.compile_runner.DockerCompileRunnerImpl;
+import fr.esgi.pa.server.code.infrastructure.device.compile_runner.DockerCompileRunner;
 import fr.esgi.pa.server.code.infrastructure.device.compiler.config.CompilerConfig;
 import fr.esgi.pa.server.code.infrastructure.device.utils.ScriptCompilerContent;
 import fr.esgi.pa.server.common.core.utils.io.FileFactory;
@@ -30,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class DockerCompileRunnerImplTest {
+class DockerCompileRunnerTest {
 
     @Mock
     private ProcessHelper mockProcessHelper;
@@ -55,13 +55,13 @@ class DockerCompileRunnerImplTest {
 
     private Language currentLanguage;
 
-    private DockerCompileRunnerImpl sut;
+    private DockerCompileRunner sut;
 
     private final String folderPath = "folder" + File.separator + "path";
 
     @BeforeEach
     void setup() {
-        sut = new DockerCompileRunnerImpl(
+        sut = new DockerCompileRunner(
                 mockProcessHelper,
                 mockFileFactory,
                 mockFileReader,
