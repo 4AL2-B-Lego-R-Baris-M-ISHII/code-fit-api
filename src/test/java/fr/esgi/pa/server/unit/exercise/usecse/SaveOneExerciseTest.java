@@ -1,7 +1,7 @@
 package fr.esgi.pa.server.unit.exercise.usecse;
 
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
-import fr.esgi.pa.server.exercise.core.dao.ExerciseDao;
+import fr.esgi.pa.server.exercise.core.util.DefaultExercise;
 import fr.esgi.pa.server.exercise.usecase.SaveOneExercise;
 import fr.esgi.pa.server.language.core.Language;
 import fr.esgi.pa.server.language.core.LanguageDao;
@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
@@ -23,6 +24,7 @@ class SaveOneExerciseTest {
     private final String title = "title";
     private final String description = "description";
     private final String languageStr = "JAVA";
+    private final long userId = 3L;
     @Mock
     private UserDao mockUserDao;
 
@@ -30,13 +32,13 @@ class SaveOneExerciseTest {
     private LanguageDao mockLanguageDao;
 
     @Mock
-    private ExerciseDao mockExerciseDao;
+    private DefaultExercise mockDefaultExercise;
 
     private SaveOneExercise sut;
 
     @BeforeEach
     void setup() {
-        sut = new SaveOneExercise(mockUserDao, mockLanguageDao, mockExerciseDao);
+        sut = new SaveOneExercise(mockUserDao, mockLanguageDao, mockDefaultExercise);
     }
 
     @Test
@@ -50,24 +52,40 @@ class SaveOneExerciseTest {
 
     @Test
     void should_get_language_by_language_str_and_call_language_dao() throws NotFoundException, IncorrectLanguageNameException {
-        when(mockUserDao.existsById(3L)).thenReturn(true);
+        when(mockUserDao.existsById(userId)).thenReturn(true);
 
-        sut.execute(title, description, languageStr, 3L);
+        sut.execute(title, description, languageStr, userId);
 
         verify(mockLanguageDao, times(1)).findByStrLanguage(languageStr);
     }
 
     @Test
-    void should_call_create_of_exercise_dao() throws NotFoundException, IncorrectLanguageNameException {
-        when(mockUserDao.existsById(3L)).thenReturn(true);
+    void when_language_found_should_create_exercise_with_defaults_values_depend_to_language() throws NotFoundException, IncorrectLanguageNameException {
+        when(mockUserDao.existsById(userId)).thenReturn(true);
         var language = new Language()
-                .setId(2L)
-                .setLanguageName(LanguageName.JAVA)
-                .setFileExtension("java");
+                .setId(1L)
+                .setLanguageName(LanguageName.C)
+                .setFileExtension("c");
         when(mockLanguageDao.findByStrLanguage(languageStr)).thenReturn(language);
 
-        sut.execute(title, description, languageStr, 3L);
+        sut.execute(title, description, languageStr, userId);
 
-        verify(mockExerciseDao, times(1)).createExercise(title, description, 3L);
+        verify(mockDefaultExercise, times(1)).createDefaultExercise(title, description, language, userId);
+    }
+
+    @Test
+    void when_exercise_with_default_values_create_should_return_exercise_id() throws NotFoundException, IncorrectLanguageNameException {
+        when(mockUserDao.existsById(userId)).thenReturn(true);
+        var language = new Language()
+                .setId(1L)
+                .setLanguageName(LanguageName.C)
+                .setFileExtension("c");
+        when(mockLanguageDao.findByStrLanguage(languageStr)).thenReturn(language);
+        var exerciseId = 5L;
+        when(mockDefaultExercise.createDefaultExercise(title, description, language, userId)).thenReturn(exerciseId);
+
+        var result = sut.execute(title, description, languageStr, userId);
+
+        assertThat(result).isEqualTo(exerciseId);
     }
 }

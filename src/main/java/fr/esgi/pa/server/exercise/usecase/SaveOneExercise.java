@@ -1,7 +1,7 @@
 package fr.esgi.pa.server.exercise.usecase;
 
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
-import fr.esgi.pa.server.exercise.core.dao.ExerciseDao;
+import fr.esgi.pa.server.exercise.core.util.DefaultExercise;
 import fr.esgi.pa.server.language.core.Language;
 import fr.esgi.pa.server.language.core.LanguageDao;
 import fr.esgi.pa.server.language.core.exception.IncorrectLanguageNameException;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 public class SaveOneExercise {
     private final UserDao userDao;
     private final LanguageDao languageDao;
-    private final ExerciseDao exerciseDao;
+    private final DefaultExercise defaultExercise;
 
     public Long execute(
             String title,
@@ -25,11 +25,8 @@ public class SaveOneExercise {
             var message = String.format("%s : User with id '%d' not exists", this.getClass(), userId);
             throw new NotFoundException(message);
         }
-        // TODO : create exercise
-        var createdExercise = exerciseDao.createExercise(title, description, userId);
-
         Language foundLanguage = languageDao.findByStrLanguage(language);
 
-        return null;
+        return defaultExercise.createDefaultExercise(title, description, foundLanguage, userId);
     }
 }
