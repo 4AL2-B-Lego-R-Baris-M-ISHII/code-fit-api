@@ -17,6 +17,7 @@ public class SaveExerciseRequest {
     @Size(max = 100)
     private String description;
 
+    @NotBlank
     @Size(max = 10)
     private String language;
 }
