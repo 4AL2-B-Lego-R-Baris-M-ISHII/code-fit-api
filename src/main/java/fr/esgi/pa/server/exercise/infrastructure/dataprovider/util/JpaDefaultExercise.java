@@ -33,11 +33,12 @@ public class JpaDefaultExercise implements DefaultExercise {
         return savedExercise.getId();
     }
 
-    private void saveExerciseTest(DefaultExerciseValues defaultValues, JpaExerciseCase savedCase) {
-        var testToSave = new JpaExerciseTest()
-                .setExerciseCaseId(savedCase.getId())
-                .setContent(defaultValues.getTestContent());
-        exerciseTestRepository.save(testToSave);
+    private JpaExercise saveExercise(String title, String description, Long userId) {
+        JpaExercise defaultExercise = new JpaExercise()
+                .setTitle(title)
+                .setDescription(description)
+                .setUserId(userId);
+        return exerciseRepository.save(defaultExercise);
     }
 
     private JpaExerciseCase saveExerciseCase(Language language, JpaExercise savedExercise, DefaultExerciseValues defaultValues) {
@@ -52,11 +53,10 @@ public class JpaDefaultExercise implements DefaultExercise {
         return exerciseCaseRepository.save(defaultCase);
     }
 
-    private JpaExercise saveExercise(String title, String description, Long userId) {
-        JpaExercise defaultExercise = new JpaExercise()
-                .setTitle(title)
-                .setDescription(description)
-                .setUserId(userId);
-        return exerciseRepository.save(defaultExercise);
+    private void saveExerciseTest(DefaultExerciseValues defaultValues, JpaExerciseCase savedCase) {
+        var testToSave = new JpaExerciseTest()
+                .setExerciseCaseId(savedCase.getId())
+                .setContent(defaultValues.getTestContent());
+        exerciseTestRepository.save(testToSave);
     }
 }
