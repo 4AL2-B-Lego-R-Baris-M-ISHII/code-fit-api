@@ -1,12 +1,15 @@
 package fr.esgi.pa.server.e2e;
 
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
+import fr.esgi.pa.server.exercise.infrastructure.dataprovider.util.DefaultExerciseHelper;
+import fr.esgi.pa.server.exercise.infrastructure.entrypoint.request.SaveExerciseRequest;
 import fr.esgi.pa.server.helper.AuthDataHelper;
 import fr.esgi.pa.server.helper.AuthHelper;
 import fr.esgi.pa.server.language.core.LanguageDao;
 import fr.esgi.pa.server.language.core.LanguageName;
 import fr.esgi.pa.server.role.core.RoleDao;
 import fr.esgi.pa.server.role.core.RoleName;
+import io.restassured.http.ContentType;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,6 +33,9 @@ public class ExerciseApiTest {
 
     @Autowired
     private AuthHelper authHelper;
+
+    @Autowired
+    private DefaultExerciseHelper defaultExerciseHelper;
 
     @LocalServerPort
     private int localPort;
@@ -55,19 +61,6 @@ public class ExerciseApiTest {
                 e.printStackTrace();
             }
         });
-    }
-
-    @Test
-    void get_test() {
-        var response = given()
-                .header("Authorization", "Bearer " + authData.getToken())
-                .when()
-                .get("/api/exercise/test")
-                .then()
-                .statusCode(200)
-                .extract()
-                .asString();
-        assertThat(response).isEqualTo("userId : " + authData.getUser().getId());
     }
 
     @Nested
@@ -120,7 +113,23 @@ public class ExerciseApiTest {
         @Test
         void should_create_exercise() throws NotFoundException {
             var foundLanguage = languageDao.findByLanguageName(LanguageName.JAVA);
-
+            var javaDefaultValues = defaultExerciseHelper.getValuesByLanguage(foundLanguage);
+            var exerciseRequest = new SaveExerciseRequest().setTitle("title exercise")
+                    .setTitle("simple exercise")
+                    .setDescription("return the string that is in parameter")
+                    .setLanguage("JAVA");
+            var response = given()
+                    .header("Authorization", "Bearer " + authData.getToken())
+                    .contentType(ContentType.JSON)
+                    .body(exerciseRequest)
+                    .when()
+                    .post("/api/exercise/")
+                    .then()
+                    .statusCode(201)
+                    .extract()
+                    .header("Location");
+            assertThat(response).isNotNull();
+            assertThat(response).contains("/api/exercise/");
         }
     }
 }
