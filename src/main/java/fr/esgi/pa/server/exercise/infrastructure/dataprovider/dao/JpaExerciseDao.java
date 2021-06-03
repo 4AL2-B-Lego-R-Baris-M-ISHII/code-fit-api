@@ -3,9 +3,9 @@ package fr.esgi.pa.server.exercise.infrastructure.dataprovider.dao;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.exercise.core.dao.ExerciseDao;
 import fr.esgi.pa.server.exercise.core.entity.Exercise;
+import fr.esgi.pa.server.exercise.infrastructure.dataprovider.entity.JpaExercise;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.mapper.ExerciseMapper;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.repository.ExerciseRepository;
-import fr.esgi.pa.server.exercise.infrastructure.dataprovider.entity.JpaExercise;
 import fr.esgi.pa.server.user.core.UserDao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,5 +27,14 @@ public class JpaExerciseDao implements ExerciseDao {
         var savedExercise = exerciseRepository.save(exerciseToSave);
 
         return exerciseMapper.entityToDomain(savedExercise);
+    }
+
+    @Override
+    public Exercise findById(Long exerciseId) throws NotFoundException {
+        var foundExercise = exerciseRepository.findById(exerciseId).orElseThrow(() -> {
+            var message = String.format("%s : Exercise with id '%d' not found", NotFoundException.class, exerciseId);
+            return new NotFoundException(message);
+        });
+        return exerciseMapper.entityToDomain(foundExercise);
     }
 }

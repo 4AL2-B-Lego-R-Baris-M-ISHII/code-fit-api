@@ -7,7 +7,6 @@ import fr.esgi.pa.server.exercise.usecase.FindOneExercise;
 import fr.esgi.pa.server.exercise.usecase.SaveOneExercise;
 import fr.esgi.pa.server.language.core.exception.IncorrectLanguageNameException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -19,7 +18,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 import java.net.URI;
 
-import static org.springframework.http.ResponseEntity.*;
+import static org.springframework.http.ResponseEntity.created;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -57,7 +56,7 @@ public class ExerciseController {
             @Min(value = 1, message = "id has to be equal or more than 1") String userId,
             @PathVariable("id")
             @Min(value = 1, message = "id has to be equal or more than 1") Long exerciseId
-    ) {
+    ) throws NotFoundException {
         findOneExercise.execute(exerciseId, Long.parseLong(userId));
 
         return ResponseEntity.ok(null);
