@@ -1,6 +1,7 @@
 package fr.esgi.pa.server.e2e;
 
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
+import fr.esgi.pa.server.exercise.core.entity.Exercise;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.util.DefaultExerciseHelper;
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.request.SaveExerciseRequest;
 import fr.esgi.pa.server.helper.AuthDataHelper;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
+import java.sql.SQLOutput;
 import java.util.Set;
 
 import static io.restassured.RestAssured.given;
@@ -118,7 +120,7 @@ public class ExerciseApiTest {
                     .setTitle("simple exercise")
                     .setDescription("return the string that is in parameter")
                     .setLanguage("JAVA");
-            var response = given()
+            var postResponse = given()
                     .header("Authorization", "Bearer " + authData.getToken())
                     .contentType(ContentType.JSON)
                     .body(exerciseRequest)
@@ -128,8 +130,21 @@ public class ExerciseApiTest {
                     .statusCode(201)
                     .extract()
                     .header("Location");
-            assertThat(response).isNotNull();
-            assertThat(response).contains("/api/exercise/");
+            assertThat(postResponse).isNotNull();
+            assertThat(postResponse).contains("/api/exercise/");
+
+            var getResponse = given()
+                    .header("Authorization", "Bearer " + authData.getToken())
+                    .when()
+                    .get(postResponse)
+                    .then()
+                    .statusCode(200)
+                    .extract()
+                    .as(Exercise.class);
+            assertThat(getResponse.getId()).isNotNull();
+            assertThat(getResponse.getTitle()).isEqualTo(exerciseRequest.getTitle());
+            assertThat(getResponse.getDescription()).isEqualTo(exerciseRequest.getDescription());
+            assertThat(getResponse.getUserId()).isEqualTo(authData.getUser().getId());
         }
     }
 }

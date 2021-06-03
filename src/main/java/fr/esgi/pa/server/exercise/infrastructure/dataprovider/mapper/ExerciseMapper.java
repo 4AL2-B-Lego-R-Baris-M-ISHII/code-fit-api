@@ -12,6 +12,7 @@ public class ExerciseMapper implements MapperEntityToDomain<JpaExercise, Exercis
         return new Exercise()
                 .setId(entity.getId())
                 .setTitle(entity.getTitle())
-                .setDescription(entity.getDescription());
+                .setDescription(entity.getDescription())
+                .setUserId(entity.getUserId());
     }
 }

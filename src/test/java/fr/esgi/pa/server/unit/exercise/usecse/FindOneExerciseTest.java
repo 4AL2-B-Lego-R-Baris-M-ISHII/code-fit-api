@@ -32,13 +32,6 @@ class FindOneExerciseTest {
     }
 
     @Test
-    void should_call_userDao_findById() throws NotFoundException {
-        sut.execute(exerciseId, userId);
-
-        verify(mockUserDao, times(1)).existsById(userId);
-    }
-
-    @Test
     void when_user_with_given_userId_not_exists_should_throw_NotFoundException() {
         when(mockUserDao.existsById(userId)).thenReturn(false);
 
