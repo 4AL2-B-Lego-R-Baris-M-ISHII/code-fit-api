@@ -3,6 +3,7 @@ package fr.esgi.pa.server.exercise.usecase;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.exercise.core.dao.ExerciseCaseDao;
 import fr.esgi.pa.server.exercise.core.dao.ExerciseDao;
+import fr.esgi.pa.server.exercise.core.dao.ExerciseTestDao;
 import fr.esgi.pa.server.exercise.core.dto.DtoExercise;
 import fr.esgi.pa.server.user.core.UserDao;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ public class FindOneExercise {
     private final UserDao userDao;
     private final ExerciseDao exerciseDao;
     private final ExerciseCaseDao exerciseCaseDao;
+    private final ExerciseTestDao exerciseTestDao;
 
     public DtoExercise execute(Long exerciseId, Long userId) throws NotFoundException {
         if (!userDao.existsById(userId)) {
@@ -23,7 +25,9 @@ public class FindOneExercise {
 
         // TODO : send appropriate data with exercise and exercise case and exercise test (maybe in another usecase
         var exercise = exerciseDao.findById(exerciseId);
-        exerciseCaseDao.findAllByExerciseId(exercise.getId());
+        var setExerciseCase = exerciseCaseDao.findAllByExerciseId(exercise.getId());
+
+        setExerciseCase.forEach(exerciseCase -> exerciseTestDao.findAllByExerciseCaseId(exerciseCase.getId()));
         return null;
     }
 }

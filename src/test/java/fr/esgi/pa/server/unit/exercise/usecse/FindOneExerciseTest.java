@@ -3,7 +3,9 @@ package fr.esgi.pa.server.unit.exercise.usecse;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.exercise.core.dao.ExerciseCaseDao;
 import fr.esgi.pa.server.exercise.core.dao.ExerciseDao;
+import fr.esgi.pa.server.exercise.core.dao.ExerciseTestDao;
 import fr.esgi.pa.server.exercise.core.entity.Exercise;
+import fr.esgi.pa.server.exercise.core.entity.ExerciseCase;
 import fr.esgi.pa.server.exercise.usecase.FindOneExercise;
 import fr.esgi.pa.server.user.core.UserDao;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.*;
@@ -31,9 +35,12 @@ class FindOneExerciseTest {
     @Mock
     private ExerciseCaseDao mockExerciseCaseDao;
 
+    @Mock
+    private ExerciseTestDao mockExerciseTestDao;
+
     @BeforeEach
     void setup() {
-        sut = new FindOneExercise(mockUserDao, mockExerciseDao, mockExerciseCaseDao);
+        sut = new FindOneExercise(mockUserDao, mockExerciseDao, mockExerciseCaseDao, mockExerciseTestDao);
     }
 
     @Test
@@ -43,15 +50,6 @@ class FindOneExerciseTest {
         assertThatThrownBy(() -> sut.execute(exerciseId, userId))
                 .isExactlyInstanceOf(NotFoundException.class)
                 .hasMessage(String.format("%s : User with userId '%d' not found", sut.getClass(), userId));
-    }
-
-    @Test
-    void should_call_exerciseDao_findById() throws NotFoundException {
-        when(mockUserDao.existsById(userId)).thenReturn(true);
-
-        sut.execute(exerciseId, userId);
-
-        verify(mockExerciseDao, times(1)).findById(exerciseId);
     }
 
     @Test
@@ -68,5 +66,65 @@ class FindOneExerciseTest {
         sut.execute(exerciseId, userId);
 
         verify(mockExerciseCaseDao, times(1)).findAllByExerciseId(exerciseId);
+    }
+
+    @Test
+    void when_find_all_exercise_case_return_one_case_by_exercise_id_should_call_exerciseTestDao_to_get_all_test_per_case() throws NotFoundException {
+        when(mockUserDao.existsById(userId)).thenReturn(true);
+        var foundExercise = new Exercise()
+                .setId(exerciseId)
+                .setTitle("title")
+                .setDescription("description")
+                .setSolution("solution")
+                .setUserId(userId);
+        when(mockExerciseDao.findById(exerciseId)).thenReturn(foundExercise);
+        var setExerciseCase = Set.of(
+                new ExerciseCase()
+                        .setId(789L)
+                        .setExerciseId(exerciseId)
+                        .setSolution("solution")
+                        .setIsValid(false)
+                        .setLanguageId(2L)
+                        .setStartContent("start")
+        );
+        when(mockExerciseCaseDao.findAllByExerciseId(exerciseId)).thenReturn(setExerciseCase);
+
+        sut.execute(exerciseId, userId);
+
+        verify(mockExerciseTestDao, times(1)).findAllByExerciseCaseId(789L);
+    }
+
+    @Test
+    void when_find_all_exercise_cases_and_return_few_cases_by_exercise_id_should_call_number_of_cases_exerciseTestDao_to_get_all_test_per_case() throws NotFoundException {
+        when(mockUserDao.existsById(userId)).thenReturn(true);
+        var foundExercise = new Exercise()
+                .setId(exerciseId)
+                .setTitle("title")
+                .setDescription("description")
+                .setSolution("solution")
+                .setUserId(userId);
+        when(mockExerciseDao.findById(exerciseId)).thenReturn(foundExercise);
+        var setExerciseCase = Set.of(
+                new ExerciseCase()
+                        .setId(789L)
+                        .setExerciseId(exerciseId)
+                        .setSolution("solution")
+                        .setIsValid(false)
+                        .setLanguageId(2L)
+                        .setStartContent("start"),
+                new ExerciseCase()
+                        .setId(123L)
+                        .setExerciseId(exerciseId)
+                        .setSolution("solution 123")
+                        .setIsValid(false)
+                        .setLanguageId(2L)
+                        .setStartContent("start 123")
+        );
+        when(mockExerciseCaseDao.findAllByExerciseId(exerciseId)).thenReturn(setExerciseCase);
+
+        sut.execute(exerciseId, userId);
+
+        verify(mockExerciseTestDao, times(1)).findAllByExerciseCaseId(789L);
+        verify(mockExerciseTestDao, times(1)).findAllByExerciseCaseId(123L);
     }
 }
