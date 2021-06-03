@@ -53,6 +53,6 @@ class FindOneExerciseTest {
 
         sut.execute(exerciseId, userId);
 
-        //verify(mockExerciseDao, times(1))
+        verify(mockExerciseDao, times(1)).findById(exerciseId);
     }
 }

@@ -1,6 +1,7 @@
 package fr.esgi.pa.server.integration.exercise.infrastructure.entrypoint;
 
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
+import fr.esgi.pa.server.exercise.core.entity.Exercise;
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.request.SaveExerciseRequest;
 import fr.esgi.pa.server.exercise.usecase.FindOneExercise;
 import fr.esgi.pa.server.exercise.usecase.SaveOneExercise;
@@ -288,5 +289,40 @@ class ExerciseControllerTest {
         }
 
         // TODO : continue after usecase find one exercise done
+        @WithMockUser
+        @Test
+        void when_usecase_findOneExercise_return_exercise_should_send_success_response_with_exercise() throws Exception {
+            var userId = 7L;
+            var exerciseId = 8L;
+            var expectedExercise = new Exercise()
+                    .setId(8L)
+                    .setTitle("title")
+                    .setDescription("description")
+                    .setSolution("solution");
+            when(mockFindOneExercise.execute(exerciseId, userId)).thenReturn(expectedExercise);
+            var contentAsString = mockMvc.perform(
+                    get("/api/exercise/" + exerciseId)
+                            .requestAttr("userId", userId)
+            ).andExpect(status().isOk())
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
+            assertThat(contentAsString).isNotNull();
+            assertThat(contentAsString).isNotBlank();
+            var response = JsonHelper.jsonToObject(contentAsString, Exercise.class);
+            assertThat(response).isEqualTo(expectedExercise);
+        }
+
+        @WithMockUser
+        @Test
+        void when_usecase_findOneExercise_throw_not_found_exception_should_send_not_found_error_response() throws Exception {
+            var userId = 7L;
+            var exerciseId = 8L;
+            when(mockFindOneExercise.execute(exerciseId, userId)).thenThrow(new NotFoundException("not found"));
+            mockMvc.perform(
+                    get("/api/exercise/" + exerciseId)
+                            .requestAttr("userId", userId)
+            ).andExpect(status().isNotFound());
+        }
     }
 }

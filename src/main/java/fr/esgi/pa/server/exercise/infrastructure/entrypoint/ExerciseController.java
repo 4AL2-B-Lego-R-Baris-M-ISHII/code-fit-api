@@ -18,6 +18,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 import java.net.URI;
 
+import static org.springframework.http.ResponseEntity.*;
 import static org.springframework.http.ResponseEntity.created;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -57,8 +58,8 @@ public class ExerciseController {
             @PathVariable("id")
             @Min(value = 1, message = "id has to be equal or more than 1") Long exerciseId
     ) throws NotFoundException {
-        findOneExercise.execute(exerciseId, Long.parseLong(userId));
+        var foundExercise = findOneExercise.execute(exerciseId, Long.parseLong(userId));
 
-        return ResponseEntity.ok(null);
+        return ok(foundExercise);
     }
 }

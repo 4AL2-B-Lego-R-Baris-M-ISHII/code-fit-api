@@ -19,6 +19,6 @@ public class FindOneExercise {
             var message = String.format("%s : User with userId '%d' not found", this.getClass(), userId);
             throw new NotFoundException(message);
         }
-        return null;
+        return exerciseDao.findById(exerciseId);
     }
 }
