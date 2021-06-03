@@ -1,7 +1,7 @@
 package fr.esgi.pa.server.exercise.infrastructure.entrypoint;
 
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
-import fr.esgi.pa.server.exercise.core.entity.Exercise;
+import fr.esgi.pa.server.exercise.core.dto.DtoExercise;
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.request.SaveExerciseRequest;
 import fr.esgi.pa.server.exercise.usecase.FindOneExercise;
 import fr.esgi.pa.server.exercise.usecase.SaveOneExercise;
@@ -18,8 +18,8 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 import java.net.URI;
 
-import static org.springframework.http.ResponseEntity.*;
 import static org.springframework.http.ResponseEntity.created;
+import static org.springframework.http.ResponseEntity.ok;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -51,7 +51,7 @@ public class ExerciseController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Exercise> findOne(
+    public ResponseEntity<DtoExercise> findOne(
             @RequestAttribute("userId")
             @Pattern(regexp = "^\\d+$", message = "id has to be an integer")
             @Min(value = 1, message = "id has to be equal or more than 1") String userId,

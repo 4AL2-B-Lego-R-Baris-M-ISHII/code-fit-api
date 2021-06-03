@@ -1,4 +1,4 @@
-package fr.esgi.pa.server.unit.exercise.infrastructure.dataprovider;
+package fr.esgi.pa.server.unit.exercise.infrastructure.dataprovider.dao;
 
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.dao.JpaExerciseDao;

@@ -1,7 +1,9 @@
 package fr.esgi.pa.server.unit.exercise.usecse;
 
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
+import fr.esgi.pa.server.exercise.core.dao.ExerciseCaseDao;
 import fr.esgi.pa.server.exercise.core.dao.ExerciseDao;
+import fr.esgi.pa.server.exercise.core.entity.Exercise;
 import fr.esgi.pa.server.exercise.usecase.FindOneExercise;
 import fr.esgi.pa.server.user.core.UserDao;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,9 +28,12 @@ class FindOneExerciseTest {
     @Mock
     private ExerciseDao mockExerciseDao;
 
+    @Mock
+    private ExerciseCaseDao mockExerciseCaseDao;
+
     @BeforeEach
     void setup() {
-        sut = new FindOneExercise(mockUserDao, mockExerciseDao);
+        sut = new FindOneExercise(mockUserDao, mockExerciseDao, mockExerciseCaseDao);
     }
 
     @Test
@@ -47,5 +52,21 @@ class FindOneExerciseTest {
         sut.execute(exerciseId, userId);
 
         verify(mockExerciseDao, times(1)).findById(exerciseId);
+    }
+
+    @Test
+    void when_found_exercise_should_call_list_exercise_cases() throws NotFoundException {
+        when(mockUserDao.existsById(userId)).thenReturn(true);
+        var foundExercise = new Exercise()
+                .setId(exerciseId)
+                .setTitle("title")
+                .setDescription("description")
+                .setSolution("solution")
+                .setUserId(userId);
+        when(mockExerciseDao.findById(exerciseId)).thenReturn(foundExercise);
+
+        sut.execute(exerciseId, userId);
+
+        verify(mockExerciseCaseDao, times(1)).findAllByExerciseId(exerciseId);
     }
 }
