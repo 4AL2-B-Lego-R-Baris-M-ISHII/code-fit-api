@@ -64,12 +64,15 @@ class JpaExerciseCaseDaoTest {
                 .setIsValid(false)
                 .setStartContent("start other");
         exerciseCaseRepository.save(otherExerciseCase);
-        
+        System.out.println(expectedJpaCases);
+
         var result = sut.findAllByExerciseId(savedExercise.getId());
-        
+
         var expected = expectedJpaCases.stream()
                 .map(exerciseCaseMapper::entityToDomain)
                 .collect(Collectors.toSet());
+
+        System.out.println(expected);
         assertThat(result).isEqualTo(expected);
     }
 }

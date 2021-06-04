@@ -5,6 +5,7 @@ import fr.esgi.pa.server.exercise.core.dao.ExerciseCaseDao;
 import fr.esgi.pa.server.exercise.core.dao.ExerciseDao;
 import fr.esgi.pa.server.exercise.core.dao.ExerciseTestDao;
 import fr.esgi.pa.server.exercise.core.dto.DtoExercise;
+import fr.esgi.pa.server.exercise.core.entity.ExerciseCase;
 import fr.esgi.pa.server.user.core.UserDao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,11 +24,13 @@ public class FindOneExercise {
             throw new NotFoundException(message);
         }
 
-        // TODO : send appropriate data with exercise and exercise case and exercise test (maybe in another usecase
         var exercise = exerciseDao.findById(exerciseId);
         var setExerciseCase = exerciseCaseDao.findAllByExerciseId(exercise.getId());
 
-        setExerciseCase.forEach(exerciseCase -> exerciseTestDao.findAllByExerciseCaseId(exerciseCase.getId()));
+        for (ExerciseCase exerciseCase : setExerciseCase) {
+            exerciseTestDao.findAllByExerciseCaseId(exerciseCase.getId());
+        }
+        // TODO convert all element to DTO
         return null;
     }
 }
