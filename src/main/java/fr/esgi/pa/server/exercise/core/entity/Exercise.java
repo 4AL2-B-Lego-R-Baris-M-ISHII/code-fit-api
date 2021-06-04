@@ -9,6 +9,5 @@ public class Exercise {
     private Long id;
     private String title;
     private String description;
-    private String solution;
     private Long userId;
 }

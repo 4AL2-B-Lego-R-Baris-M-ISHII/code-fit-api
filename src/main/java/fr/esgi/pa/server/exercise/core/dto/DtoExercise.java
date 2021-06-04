@@ -11,7 +11,6 @@ public class DtoExercise {
     private Long id;
     private String title;
     private String description;
-    private String solution;
     private Long userId;
     private Set<DtoExerciseCase> cases;
 }

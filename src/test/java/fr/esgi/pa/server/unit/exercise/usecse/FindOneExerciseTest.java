@@ -6,6 +6,10 @@ import fr.esgi.pa.server.exercise.core.dao.ExerciseDao;
 import fr.esgi.pa.server.exercise.core.dao.ExerciseTestDao;
 import fr.esgi.pa.server.exercise.core.entity.Exercise;
 import fr.esgi.pa.server.exercise.core.entity.ExerciseCase;
+import fr.esgi.pa.server.exercise.core.entity.ExerciseTest;
+import fr.esgi.pa.server.exercise.infrastructure.entrypoint.adapter.ExerciseAdapter;
+import fr.esgi.pa.server.exercise.infrastructure.entrypoint.adapter.ExerciseCaseAdapter;
+import fr.esgi.pa.server.exercise.infrastructure.entrypoint.adapter.ExerciseTestAdapter;
 import fr.esgi.pa.server.exercise.usecase.FindOneExercise;
 import fr.esgi.pa.server.user.core.UserDao;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +19,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
@@ -38,9 +44,21 @@ class FindOneExerciseTest {
     @Mock
     private ExerciseTestDao mockExerciseTestDao;
 
+    private final ExerciseAdapter exerciseAdapter = new ExerciseAdapter();
+    private final ExerciseCaseAdapter exerciseCaseAdapter = new ExerciseCaseAdapter();
+    private final ExerciseTestAdapter exerciseTestAdapter = new ExerciseTestAdapter();
+
     @BeforeEach
     void setup() {
-        sut = new FindOneExercise(mockUserDao, mockExerciseDao, mockExerciseCaseDao, mockExerciseTestDao);
+        sut = new FindOneExercise(
+                mockUserDao,
+                mockExerciseDao,
+                mockExerciseCaseDao,
+                mockExerciseTestDao,
+                exerciseAdapter,
+                exerciseCaseAdapter,
+                exerciseTestAdapter
+        );
     }
 
     @Test
@@ -59,7 +77,6 @@ class FindOneExerciseTest {
                 .setId(exerciseId)
                 .setTitle("title")
                 .setDescription("description")
-                .setSolution("solution")
                 .setUserId(userId);
         when(mockExerciseDao.findById(exerciseId)).thenReturn(foundExercise);
 
@@ -75,7 +92,6 @@ class FindOneExerciseTest {
                 .setId(exerciseId)
                 .setTitle("title")
                 .setDescription("description")
-                .setSolution("solution")
                 .setUserId(userId);
         when(mockExerciseDao.findById(exerciseId)).thenReturn(foundExercise);
         var setExerciseCase = Set.of(
@@ -101,7 +117,6 @@ class FindOneExerciseTest {
                 .setId(exerciseId)
                 .setTitle("title")
                 .setDescription("description")
-                .setSolution("solution")
                 .setUserId(userId);
         when(mockExerciseDao.findById(exerciseId)).thenReturn(foundExercise);
         var setExerciseCase = Set.of(
@@ -126,5 +141,68 @@ class FindOneExerciseTest {
 
         verify(mockExerciseTestDao, times(1)).findAllByExerciseCaseId(789L);
         verify(mockExerciseTestDao, times(1)).findAllByExerciseCaseId(123L);
+    }
+
+    @Test
+    void when_find_all_exercise_test_per_case_return_few_tests_should_return_dto_exercise_with_cases_and_tests() throws NotFoundException {
+        when(mockUserDao.existsById(userId)).thenReturn(true);
+        var foundExercise = new Exercise()
+                .setId(exerciseId)
+                .setTitle("title")
+                .setDescription("description")
+                .setUserId(userId);
+        when(mockExerciseDao.findById(exerciseId)).thenReturn(foundExercise);
+        var exerciseCase789 = new ExerciseCase()
+                .setId(789L)
+                .setExerciseId(exerciseId)
+                .setSolution("solution")
+                .setIsValid(false)
+                .setLanguageId(2L)
+                .setStartContent("start");
+        var exerciseCase123 = new ExerciseCase()
+                .setId(123L)
+                .setExerciseId(exerciseId)
+                .setSolution("solution 123")
+                .setIsValid(false)
+                .setLanguageId(2L)
+                .setStartContent("start 123");
+        var setExerciseCase = Set.of(
+                exerciseCase789,
+                exerciseCase123
+        );
+        when(mockExerciseCaseDao.findAllByExerciseId(exerciseId)).thenReturn(setExerciseCase);
+        var setExerciseTestOfExercise789 = Set.of(
+                new ExerciseTest()
+                        .setId(3L)
+                        .setExerciseCaseId(789L)
+                        .setContent("test content 3"),
+                new ExerciseTest()
+                        .setId(4L)
+                        .setExerciseCaseId(789L)
+                        .setContent("test content 4")
+        );
+        when(mockExerciseTestDao.findAllByExerciseCaseId(789L)).thenReturn(setExerciseTestOfExercise789);
+        var setExerciseTEstOfExercise123 = Set.of(
+                new ExerciseTest()
+                        .setId(5L)
+                        .setExerciseCaseId(123L)
+                        .setContent("test content 5")
+        );
+        when(mockExerciseTestDao.findAllByExerciseCaseId(123L)).thenReturn(setExerciseTEstOfExercise123);
+
+        var result = sut.execute(exerciseId, userId);
+
+        var expectedDtoExercise = exerciseAdapter.domainToDto(foundExercise);
+        var expectedDtoExerciseTestOfExercise789 = setExerciseTestOfExercise789.stream()
+                .map(exerciseTestAdapter::domainToDto).collect(Collectors.toSet());
+        var expectedDtoExerciseCase789 = exerciseCaseAdapter.domainToDto(exerciseCase789);
+        expectedDtoExerciseCase789.setTests(expectedDtoExerciseTestOfExercise789);
+        var expectedDtoExerciseTestOfExercise123 = setExerciseTEstOfExercise123.stream()
+                .map(exerciseTestAdapter::domainToDto).collect(Collectors.toSet());
+        var expectedDtoExerciseCase123 = exerciseCaseAdapter.domainToDto(exerciseCase123);
+        expectedDtoExerciseCase123.setTests(expectedDtoExerciseTestOfExercise123);
+        expectedDtoExercise.setCases(Set.of(expectedDtoExerciseCase789, expectedDtoExerciseCase123));
+
+        assertThat(result).isEqualTo(expectedDtoExercise);
     }
 }
