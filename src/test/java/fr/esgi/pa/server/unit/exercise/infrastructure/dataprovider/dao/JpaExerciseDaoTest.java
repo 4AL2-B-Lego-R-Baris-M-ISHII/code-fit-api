@@ -1,4 +1,4 @@
-package fr.esgi.pa.server.unit.exercise.infrastructure.dataprovider;
+package fr.esgi.pa.server.unit.exercise.infrastructure.dataprovider.dao;
 
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.dao.JpaExerciseDao;
@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -31,6 +33,7 @@ class JpaExerciseDaoTest {
     private final ExerciseMapper exerciseMapper = new ExerciseMapper();
 
     private JpaExerciseDao sut;
+
 
     @BeforeEach
     void setup() {
@@ -63,6 +66,33 @@ class JpaExerciseDaoTest {
             var result = sut.createExercise(exerciseTitle, description, 22L);
 
             var expectedExercise = exerciseMapper.entityToDomain(savedExercise);
+            assertThat(result).isEqualTo(expectedExercise);
+        }
+    }
+
+    @Nested
+    class FindExerciseById {
+        @Test
+        void when_exercise_not_found_should_throw_NotFoundException() {
+            when(mockExerciseRepository.findById(20L)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> sut.findById(20L))
+                    .isExactlyInstanceOf(NotFoundException.class)
+                    .hasMessage(String.format("%s : Exercise with id '%d' not found", NotFoundException.class, 20L));
+        }
+
+        @Test
+        void when_exercise_found_should_return_found_exercise() throws NotFoundException {
+            var foundExercise = new JpaExercise()
+                    .setId(20L)
+                    .setTitle("title")
+                    .setDescription("description")
+                    .setUserId(33L);
+            when(mockExerciseRepository.findById(20L)).thenReturn(Optional.of(foundExercise));
+
+            var result = sut.findById(20L);
+
+            var expectedExercise = exerciseMapper.entityToDomain(foundExercise);
             assertThat(result).isEqualTo(expectedExercise);
         }
     }

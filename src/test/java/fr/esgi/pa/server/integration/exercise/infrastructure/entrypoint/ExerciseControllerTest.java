@@ -2,6 +2,7 @@ package fr.esgi.pa.server.integration.exercise.infrastructure.entrypoint;
 
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.request.SaveExerciseRequest;
+import fr.esgi.pa.server.exercise.usecase.FindOneExercise;
 import fr.esgi.pa.server.exercise.usecase.SaveOneExercise;
 import fr.esgi.pa.server.helper.JsonHelper;
 import fr.esgi.pa.server.language.core.exception.IncorrectLanguageNameException;
@@ -21,6 +22,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -33,9 +35,12 @@ class ExerciseControllerTest {
     @MockBean
     private SaveOneExercise mockSaveOneExercise;
 
+    @MockBean
+    private FindOneExercise mockFindOneExercise;
+
     @DisplayName("POST /api/exercise")
     @Nested
-    class PostExercise {
+    class PostExerciseTest {
         @Test
         void when_user_not_authenticate_should_send_unauthorized_error_response() throws Exception {
             mockMvc.perform(
@@ -196,7 +201,7 @@ class ExerciseControllerTest {
             assertThat(content).isEqualTo("language not found");
         }
 
-            @WithMockUser(username = "toto", password = "toto", roles = "ADMIN")
+        @WithMockUser(username = "toto", password = "toto", roles = "ADMIN")
         @Test
         void when_save_one_exercise_success_should_response_concerned_uri() throws Exception {
             var saveExerciseRequest = new SaveExerciseRequest()
@@ -224,6 +229,99 @@ class ExerciseControllerTest {
                     .buildAndExpand("56")
                     .toUri();
             assertThat(location).isEqualTo(response.toString());
+        }
+    }
+
+    @DisplayName("GET /api/exercise/{id}")
+    @Nested
+    class GetOneExerciseTest {
+
+        @Test
+        void when_user_is_not_authenticate_should_send_unauthorized_error_response() throws Exception {
+            var userId = 7L;
+            var exerciseId = 8L;
+            mockMvc.perform(
+                    get("/api/exercise/" + exerciseId)
+                            .requestAttr("userId", userId)
+            ).andExpect(status().isUnauthorized());
+        }
+
+        @WithMockUser
+        @ParameterizedTest
+        @ValueSource(strings = {"notnumber", "3.1", "-1", "0", "\t", "\n"})
+        void when_userId_is_not_number_should_send_forbidden_error_response(String notCorrectUserId) throws Exception {
+            var exerciseId = 8L;
+            mockMvc.perform(
+                    get("/api/exercise/" + exerciseId)
+                            .requestAttr("userId", notCorrectUserId)
+            ).andExpect(status().isBadRequest())
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
+        }
+
+        @WithMockUser
+        @ParameterizedTest
+        @ValueSource(strings = {"notnumber", "3.1", "-1", "0"})
+        void when_exerciseId_is_not_number_should_send_forbidden_error_response(String notCorrectExerciseId) throws Exception {
+            var userId = 8L;
+            mockMvc.perform(
+                    get("/api/exercise/" + notCorrectExerciseId)
+                            .requestAttr("userId", userId)
+            ).andExpect(status().isBadRequest())
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
+        }
+
+        @WithMockUser
+        @Test
+        void when_user_is_authenticate_should_call_usecase_findOneExercise() throws Exception {
+            var userId = 7L;
+            var exerciseId = 8L;
+            mockMvc.perform(
+                    get("/api/exercise/" + exerciseId)
+                            .requestAttr("userId", userId)
+            ).andExpect(status().isOk());
+
+            verify(mockFindOneExercise, times(1)).execute(exerciseId, userId);
+        }
+
+        // TODO : continue after usecase find one exercise done
+//        @WithMockUser
+//        @Test
+//        void when_usecase_findOneExercise_return_exercise_should_send_success_response_with_exercise() throws Exception {
+//            var userId = 7L;
+//            var exerciseId = 8L;
+//            var expectedExercise = new Exercise()
+//                    .setId(8L)
+//                    .setTitle("title")
+//                    .setDescription("description")
+//                    .setSolution("solution");
+//            when(mockFindOneExercise.execute(exerciseId, userId)).thenReturn(expectedExercise);
+//            var contentAsString = mockMvc.perform(
+//                    get("/api/exercise/" + exerciseId)
+//                            .requestAttr("userId", userId)
+//            ).andExpect(status().isOk())
+//                    .andReturn()
+//                    .getResponse()
+//                    .getContentAsString();
+//            assertThat(contentAsString).isNotNull();
+//            assertThat(contentAsString).isNotBlank();
+//            var response = JsonHelper.jsonToObject(contentAsString, Exercise.class);
+//            assertThat(response).isEqualTo(expectedExercise);
+//        }
+
+        @WithMockUser
+        @Test
+        void when_usecase_findOneExercise_throw_not_found_exception_should_send_not_found_error_response() throws Exception {
+            var userId = 7L;
+            var exerciseId = 8L;
+            when(mockFindOneExercise.execute(exerciseId, userId)).thenThrow(new NotFoundException("not found"));
+            mockMvc.perform(
+                    get("/api/exercise/" + exerciseId)
+                            .requestAttr("userId", userId)
+            ).andExpect(status().isNotFound());
         }
     }
 }

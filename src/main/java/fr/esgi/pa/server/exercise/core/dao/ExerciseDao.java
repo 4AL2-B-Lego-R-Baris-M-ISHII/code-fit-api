@@ -5,4 +5,6 @@ import fr.esgi.pa.server.exercise.core.entity.Exercise;
 
 public interface ExerciseDao {
     Exercise createExercise(String title, String description, Long userId) throws NotFoundException;
+
+    Exercise findById(Long exerciseId) throws NotFoundException;
 }

@@ -1,7 +1,12 @@
 package fr.esgi.pa.server.e2e;
 
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
+import fr.esgi.pa.server.exercise.core.dao.ExerciseCaseDao;
+import fr.esgi.pa.server.exercise.core.dao.ExerciseTestDao;
+import fr.esgi.pa.server.exercise.core.dto.DtoExercise;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.util.DefaultExerciseHelper;
+import fr.esgi.pa.server.exercise.infrastructure.entrypoint.adapter.ExerciseCaseAdapter;
+import fr.esgi.pa.server.exercise.infrastructure.entrypoint.adapter.ExerciseTestAdapter;
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.request.SaveExerciseRequest;
 import fr.esgi.pa.server.helper.AuthDataHelper;
 import fr.esgi.pa.server.helper.AuthHelper;
@@ -16,10 +21,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.port;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -36,6 +43,18 @@ public class ExerciseApiTest {
 
     @Autowired
     private DefaultExerciseHelper defaultExerciseHelper;
+
+    @Autowired
+    private ExerciseCaseDao exerciseCaseDao;
+
+    @Autowired
+    private ExerciseTestDao exerciseTestDao;
+
+    @Autowired
+    private ExerciseCaseAdapter exerciseCaseAdapter;
+
+    @Autowired
+    private ExerciseTestAdapter exerciseTestAdapter;
 
     @LocalServerPort
     private int localPort;
@@ -111,14 +130,14 @@ public class ExerciseApiTest {
 //        }
 
         @Test
-        void should_create_exercise() throws NotFoundException {
+        void should_create_exercise_and_get_created_one() throws NotFoundException {
             var foundLanguage = languageDao.findByLanguageName(LanguageName.JAVA);
             var javaDefaultValues = defaultExerciseHelper.getValuesByLanguage(foundLanguage);
             var exerciseRequest = new SaveExerciseRequest().setTitle("title exercise")
                     .setTitle("simple exercise")
                     .setDescription("return the string that is in parameter")
                     .setLanguage("JAVA");
-            var response = given()
+            var postResponse = given()
                     .header("Authorization", "Bearer " + authData.getToken())
                     .contentType(ContentType.JSON)
                     .body(exerciseRequest)
@@ -128,8 +147,43 @@ public class ExerciseApiTest {
                     .statusCode(201)
                     .extract()
                     .header("Location");
-            assertThat(response).isNotNull();
-            assertThat(response).contains("/api/exercise/");
+            assertThat(postResponse).isNotNull();
+            assertThat(postResponse).contains("/api/exercise/");
+
+            var getResponse = given()
+                    .header("Authorization", "Bearer " + authData.getToken())
+                    .when()
+                    .get(postResponse)
+                    .then()
+                    .statusCode(200)
+                    .extract()
+                    .as(DtoExercise.class);
+            assertThat(getResponse.getId()).isNotNull();
+            assertThat(getResponse.getTitle()).isEqualTo(exerciseRequest.getTitle());
+            assertThat(getResponse.getDescription()).isEqualTo(exerciseRequest.getDescription());
+            assertThat(getResponse.getUserId()).isEqualTo(authData.getUser().getId());
+
+            var foundExerciseCases = exerciseCaseDao.findAllByExerciseId(getResponse.getId());
+            var expectedDtoCases = foundExerciseCases.stream()
+                    .map(exerciseCase -> {
+                        try {
+                            assertThat(exerciseCase.getSolution()).isEqualTo(javaDefaultValues.getSolution());
+                            assertThat(exerciseCase.getStartContent()).isEqualTo(javaDefaultValues.getStartContent());
+                            var dtoSetExerciseTest = exerciseTestDao.findAllByExerciseCaseId(exerciseCase.getId())
+                                    .stream()
+                                    .map(exerciseTest -> {
+                                        assertThat(exerciseTest.getContent()).isEqualTo(javaDefaultValues.getTestContent());
+                                        return exerciseTestAdapter.domainToDto(exerciseTest);
+                                    })
+                                    .collect(Collectors.toSet());
+                            return exerciseCaseAdapter.domainToDto(exerciseCase).setTests(dtoSetExerciseTest);
+                        } catch (NotFoundException e) {
+                            fail("problem with findAllByExerciseCaseId : " + e.getMessage());
+                        }
+                        return null;
+                    })
+                    .collect(Collectors.toSet());
+            assertThat(getResponse.getCases()).isEqualTo(expectedDtoCases);
         }
     }
 }
