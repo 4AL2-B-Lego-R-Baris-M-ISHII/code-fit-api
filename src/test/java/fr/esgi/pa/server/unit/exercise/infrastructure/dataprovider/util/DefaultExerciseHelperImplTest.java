@@ -99,7 +99,9 @@ class DefaultExerciseHelperImplTest {
         @Test
         void should_return_default_exercise_values_with_c_code_start_content() {
             var result = sut.getValuesByLanguage(cLanguage);
-            var expectedStartContent = "char* exercise1(char *test) {\n" +
+            var expectedStartContent = "#include <string.h>\n" +
+                    "\n" +
+                    "char* exercise1(char *test) {\n" +
                     "    // CODE HERE\n" +
                     "    return NULL;\n" +
                     "}\n";
@@ -110,7 +112,9 @@ class DefaultExerciseHelperImplTest {
         @Test
         void should_return_default_exercise_values_with_c_solution() {
             var result = sut.getValuesByLanguage(cLanguage);
-            var expectedSolution = "char* exercise1(char *test) {\n" +
+            var expectedSolution = "#include <string.h>\n" +
+                    "\n" +
+                    "char* exercise1(char *test) {\n" +
                     "    // CODE HERE\n" +
                     "    return test;\n" +
                     "}\n";
@@ -121,7 +125,9 @@ class DefaultExerciseHelperImplTest {
         @Test
         void should_return_default_exercise_values_with_c_test() {
             var result = sut.getValuesByLanguage(cLanguage);
-            var expectedTest = "int main() {\n" +
+            var expectedTest = "#include <string.h>\n" +
+                    "\n" +
+                    "int main() {\n" +
                     "    char *result = exercise1(\"toto\");\n" +
                     "    if (strcmp(result, \"toto\") != 0) {\n" +
                     "        return 1;\n" +

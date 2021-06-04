@@ -17,15 +17,21 @@ public class DefaultExerciseHelperImpl implements DefaultExerciseHelper {
 
     private DefaultExerciseValues getCDefaultExerciseValues() {
         return new DefaultExerciseValues()
-                .setStartContent("char* exercise1(char *test) {\n" +
+                .setStartContent("#include <string.h>\n" +
+                        "\n" +
+                        "char* exercise1(char *test) {\n" +
                         "    // CODE HERE\n" +
                         "    return NULL;\n" +
                         "}\n")
-                .setSolution("char* exercise1(char *test) {\n" +
+                .setSolution("#include <string.h>\n" +
+                        "\n" +
+                        "char* exercise1(char *test) {\n" +
                         "    // CODE HERE\n" +
                         "    return test;\n" +
                         "}\n")
-                .setTestContent("int main() {\n" +
+                .setTestContent("#include <string.h>\n" +
+                        "\n" +
+                        "int main() {\n" +
                         "    char *result = exercise1(\"toto\");\n" +
                         "    if (strcmp(result, \"toto\") != 0) {\n" +
                         "        return 1;\n" +
