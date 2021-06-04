@@ -13,11 +13,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class JpaExerciseDaoTest {
@@ -94,6 +96,41 @@ class JpaExerciseDaoTest {
 
             var expectedExercise = exerciseMapper.entityToDomain(foundExercise);
             assertThat(result).isEqualTo(expectedExercise);
+        }
+    }
+
+    @Nested
+    class FindAllExercises {
+        @Test
+        void should_call_exercise_repository_to_get_all_exercises() {
+            sut.findAll();
+
+            verify(mockExerciseRepository, times(1)).findAll();
+        }
+
+        @Test
+        void when_find_all_exercises_by_exercise_repository_should_return_all_set_exercise() {
+            var jpaExercise22 = new JpaExercise()
+                    .setId(22L)
+                    .setTitle("title")
+                    .setDescription("description")
+                    .setUserId(3L);
+            var jpaExercise77 = new JpaExercise()
+                    .setId(33L)
+                    .setTitle("title44")
+                    .setDescription("description55")
+                    .setUserId(66L);
+            var foundSetExercise = List.of(jpaExercise22, jpaExercise77);
+            when(mockExerciseRepository.findAll()).thenReturn(foundSetExercise);
+
+            var result = sut.findAll();
+
+            var expectedSetExercise = foundSetExercise.stream()
+                    .map(exerciseMapper::entityToDomain)
+                    .collect(Collectors.toSet());
+
+            assertThat(result).isNotNull();
+            assertThat(result).isEqualTo(expectedSetExercise);
         }
     }
 }
