@@ -69,6 +69,6 @@ public class ExerciseController {
     @GetMapping
     public ResponseEntity<Set<DtoExercise>> findAll() throws NotFoundException {
         var allExercise = findAllExercises.execute();
-        return null;
+        return ok(allExercise);
     }
 }
