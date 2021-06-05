@@ -19,7 +19,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class JpaLanguageDaoTest {
@@ -106,6 +106,34 @@ class JpaLanguageDaoTest {
 
             var result = sut.findByStrLanguage("C");
 
+            assertThat(result).isEqualTo(expected);
+        }
+    }
+
+    @Nested
+    class FindLanguageById {
+        @Test
+        void when_return_language_by_repository_is_empty_should_throw_not_found_exception() {
+            var languageId = 28L;
+            when(mockLanguageRepository.findById(languageId)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> sut.findById(languageId))
+                    .isExactlyInstanceOf(NotFoundException.class)
+                    .hasMessage("%s : language with id '%d' not found", NotFoundException.class, languageId);
+        }
+
+        @Test
+        void when_found_language_by_language_repository_should_return_found_language() throws NotFoundException {
+            var languageId = 33L;
+            var java = new JpaLanguage()
+                    .setId(languageId)
+                    .setFileExtension("java")
+                    .setName(LanguageName.JAVA);
+            when(mockLanguageRepository.findById(languageId)).thenReturn(Optional.of(java));
+
+            var result = sut.findById(languageId);
+
+            var expected = languageMapper.entityToDomain(java);
             assertThat(result).isEqualTo(expected);
         }
     }

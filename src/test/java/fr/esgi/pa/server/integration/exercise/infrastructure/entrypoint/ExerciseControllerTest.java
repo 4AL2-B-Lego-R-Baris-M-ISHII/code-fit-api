@@ -1,11 +1,17 @@
 package fr.esgi.pa.server.integration.exercise.infrastructure.entrypoint;
 
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
+import fr.esgi.pa.server.exercise.core.dto.DtoExercise;
+import fr.esgi.pa.server.exercise.core.dto.DtoExerciseCase;
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.request.SaveExerciseRequest;
+import fr.esgi.pa.server.exercise.usecase.FindAllExercises;
 import fr.esgi.pa.server.exercise.usecase.FindOneExercise;
 import fr.esgi.pa.server.exercise.usecase.SaveOneExercise;
 import fr.esgi.pa.server.helper.JsonHelper;
+import fr.esgi.pa.server.language.core.Language;
+import fr.esgi.pa.server.language.core.LanguageName;
 import fr.esgi.pa.server.language.core.exception.IncorrectLanguageNameException;
+import org.assertj.core.util.Sets;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,6 +25,9 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.util.Arrays;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -37,6 +46,9 @@ class ExerciseControllerTest {
 
     @MockBean
     private FindOneExercise mockFindOneExercise;
+
+    @MockBean
+    private FindAllExercises mockFindAllExercises;
 
     @DisplayName("POST /api/exercise")
     @Nested
@@ -287,30 +299,29 @@ class ExerciseControllerTest {
             verify(mockFindOneExercise, times(1)).execute(exerciseId, userId);
         }
 
-        // TODO : continue after usecase find one exercise done
-//        @WithMockUser
-//        @Test
-//        void when_usecase_findOneExercise_return_exercise_should_send_success_response_with_exercise() throws Exception {
-//            var userId = 7L;
-//            var exerciseId = 8L;
-//            var expectedExercise = new Exercise()
-//                    .setId(8L)
-//                    .setTitle("title")
-//                    .setDescription("description")
-//                    .setSolution("solution");
-//            when(mockFindOneExercise.execute(exerciseId, userId)).thenReturn(expectedExercise);
-//            var contentAsString = mockMvc.perform(
-//                    get("/api/exercise/" + exerciseId)
-//                            .requestAttr("userId", userId)
-//            ).andExpect(status().isOk())
-//                    .andReturn()
-//                    .getResponse()
-//                    .getContentAsString();
-//            assertThat(contentAsString).isNotNull();
-//            assertThat(contentAsString).isNotBlank();
-//            var response = JsonHelper.jsonToObject(contentAsString, Exercise.class);
-//            assertThat(response).isEqualTo(expectedExercise);
-//        }
+        @WithMockUser
+        @Test
+        void when_usecase_findOneExercise_return_exercise_should_send_success_response_with_exercise() throws Exception {
+            var userId = 7L;
+            var exerciseId = 8L;
+            var expectedExercise = new DtoExercise()
+                    .setId(8L)
+                    .setTitle("title")
+                    .setDescription("description");
+
+            when(mockFindOneExercise.execute(exerciseId, userId)).thenReturn(expectedExercise);
+            var contentAsString = mockMvc.perform(
+                    get("/api/exercise/" + exerciseId)
+                            .requestAttr("userId", userId)
+            ).andExpect(status().isOk())
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
+            assertThat(contentAsString).isNotNull();
+            assertThat(contentAsString).isNotBlank();
+            var response = JsonHelper.jsonToObject(contentAsString, DtoExercise.class);
+            assertThat(response).isEqualTo(expectedExercise);
+        }
 
         @WithMockUser
         @Test
@@ -322,6 +333,63 @@ class ExerciseControllerTest {
                     get("/api/exercise/" + exerciseId)
                             .requestAttr("userId", userId)
             ).andExpect(status().isNotFound());
+        }
+    }
+
+    @DisplayName("GET /api/exercise")
+    @Nested
+    class GetAllExercisesTest {
+        @Test
+        void when_user_not_authenticate_should_send_unauthorized_error_response() throws Exception {
+            mockMvc.perform(
+                    get("/api/exercise")
+            ).andExpect(status().isUnauthorized());
+        }
+
+        @WithMockUser
+        @Test
+        void when_usecase_findAllExercise_throw_NotFoundException() throws Exception {
+            when(mockFindAllExercises.execute()).thenThrow(new NotFoundException("not found"));
+            mockMvc.perform(
+                    get("/api/exercise")
+            ).andExpect(status().isNotFound());
+        }
+
+        @WithMockUser
+        @Test
+        void when_usecase_findAllExercise_return_set_dto_exercise() throws Exception {
+            var setDtoExercise = Set.of(
+                    new DtoExercise()
+                            .setId(5L)
+                            .setTitle("title")
+                            .setDescription("description")
+                            .setUserId(5L)
+                            .setCases(Set.of(
+                                    new DtoExerciseCase()
+                                            .setId(7L)
+                                            .setLanguage(new Language().setId(8L).setFileExtension("java").setLanguageName(LanguageName.JAVA))
+                                            .setSolution("solution")
+                                            .setStartContent("start content")
+                                            .setIsValid(false)
+                            ))
+            );
+
+            when(mockFindAllExercises.execute()).thenReturn(setDtoExercise);
+
+            var contentAsString = mockMvc.perform(
+                    get("/api/exercise")
+            ).andExpect(status().isOk())
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
+
+            assertThat(contentAsString).isNotNull();
+            assertThat(contentAsString).isNotBlank();
+
+            var arrDtoExercise = JsonHelper.jsonToObject(contentAsString, DtoExercise[].class);
+            assertThat(arrDtoExercise).isNotNull();
+            var resultSetDtoExercise = Sets.newHashSet(Arrays.asList(arrDtoExercise));
+            assertThat(resultSetDtoExercise).isEqualTo(setDtoExercise);
         }
     }
 }

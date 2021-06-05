@@ -10,6 +10,9 @@ import fr.esgi.pa.server.user.core.UserDao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class JpaExerciseDao implements ExerciseDao {
@@ -36,5 +39,13 @@ public class JpaExerciseDao implements ExerciseDao {
             return new NotFoundException(message);
         });
         return exerciseMapper.entityToDomain(foundExercise);
+    }
+
+    @Override
+    public Set<Exercise> findAll() {
+        var exercises = exerciseRepository.findAll();
+        return exercises.stream()
+                .map(exerciseMapper::entityToDomain)
+                .collect(Collectors.toSet());
     }
 }

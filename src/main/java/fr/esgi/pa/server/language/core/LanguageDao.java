@@ -13,5 +13,7 @@ public interface LanguageDao {
 
     Language findByStrLanguage(String strLanguage) throws IncorrectLanguageNameException, NotFoundException;
 
+    Language findById(Long languageId) throws NotFoundException;
+
     List<Language> findAll();
 }
