@@ -10,6 +10,7 @@ import fr.esgi.pa.server.exercise.core.entity.ExerciseCase;
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.adapter.ExerciseAdapter;
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.adapter.ExerciseCaseAdapter;
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.adapter.ExerciseTestAdapter;
+import fr.esgi.pa.server.language.core.LanguageDao;
 import fr.esgi.pa.server.user.core.UserDao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ public class FindOneExercise {
     private final ExerciseDao exerciseDao;
     private final ExerciseCaseDao exerciseCaseDao;
     private final ExerciseTestDao exerciseTestDao;
+    private final LanguageDao languageDao;
     private final ExerciseAdapter exerciseAdapter;
     private final ExerciseCaseAdapter exerciseCaseAdapter;
     private final ExerciseTestAdapter exerciseTestAdapter;
@@ -55,6 +57,8 @@ public class FindOneExercise {
 
     private DtoExerciseCase getDtoExerciseCase(ExerciseCase exerciseCase) throws NotFoundException {
         var currentDtoExerciseCase = exerciseCaseAdapter.domainToDto(exerciseCase);
+        var language = languageDao.findById(exerciseCase.getLanguageId());
+        currentDtoExerciseCase.setLanguage(language);
         var setExerciseTest = exerciseTestDao.findAllByExerciseCaseId(exerciseCase.getId())
                 .stream()
                 .map(exerciseTestAdapter::domainToDto)

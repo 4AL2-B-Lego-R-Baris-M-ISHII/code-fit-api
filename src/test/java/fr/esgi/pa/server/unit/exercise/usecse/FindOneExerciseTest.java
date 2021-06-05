@@ -11,6 +11,9 @@ import fr.esgi.pa.server.exercise.infrastructure.entrypoint.adapter.ExerciseAdap
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.adapter.ExerciseCaseAdapter;
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.adapter.ExerciseTestAdapter;
 import fr.esgi.pa.server.exercise.usecase.FindOneExercise;
+import fr.esgi.pa.server.language.core.Language;
+import fr.esgi.pa.server.language.core.LanguageDao;
+import fr.esgi.pa.server.language.core.LanguageName;
 import fr.esgi.pa.server.user.core.UserDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,6 +47,9 @@ class FindOneExerciseTest {
     @Mock
     private ExerciseTestDao mockExerciseTestDao;
 
+    @Mock
+    private LanguageDao mockLanguageDao;
+
     private final ExerciseAdapter exerciseAdapter = new ExerciseAdapter();
     private final ExerciseCaseAdapter exerciseCaseAdapter = new ExerciseCaseAdapter();
     private final ExerciseTestAdapter exerciseTestAdapter = new ExerciseTestAdapter();
@@ -55,6 +61,7 @@ class FindOneExerciseTest {
                 mockExerciseDao,
                 mockExerciseCaseDao,
                 mockExerciseTestDao,
+                mockLanguageDao,
                 exerciseAdapter,
                 exerciseCaseAdapter,
                 exerciseTestAdapter
@@ -189,6 +196,8 @@ class FindOneExerciseTest {
                         .setContent("test content 5")
         );
         when(mockExerciseTestDao.findAllByExerciseCaseId(123L)).thenReturn(setExerciseTEstOfExercise123);
+        var java = new Language().setId(3L).setLanguageName(LanguageName.JAVA).setFileExtension("java");
+        when(mockLanguageDao.findById(2L)).thenReturn(java);
 
         var result = sut.execute(exerciseId, userId);
 
@@ -197,10 +206,13 @@ class FindOneExerciseTest {
                 .map(exerciseTestAdapter::domainToDto).collect(Collectors.toSet());
         var expectedDtoExerciseCase789 = exerciseCaseAdapter.domainToDto(exerciseCase789);
         expectedDtoExerciseCase789.setTests(expectedDtoExerciseTestOfExercise789);
+        expectedDtoExerciseCase789.setLanguage(java);
         var expectedDtoExerciseTestOfExercise123 = setExerciseTEstOfExercise123.stream()
                 .map(exerciseTestAdapter::domainToDto).collect(Collectors.toSet());
         var expectedDtoExerciseCase123 = exerciseCaseAdapter.domainToDto(exerciseCase123);
         expectedDtoExerciseCase123.setTests(expectedDtoExerciseTestOfExercise123);
+        expectedDtoExerciseCase123.setLanguage(java);
+
         expectedDtoExercise.setCases(Set.of(expectedDtoExerciseCase789, expectedDtoExerciseCase123));
 
         assertThat(result).isEqualTo(expectedDtoExercise);
