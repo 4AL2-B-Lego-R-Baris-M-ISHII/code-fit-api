@@ -3,6 +3,7 @@ package fr.esgi.pa.server.unit.exercise.usecase;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.exercise.core.dao.ExerciseDao;
 import fr.esgi.pa.server.exercise.core.entity.Exercise;
+import fr.esgi.pa.server.exercise.core.exception.ForbiddenSaveExerciseException;
 import fr.esgi.pa.server.exercise.core.exception.IncorrectExerciseException;
 import fr.esgi.pa.server.exercise.usecase.UpdateOneExercise;
 import fr.esgi.pa.server.user.core.UserDao;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
@@ -42,21 +44,13 @@ class UpdateOneExerciseTest {
     }
 
     @Test
-    void when_user_exists_should_find_one_exercise_by_id() throws NotFoundException {
-        when(mockUserDao.existsById(userId)).thenReturn(true);
-
-        sut.execute(userId, exerciseId, "title", "description");
-
-        verify(mockExerciseDao, times(1)).findById(exerciseId);
-    }
-
-    @Test
-    void when_found_exercise_and_param_title_and_description_not_null_should_update_with_new_params() throws NotFoundException, IncorrectExerciseException {
+    void when_found_exercise_and_param_title_and_description_not_null_should_update_with_new_params() throws NotFoundException, IncorrectExerciseException, ForbiddenSaveExerciseException {
         when(mockUserDao.existsById(userId)).thenReturn(true);
         var foundExercise = new Exercise()
                 .setId(exerciseId)
                 .setTitle("old title")
-                .setDescription("old description");
+                .setDescription("old description")
+                .setUserId(userId);
         when(mockExerciseDao.findById(exerciseId)).thenReturn(foundExercise);
 
         sut.execute(userId, exerciseId, "new title", "new description");
@@ -64,7 +58,67 @@ class UpdateOneExerciseTest {
         var exerciseToUpdate = new Exercise()
                 .setId(exerciseId)
                 .setTitle("new title")
-                .setDescription("new description");
+                .setDescription("new description")
+                .setUserId(userId);
         verify(mockExerciseDao, times(1)).save(exerciseToUpdate);
+    }
+
+    @Test
+    void when_found_exercise_and_param_title_null_should_not_update_title() throws NotFoundException, IncorrectExerciseException, ForbiddenSaveExerciseException {
+        when(mockUserDao.existsById(userId)).thenReturn(true);
+        var foundExercise = new Exercise()
+                .setId(exerciseId)
+                .setTitle("old title")
+                .setDescription("old description")
+                .setUserId(userId);
+        when(mockExerciseDao.findById(exerciseId)).thenReturn(foundExercise);
+
+        sut.execute(userId, exerciseId, null, "new description");
+
+        var exerciseToUpdate = new Exercise()
+                .setId(exerciseId)
+                .setTitle("old title")
+                .setDescription("new description")
+                .setUserId(userId);
+        verify(mockExerciseDao, times(1)).save(exerciseToUpdate);
+    }
+
+    @Test
+    void when_found_exercise_and_param_description_null_should_not_update_description() throws NotFoundException, IncorrectExerciseException, ForbiddenSaveExerciseException {
+        when(mockUserDao.existsById(userId)).thenReturn(true);
+        var foundExercise = new Exercise()
+                .setId(exerciseId)
+                .setTitle("old title")
+                .setDescription("old description")
+                .setUserId(userId);
+        when(mockExerciseDao.findById(exerciseId)).thenReturn(foundExercise);
+
+        sut.execute(userId, exerciseId, "new title", null);
+
+        var exerciseToUpdate = new Exercise()
+                .setId(exerciseId)
+                .setTitle("new title")
+                .setDescription("old description")
+                .setUserId(userId);
+        verify(mockExerciseDao, times(1)).save(exerciseToUpdate);
+    }
+
+    @Test
+    void when_found_exercise_userId_different_to_userId_param_should_throw_ForbiddenSaveExerciseException() throws NotFoundException {
+        var otherUserId = 456L;
+        when(mockUserDao.existsById(otherUserId)).thenReturn(true);
+        var foundExercise = new Exercise()
+                .setId(exerciseId)
+                .setTitle("old title")
+                .setDescription("old description")
+                .setUserId(userId);
+        when(mockExerciseDao.findById(exerciseId)).thenReturn(foundExercise);
+
+
+        assertThat(otherUserId).isNotEqualTo(userId);
+
+        assertThatThrownBy(() -> sut.execute(otherUserId, exerciseId, "new title", null))
+                .isExactlyInstanceOf(ForbiddenSaveExerciseException.class)
+                .hasMessage("%s : Exercise can be update by only the creator", ForbiddenSaveExerciseException.class);
     }
 }
