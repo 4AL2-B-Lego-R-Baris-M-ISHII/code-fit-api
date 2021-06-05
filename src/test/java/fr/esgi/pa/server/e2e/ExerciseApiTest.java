@@ -12,6 +12,7 @@ import fr.esgi.pa.server.helper.AuthDataHelper;
 import fr.esgi.pa.server.helper.AuthHelper;
 import fr.esgi.pa.server.language.core.LanguageDao;
 import fr.esgi.pa.server.language.core.LanguageName;
+import fr.esgi.pa.server.language.core.exception.IncorrectLanguageNameException;
 import fr.esgi.pa.server.role.core.RoleDao;
 import fr.esgi.pa.server.role.core.RoleName;
 import io.restassured.http.ContentType;
@@ -130,7 +131,7 @@ public class ExerciseApiTest {
 //        }
 
         @Test
-        void should_create_exercise_and_get_created_one() throws NotFoundException {
+        void should_create_exercise_and_get_created_one() throws NotFoundException, IncorrectLanguageNameException {
             var foundLanguage = languageDao.findByLanguageName(LanguageName.JAVA);
             var javaDefaultValues = defaultExerciseHelper.getValuesByLanguage(foundLanguage);
             var exerciseRequest = new SaveExerciseRequest().setTitle("title exercise")
@@ -164,6 +165,7 @@ public class ExerciseApiTest {
             assertThat(getResponse.getUserId()).isEqualTo(authData.getUser().getId());
 
             var foundExerciseCases = exerciseCaseDao.findAllByExerciseId(getResponse.getId());
+            var javaLanguage = languageDao.findByStrLanguage(exerciseRequest.getLanguage());
             var expectedDtoCases = foundExerciseCases.stream()
                     .map(exerciseCase -> {
                         try {
@@ -176,7 +178,9 @@ public class ExerciseApiTest {
                                         return exerciseTestAdapter.domainToDto(exerciseTest);
                                     })
                                     .collect(Collectors.toSet());
-                            return exerciseCaseAdapter.domainToDto(exerciseCase).setTests(dtoSetExerciseTest);
+                            return exerciseCaseAdapter.domainToDto(exerciseCase)
+                                    .setTests(dtoSetExerciseTest)
+                                    .setLanguage(javaLanguage);
                         } catch (NotFoundException e) {
                             fail("problem with findAllByExerciseCaseId : " + e.getMessage());
                         }
