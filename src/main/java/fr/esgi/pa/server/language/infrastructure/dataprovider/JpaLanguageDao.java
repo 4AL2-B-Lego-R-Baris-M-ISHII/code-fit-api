@@ -52,6 +52,15 @@ public class JpaLanguageDao implements LanguageDao {
     }
 
     @Override
+    public Language findById(Long languageId) throws NotFoundException {
+        var foundLanguage = languageRepository.findById(languageId).orElseThrow(() -> {
+            var message = String.format("%s : language with id '%d' not found", NotFoundException.class, languageId);
+            return new NotFoundException(message);
+        });
+        return languageMapper.entityToDomain(foundLanguage);
+    }
+
+    @Override
     public List<Language> findAll() {
         return languageRepository.findAll().stream()
                 .map(languageMapper::entityToDomain)

@@ -39,6 +39,7 @@ public class FindAllExercises {
         var cases = exerciseCaseDao.findAllByExerciseId(exercise.getId())
                 .stream().map(exerciseCaseAdapter::domainToDto)
                 .collect(Collectors.toSet());
+
         var dtoExercise = exerciseAdapter.domainToDto(exercise);
         if (!cases.isEmpty()) {
             dtoExercise.setCases(cases);

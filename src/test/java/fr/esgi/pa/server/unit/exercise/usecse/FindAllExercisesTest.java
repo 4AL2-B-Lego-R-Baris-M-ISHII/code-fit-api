@@ -1,4 +1,4 @@
-package fr.esgi.pa.server.exercise.usecase;
+package fr.esgi.pa.server.unit.exercise.usecse;
 
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.exercise.core.dao.ExerciseCaseDao;
@@ -7,6 +7,8 @@ import fr.esgi.pa.server.exercise.core.entity.Exercise;
 import fr.esgi.pa.server.exercise.core.entity.ExerciseCase;
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.adapter.ExerciseAdapter;
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.adapter.ExerciseCaseAdapter;
+import fr.esgi.pa.server.exercise.usecase.FindAllExercises;
+import fr.esgi.pa.server.language.core.LanguageDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,6 +31,9 @@ class FindAllExercisesTest {
 
     @Mock
     private ExerciseCaseDao mockExerciseCaseDao;
+
+    @Mock
+    private LanguageDao languageDao;
 
     private final ExerciseAdapter exerciseAdapter = new ExerciseAdapter();
     private final ExerciseCaseAdapter exerciseCaseAdapter = new ExerciseCaseAdapter();
