@@ -1,4 +1,4 @@
-package fr.esgi.pa.server.unit.exercise.usecse;
+package fr.esgi.pa.server.unit.exercise.usecase;
 
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.exercise.core.dao.ExerciseCaseDao;

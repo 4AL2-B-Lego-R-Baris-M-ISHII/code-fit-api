@@ -1,6 +1,8 @@
 package fr.esgi.pa.server.unit.exercise.infrastructure.dataprovider.dao;
 
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
+import fr.esgi.pa.server.exercise.core.entity.Exercise;
+import fr.esgi.pa.server.exercise.core.exception.IncorrectExerciseException;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.dao.JpaExerciseDao;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.entity.JpaExercise;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.mapper.ExerciseMapper;
@@ -131,6 +133,58 @@ class JpaExerciseDaoTest {
 
             assertThat(result).isNotNull();
             assertThat(result).isEqualTo(expectedSetExercise);
+        }
+    }
+
+    @Nested
+    class SaveExercise {
+
+        @Test
+        void when_exercise_is_null_should_throw_exception() {
+            assertThatThrownBy(() -> sut.save(null))
+                    .isExactlyInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("%s : Exercise is null", IllegalArgumentException.class);
+        }
+
+        @Test
+        void when_exercise_title_is_null_should_throw_IncorrectExerciseException() {
+            var exercise = new Exercise()
+                    .setId(2L)
+                    .setUserId(3L)
+                    .setTitle(null)
+                    .setDescription("description");
+
+            assertThatThrownBy(() -> sut.save(exercise))
+                    .isExactlyInstanceOf(IncorrectExerciseException.class)
+                    .hasMessage("%s : Exercise title property is null", IncorrectExerciseException.class);
+        }
+
+        @Test
+        void when_exercise_description_is_null_should_throw_IncorrectExerciseException() {
+            var exercise = new Exercise()
+                    .setId(2L)
+                    .setUserId(3L)
+                    .setTitle("title")
+                    .setDescription(null);
+
+            assertThatThrownBy(() -> sut.save(exercise))
+                    .isExactlyInstanceOf(IncorrectExerciseException.class)
+                    .hasMessage("%s : Exercise description property is null", IncorrectExerciseException.class);
+        }
+
+        @Test
+        void when_exercise_save_should_return_appropriate_new_exercise() throws IncorrectExerciseException {
+            var exercise = new Exercise()
+                    .setId(2L)
+                    .setUserId(3L)
+                    .setTitle("title")
+                    .setDescription("description");
+            var jpaExercise = exerciseMapper.domainToEntity(exercise);
+            when(mockExerciseRepository.save(jpaExercise)).thenReturn(jpaExercise);
+
+            var result = sut.save(exercise);
+
+            assertThat(result).isEqualTo(exercise);
         }
     }
 }

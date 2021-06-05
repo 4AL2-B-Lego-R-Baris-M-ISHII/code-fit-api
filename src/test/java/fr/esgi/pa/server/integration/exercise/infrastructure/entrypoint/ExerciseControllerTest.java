@@ -435,5 +435,9 @@ class ExerciseControllerTest {
                             .content(JsonHelper.objectToJson(updateExerciseRequest))
             ).andExpect(status().isBadRequest());
         }
+
+        // TODO : complete after update one exercise usecase done
+        // TODO : exception check
+        // TODO : success response
     }
 }
