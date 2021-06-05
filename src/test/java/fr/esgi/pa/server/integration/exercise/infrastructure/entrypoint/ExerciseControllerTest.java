@@ -4,9 +4,11 @@ import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.exercise.core.dto.DtoExercise;
 import fr.esgi.pa.server.exercise.core.dto.DtoExerciseCase;
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.request.SaveExerciseRequest;
+import fr.esgi.pa.server.exercise.infrastructure.entrypoint.request.UpdateExerciseRequest;
 import fr.esgi.pa.server.exercise.usecase.FindAllExercises;
 import fr.esgi.pa.server.exercise.usecase.FindOneExercise;
 import fr.esgi.pa.server.exercise.usecase.SaveOneExercise;
+import fr.esgi.pa.server.exercise.usecase.UpdateOneExercise;
 import fr.esgi.pa.server.helper.JsonHelper;
 import fr.esgi.pa.server.language.core.Language;
 import fr.esgi.pa.server.language.core.LanguageName;
@@ -31,8 +33,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -49,6 +50,9 @@ class ExerciseControllerTest {
 
     @MockBean
     private FindAllExercises mockFindAllExercises;
+
+    @MockBean
+    private UpdateOneExercise mockUpdateOneExercise;
 
     @DisplayName("POST /api/exercise")
     @Nested
@@ -348,7 +352,7 @@ class ExerciseControllerTest {
 
         @WithMockUser
         @Test
-        void when_usecase_findAllExercise_throw_NotFoundException() throws Exception {
+        void when_usecase_findAllExercise_should_send_not_found_error_response() throws Exception {
             when(mockFindAllExercises.execute()).thenThrow(new NotFoundException("not found"));
             mockMvc.perform(
                     get("/api/exercise")
@@ -390,6 +394,46 @@ class ExerciseControllerTest {
             assertThat(arrDtoExercise).isNotNull();
             var resultSetDtoExercise = Sets.newHashSet(Arrays.asList(arrDtoExercise));
             assertThat(resultSetDtoExercise).isEqualTo(setDtoExercise);
+        }
+    }
+
+    @DisplayName("PUT /api/exercise/{di}")
+    @Nested
+    class UpdateOneExerciseTest {
+        @Test
+        void when_user_not_authenticate_should_unauthorized_error_response() throws Exception {
+            mockMvc.perform(
+                    put("/api/exercise/23")
+            ).andExpect(status().isUnauthorized());
+        }
+
+        @WithMockUser
+        @Test
+        void when_user_is_not_admin_should_send_forbidden_error_response() throws Exception {
+            var updateExerciseRequest = new UpdateExerciseRequest()
+                    .setTitle("update title")
+                    .setDescription("update description");
+            mockMvc.perform(
+                    put("/api/exercise/23")
+                            .requestAttr("userId", "5")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(JsonHelper.objectToJson(updateExerciseRequest))
+            ).andExpect(status().isForbidden());
+        }
+
+        @WithMockUser(username = "toto", password = "toto", roles = "ADMIN")
+        @ParameterizedTest
+        @ValueSource(strings = {"notnumber", "1.2", "-1", "0"})
+        void when_exercise_id_not_integer_min_1_should_send_bad_request_response(String incorrectId) throws Exception {
+            var updateExerciseRequest = new UpdateExerciseRequest()
+                    .setTitle("update title")
+                    .setDescription("update description");
+            mockMvc.perform(
+                    put("/api/exercise/" + incorrectId)
+                            .requestAttr("userId", "5")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(JsonHelper.objectToJson(updateExerciseRequest))
+            ).andExpect(status().isBadRequest());
         }
     }
 }
