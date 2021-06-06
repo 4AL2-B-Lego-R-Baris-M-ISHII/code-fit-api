@@ -1,9 +1,12 @@
 package fr.esgi.pa.server.e2e;
 
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
+import fr.esgi.pa.server.exercise.core.dao.ExerciseDao;
 import fr.esgi.pa.server.exercise.core.dto.DtoExercise;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.util.DefaultExerciseHelper;
+import fr.esgi.pa.server.exercise.infrastructure.dataprovider.util.DefaultExerciseValues;
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.request.SaveExerciseRequest;
+import fr.esgi.pa.server.exercise.infrastructure.entrypoint.request.UpdateExerciseRequest;
 import fr.esgi.pa.server.exercise_case.core.dao.ExerciseCaseDao;
 import fr.esgi.pa.server.exercise_case.core.dao.ExerciseTestDao;
 import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.adapter.ExerciseCaseAdapter;
@@ -44,6 +47,9 @@ public class ExerciseApiTest {
 
     @Autowired
     private DefaultExerciseHelper defaultExerciseHelper;
+
+    @Autowired
+    private ExerciseDao exerciseDao;
 
     @Autowired
     private ExerciseCaseDao exerciseCaseDao;
@@ -129,65 +135,112 @@ public class ExerciseApiTest {
 //            assertThat(response).isNotNull();
 //            assertThat(response).contains("/api/exercise/");
 //        }
+    }
 
-        @Test
-        void should_create_exercise_and_get_created_one() throws NotFoundException, IncorrectLanguageNameException {
-            var foundLanguage = languageDao.findByLanguageName(LanguageName.JAVA);
-            var javaDefaultValues = defaultExerciseHelper.getValuesByLanguage(foundLanguage);
-            var exerciseRequest = new SaveExerciseRequest().setTitle("title exercise")
-                    .setTitle("simple exercise")
-                    .setDescription("return the string that is in parameter")
-                    .setLanguage("JAVA");
-            var postResponse = given()
-                    .header("Authorization", "Bearer " + authData.getToken())
-                    .contentType(ContentType.JSON)
-                    .body(exerciseRequest)
-                    .when()
-                    .post("/api/exercise/")
-                    .then()
-                    .statusCode(201)
-                    .extract()
-                    .header("Location");
-            assertThat(postResponse).isNotNull();
-            assertThat(postResponse).contains("/api/exercise/");
+    @Test
+    void should_crud_exercise() throws NotFoundException, IncorrectLanguageNameException {
+        var foundLanguage = languageDao.findByLanguageName(LanguageName.JAVA);
+        var javaDefaultValues = defaultExerciseHelper.getValuesByLanguage(foundLanguage);
+        var exerciseRequest = new SaveExerciseRequest().setTitle("title exercise")
+                .setTitle("simple exercise")
+                .setDescription("return the string that is in parameter")
+                .setLanguage("JAVA");
+        String uriOneExercise = postExerciseRequestAndAssertionsAndReturnURI(exerciseRequest);
 
-            var getResponse = given()
-                    .header("Authorization", "Bearer " + authData.getToken())
-                    .when()
-                    .get(postResponse)
-                    .then()
-                    .statusCode(200)
-                    .extract()
-                    .as(DtoExercise.class);
-            assertThat(getResponse.getId()).isNotNull();
-            assertThat(getResponse.getTitle()).isEqualTo(exerciseRequest.getTitle());
-            assertThat(getResponse.getDescription()).isEqualTo(exerciseRequest.getDescription());
-            assertThat(getResponse.getUserId()).isEqualTo(authData.getUser().getId());
+        var dtoExercise = getOneExerciseRequestAndAssertions(javaDefaultValues, exerciseRequest, uriOneExercise);
 
-            var foundExerciseCases = exerciseCaseDao.findAllByExerciseId(getResponse.getId());
-            var javaLanguage = languageDao.findByStrLanguage(exerciseRequest.getLanguage());
-            var expectedDtoCases = foundExerciseCases.stream()
-                    .map(exerciseCase -> {
-                        try {
-                            assertThat(exerciseCase.getSolution()).isEqualTo(javaDefaultValues.getSolution());
-                            assertThat(exerciseCase.getStartContent()).isEqualTo(javaDefaultValues.getStartContent());
-                            var dtoSetExerciseTest = exerciseTestDao.findAllByExerciseCaseId(exerciseCase.getId())
-                                    .stream()
-                                    .map(exerciseTest -> {
-                                        assertThat(exerciseTest.getContent()).isEqualTo(javaDefaultValues.getTestContent());
-                                        return exerciseTestAdapter.domainToDto(exerciseTest);
-                                    })
-                                    .collect(Collectors.toSet());
-                            return exerciseCaseAdapter.domainToDto(exerciseCase)
-                                    .setTests(dtoSetExerciseTest)
-                                    .setLanguage(javaLanguage);
-                        } catch (NotFoundException e) {
-                            fail("problem with findAllByExerciseCaseId : " + e.getMessage());
-                        }
-                        return null;
-                    })
-                    .collect(Collectors.toSet());
-            assertThat(getResponse.getCases()).isEqualTo(expectedDtoCases);
+        updateOneExerciseRequestAndAssertions(uriOneExercise, dtoExercise);
+
+        given()
+                .header("Authorization", "Bearer " + authData.getToken())
+                .when()
+                .delete(uriOneExercise)
+                .then()
+                .statusCode(204);
+
+        dtoExercise.getCases().forEach(dtoExerciseCase -> {
+            var tests = exerciseTestDao.findAllByExerciseCaseId(dtoExerciseCase.getId());
+            assertThat(tests.size()).isEqualTo(0);
+        });
+        var cases = exerciseCaseDao.findAllByExerciseId(dtoExercise.getId());
+        assertThat(cases.size()).isEqualTo(0);
+
+        try {
+            exerciseDao.findById(dtoExercise.getId());
+            fail("findById should throw NotFoundException");
+        } catch (NotFoundException ignored) {
         }
+    }
+
+    private String postExerciseRequestAndAssertionsAndReturnURI(SaveExerciseRequest exerciseRequest) {
+        var uriOneExercise = given()
+                .header("Authorization", "Bearer " + authData.getToken())
+                .contentType(ContentType.JSON)
+                .body(exerciseRequest)
+                .when()
+                .post("/api/exercise/")
+                .then()
+                .statusCode(201)
+                .extract()
+                .header("Location");
+        assertThat(uriOneExercise).isNotNull();
+        assertThat(uriOneExercise).contains("/api/exercise/");
+        return uriOneExercise;
+    }
+
+    private DtoExercise getOneExerciseRequestAndAssertions(
+            DefaultExerciseValues javaDefaultValues,
+            SaveExerciseRequest exerciseRequest,
+            String uriOneExercise) throws NotFoundException, IncorrectLanguageNameException {
+        var getResponse = given()
+                .header("Authorization", "Bearer " + authData.getToken())
+                .when()
+                .get(uriOneExercise)
+                .then()
+                .statusCode(200)
+                .extract()
+                .as(DtoExercise.class);
+        assertThat(getResponse.getId()).isNotNull();
+        assertThat(getResponse.getTitle()).isEqualTo(exerciseRequest.getTitle());
+        assertThat(getResponse.getDescription()).isEqualTo(exerciseRequest.getDescription());
+        assertThat(getResponse.getUserId()).isEqualTo(authData.getUser().getId());
+
+        var foundExerciseCases = exerciseCaseDao.findAllByExerciseId(getResponse.getId());
+        var javaLanguage = languageDao.findByStrLanguage(exerciseRequest.getLanguage());
+        var expectedDtoCases = foundExerciseCases.stream()
+                .map(exerciseCase -> {
+                    assertThat(exerciseCase.getSolution()).isEqualTo(javaDefaultValues.getSolution());
+                    assertThat(exerciseCase.getStartContent()).isEqualTo(javaDefaultValues.getStartContent());
+                    var dtoSetExerciseTest = exerciseTestDao.findAllByExerciseCaseId(exerciseCase.getId())
+                            .stream()
+                            .map(exerciseTest -> {
+                                assertThat(exerciseTest.getContent()).isEqualTo(javaDefaultValues.getTestContent());
+                                return exerciseTestAdapter.domainToDto(exerciseTest);
+                            })
+                            .collect(Collectors.toSet());
+                    return exerciseCaseAdapter.domainToDto(exerciseCase)
+                            .setTests(dtoSetExerciseTest)
+                            .setLanguage(javaLanguage);
+                })
+                .collect(Collectors.toSet());
+        assertThat(getResponse.getCases()).isEqualTo(expectedDtoCases);
+        return getResponse;
+    }
+
+    private void updateOneExerciseRequestAndAssertions(String uriOneExercise, DtoExercise dtoExercise) throws NotFoundException {
+        var updateExerciseRequest = new UpdateExerciseRequest()
+                .setTitle("update title")
+                .setDescription("update description");
+        given()
+                .header("Authorization", "Bearer " + authData.getToken())
+                .contentType(ContentType.JSON)
+                .body(updateExerciseRequest)
+                .when()
+                .put(uriOneExercise)
+                .then()
+                .statusCode(204);
+        var checkUpdateExercise = exerciseDao.findById(dtoExercise.getId());
+        assertThat(checkUpdateExercise.getTitle()).isEqualTo(updateExerciseRequest.getTitle());
+        assertThat(checkUpdateExercise.getDescription()).isEqualTo(updateExerciseRequest.getDescription());
     }
 }

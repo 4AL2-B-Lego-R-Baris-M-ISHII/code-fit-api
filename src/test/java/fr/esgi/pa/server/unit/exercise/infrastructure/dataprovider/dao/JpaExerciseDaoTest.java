@@ -1,5 +1,6 @@
 package fr.esgi.pa.server.unit.exercise.infrastructure.dataprovider.dao;
 
+import fr.esgi.pa.server.common.core.exception.CommonExceptionState;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.exercise.core.entity.Exercise;
 import fr.esgi.pa.server.exercise.core.exception.IncorrectExerciseException;
@@ -7,6 +8,7 @@ import fr.esgi.pa.server.exercise.infrastructure.dataprovider.dao.JpaExerciseDao
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.entity.JpaExercise;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.mapper.ExerciseMapper;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.repository.ExerciseRepository;
+import fr.esgi.pa.server.exercise_case.core.dao.ExerciseCaseDao;
 import fr.esgi.pa.server.user.core.UserDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -34,6 +36,9 @@ class JpaExerciseDaoTest {
     @Mock
     private ExerciseRepository mockExerciseRepository;
 
+    @Mock
+    private ExerciseCaseDao mockExerciseCaseDao;
+
     private final ExerciseMapper exerciseMapper = new ExerciseMapper();
 
     private JpaExerciseDao sut;
@@ -41,7 +46,12 @@ class JpaExerciseDaoTest {
 
     @BeforeEach
     void setup() {
-        sut = new JpaExerciseDao(mockUserDao, mockExerciseRepository, exerciseMapper);
+        sut = new JpaExerciseDao(
+                mockUserDao,
+                mockExerciseCaseDao,
+                mockExerciseRepository,
+                exerciseMapper
+        );
     }
 
     @Nested
@@ -185,6 +195,40 @@ class JpaExerciseDaoTest {
             var result = sut.save(exercise);
 
             assertThat(result).isEqualTo(exercise);
+        }
+    }
+
+    @Nested
+    class DeleteExerciseTest {
+
+        private final long exerciseId = 24L;
+
+        @Test
+        void when_exercise_with_given_id_not_exists_should_check_if_exercise_with_given_id_exists() {
+            when(mockExerciseRepository.existsById(exerciseId)).thenReturn(false);
+
+            assertThatThrownBy(() -> sut.deleteById(exerciseId))
+                    .isExactlyInstanceOf(NotFoundException.class)
+                    .hasMessage("%s : Exercise with id '%d' not found", CommonExceptionState.NOT_FOUND, exerciseId);
+        }
+
+        @Test
+        void should_delete_all_cases_of_exercise_by_exerciseId() throws NotFoundException {
+            when(mockExerciseRepository.existsById(exerciseId)).thenReturn(true);
+
+            sut.deleteById(exerciseId);
+
+            verify(mockExerciseCaseDao, times(1)).deleteAllByExerciseId(exerciseId);
+        }
+
+        @Test
+        void should_delete_exercise_by_id() throws NotFoundException {
+            when(mockExerciseRepository.existsById(exerciseId)).thenReturn(true);
+            doNothing().when(mockExerciseCaseDao).deleteAllByExerciseId(exerciseId);
+
+            sut.deleteById(exerciseId);
+
+            verify(mockExerciseRepository, times(1)).deleteById(exerciseId);
         }
     }
 }
