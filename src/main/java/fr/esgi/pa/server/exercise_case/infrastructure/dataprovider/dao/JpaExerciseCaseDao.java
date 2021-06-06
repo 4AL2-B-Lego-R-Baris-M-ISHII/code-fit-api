@@ -31,4 +31,9 @@ public class JpaExerciseCaseDao implements ExerciseCaseDao {
                 .map(exerciseCaseMapper::entityToDomain)
                 .collect(Collectors.toSet());
     }
+
+    @Override
+    public void deleteAllByExerciseId(Long exerciseId) {
+
+    }
 }

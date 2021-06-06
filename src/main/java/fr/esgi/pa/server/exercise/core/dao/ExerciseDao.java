@@ -17,5 +17,5 @@ public interface ExerciseDao {
 
     Exercise save(Exercise exercise) throws IncorrectExerciseException;
 
-    void deleteById(Long exerciseId);
+    void deleteById(Long exerciseId) throws NotFoundException;
 }

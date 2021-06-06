@@ -1,5 +1,6 @@
 package fr.esgi.pa.server.exercise.infrastructure.dataprovider.dao;
 
+import fr.esgi.pa.server.common.core.exception.CommonExceptionState;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.exercise.core.dao.ExerciseDao;
 import fr.esgi.pa.server.exercise.core.entity.Exercise;
@@ -7,9 +8,11 @@ import fr.esgi.pa.server.exercise.core.exception.IncorrectExerciseException;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.entity.JpaExercise;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.mapper.ExerciseMapper;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.repository.ExerciseRepository;
+import fr.esgi.pa.server.exercise_case.core.dao.ExerciseCaseDao;
 import fr.esgi.pa.server.user.core.UserDao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -18,6 +21,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class JpaExerciseDao implements ExerciseDao {
     private final UserDao userDao;
+    private final ExerciseCaseDao exerciseCaseDao;
     private final ExerciseRepository exerciseRepository;
     private final ExerciseMapper exerciseMapper;
 
@@ -76,8 +80,16 @@ public class JpaExerciseDao implements ExerciseDao {
         }
     }
 
+    @Transactional
     @Override
-    public void deleteById(Long exerciseId) {
+    public void deleteById(Long exerciseId) throws NotFoundException {
+        if (!exerciseRepository.existsById(exerciseId)) {
+            var message = String.format("%s : Exercise with id '%d' not found", CommonExceptionState.NOT_FOUND, exerciseId);
+            throw new NotFoundException(message);
+        }
 
+        exerciseCaseDao.deleteAllByExerciseId(exerciseId);
+
+        exerciseRepository.deleteById(exerciseId);
     }
 }
