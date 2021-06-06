@@ -7,6 +7,7 @@ import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.mapper.Exerci
 import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.repository.ExerciseCaseRepository;
 import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.repository.ExerciseTestRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -37,44 +38,76 @@ class JpaExerciseTestDaoTest {
         sut = new JpaExerciseTestDao(mockExerciseCaseRepository, mockExerciseTestRepository, exerciseTestMapper);
     }
 
-    @Test
-    void when_exercise_case_not_exists_should_throw_not_found_exception() {
-        when(mockExerciseCaseRepository.existsById(exerciseCaseId)).thenReturn(false);
+    @Nested
+    class FindAllByExerciseCaseId {
+        @Test
+        void when_exercise_case_not_exists_should_throw_not_found_exception() {
+            when(mockExerciseCaseRepository.existsById(exerciseCaseId)).thenReturn(false);
 
-        assertThatThrownBy(() -> sut.findAllByExerciseCaseId(exerciseCaseId))
-                .isExactlyInstanceOf(NotFoundException.class)
-                .hasMessage("%s : exercise case with id '%d' not found", NotFoundException.class, exerciseCaseId);
+            assertThatThrownBy(() -> sut.findAllByExerciseCaseId(exerciseCaseId))
+                    .isExactlyInstanceOf(NotFoundException.class)
+                    .hasMessage("%s : exercise case with id '%d' not found", NotFoundException.class, exerciseCaseId);
+        }
+
+        @Test
+        void when_exercise_case_exists_should_find_all_exercise_tests_by_exercise_case_id() throws NotFoundException {
+            when(mockExerciseCaseRepository.existsById(exerciseCaseId)).thenReturn(true);
+
+            sut.findAllByExerciseCaseId(exerciseCaseId);
+
+            verify(mockExerciseTestRepository, times(1)).findAllByExerciseCaseId(exerciseCaseId);
+        }
+
+        @Test
+        void when_call_exercise_test_repository_to_find_all_by_exercise_case_id_should_return_set_of_exercise_test() throws NotFoundException {
+            when(mockExerciseCaseRepository.existsById(exerciseCaseId)).thenReturn(true);
+            var setExerciseTest = Set.of(
+                    new JpaExerciseTest()
+                            .setId(1L)
+                            .setExerciseCaseId(exerciseCaseId)
+                            .setContent("first content"),
+                    new JpaExerciseTest()
+                            .setId(2L)
+                            .setExerciseCaseId(exerciseCaseId)
+                            .setContent("second content")
+            );
+            when(mockExerciseTestRepository.findAllByExerciseCaseId(exerciseCaseId)).thenReturn(setExerciseTest);
+
+            var result = sut.findAllByExerciseCaseId(exerciseCaseId);
+
+            var expected = setExerciseTest
+                    .stream().map(exerciseTestMapper::entityToDomain)
+                    .collect(Collectors.toSet());
+            assertThat(result).isEqualTo(expected);
+        }
     }
 
-    @Test
-    void when_exercise_case_exists_should_find_all_exercise_tests_by_exercise_case_id() throws NotFoundException {
-        when(mockExerciseCaseRepository.existsById(exerciseCaseId)).thenReturn(true);
+    @Nested
+    class DeleteAllByExerciseCaseIdTest {
+        @Test
+        void should_find_all_test_by_exercise_case_id() {
+            sut.deleteAllByExerciseCaseId(exerciseCaseId);
 
-        sut.findAllByExerciseCaseId(exerciseCaseId);
+            verify(mockExerciseTestRepository, times(1)).findAllByExerciseCaseId(exerciseCaseId);
+        }
 
-        verify(mockExerciseTestRepository, times(1)).findAllByExerciseCaseId(exerciseCaseId);
-    }
+        @Test
+        void when_found_tests_should_delete_all_tests() {
+            var test1 = new JpaExerciseTest()
+                    .setId(5L)
+                    .setContent("content 5")
+                    .setExerciseCaseId(exerciseCaseId);
+            var test2 = new JpaExerciseTest()
+                    .setId(6L)
+                    .setContent("content 6")
+                    .setExerciseCaseId(exerciseCaseId);
+            var setTest = Set.of(test1, test2);
+            when(mockExerciseTestRepository.findAllByExerciseCaseId(exerciseCaseId))
+                    .thenReturn(setTest);
 
-    @Test
-    void when_call_exercise_test_repository_to_find_all_by_exercise_case_id_should_return_set_of_exercise_test() throws NotFoundException {
-        when(mockExerciseCaseRepository.existsById(exerciseCaseId)).thenReturn(true);
-        var setExerciseTest = Set.of(
-                new JpaExerciseTest()
-                        .setId(1L)
-                        .setExerciseCaseId(exerciseCaseId)
-                        .setContent("first content"),
-                new JpaExerciseTest()
-                        .setId(2L)
-                        .setExerciseCaseId(exerciseCaseId)
-                        .setContent("second content")
-        );
-        when(mockExerciseTestRepository.findAllByExerciseCaseId(exerciseCaseId)).thenReturn(setExerciseTest);
+            sut.deleteAllByExerciseCaseId(exerciseCaseId);
 
-        var result = sut.findAllByExerciseCaseId(exerciseCaseId);
-
-        var expected = setExerciseTest
-                .stream().map(exerciseTestMapper::entityToDomain)
-                .collect(Collectors.toSet());
-        assertThat(result).isEqualTo(expected);
+            verify(mockExerciseTestRepository, times(1)).deleteAll(setTest);
+        }
     }
 }

@@ -26,7 +26,6 @@ public class JpaExerciseTestDao implements ExerciseTestDao {
             throw new NotFoundException(message);
         }
 
-        // TODO : test integration to confirm that is work in real
         return exerciseTestRepository.findAllByExerciseCaseId(exerciseCaseId)
                 .stream()
                 .map(exerciseTestMapper::entityToDomain)
@@ -35,6 +34,8 @@ public class JpaExerciseTestDao implements ExerciseTestDao {
 
     @Override
     public void deleteAllByExerciseCaseId(Long exerciseCaseId) {
+        var setTest = exerciseTestRepository.findAllByExerciseCaseId(exerciseCaseId);
 
+        exerciseTestRepository.deleteAll(setTest);
     }
 }
