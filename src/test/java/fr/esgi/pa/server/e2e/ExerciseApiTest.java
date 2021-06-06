@@ -138,7 +138,7 @@ public class ExerciseApiTest {
                     .setTitle("simple exercise")
                     .setDescription("return the string that is in parameter")
                     .setLanguage("JAVA");
-            var postResponse = given()
+            var uriOneExercise = given()
                     .header("Authorization", "Bearer " + authData.getToken())
                     .contentType(ContentType.JSON)
                     .body(exerciseRequest)
@@ -148,13 +148,13 @@ public class ExerciseApiTest {
                     .statusCode(201)
                     .extract()
                     .header("Location");
-            assertThat(postResponse).isNotNull();
-            assertThat(postResponse).contains("/api/exercise/");
+            assertThat(uriOneExercise).isNotNull();
+            assertThat(uriOneExercise).contains("/api/exercise/");
 
             var getResponse = given()
                     .header("Authorization", "Bearer " + authData.getToken())
                     .when()
-                    .get(postResponse)
+                    .get(uriOneExercise)
                     .then()
                     .statusCode(200)
                     .extract()

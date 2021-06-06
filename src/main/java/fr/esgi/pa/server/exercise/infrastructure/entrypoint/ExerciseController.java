@@ -6,10 +6,7 @@ import fr.esgi.pa.server.exercise.core.exception.ForbiddenSaveExerciseException;
 import fr.esgi.pa.server.exercise.core.exception.IncorrectExerciseException;
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.request.SaveExerciseRequest;
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.request.UpdateExerciseRequest;
-import fr.esgi.pa.server.exercise.usecase.FindAllExercises;
-import fr.esgi.pa.server.exercise.usecase.FindOneExercise;
-import fr.esgi.pa.server.exercise.usecase.SaveOneExercise;
-import fr.esgi.pa.server.exercise.usecase.UpdateOneExercise;
+import fr.esgi.pa.server.exercise.usecase.*;
 import fr.esgi.pa.server.language.core.exception.IncorrectLanguageNameException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +34,7 @@ public class ExerciseController {
     private final FindOneExercise findOneExercise;
     private final FindAllExercises findAllExercises;
     private final UpdateOneExercise updateOneExercise;
+    private final DeleteOneExercise deleteOneExercise;
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -89,5 +87,17 @@ public class ExerciseController {
     ) throws IncorrectExerciseException, NotFoundException, ForbiddenSaveExerciseException {
         updateOneExercise.execute(Long.parseLong(userId), exerciseId, request.getTitle(), request.getDescription());
         return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> deleteOne(
+            @RequestAttribute("userId")
+            @Pattern(regexp = "^\\d+$", message = "id has to be an integer")
+            @Min(value = 1, message = "id has to be equal or more than 1") String userId,
+            @PathVariable("id")
+            @Min(value = 1, message = "id has to be equal or more than 1") Long exerciseId
+    ) {
+        return null;
     }
 }

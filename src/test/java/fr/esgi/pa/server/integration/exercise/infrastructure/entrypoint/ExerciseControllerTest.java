@@ -4,10 +4,7 @@ import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.exercise.core.dto.DtoExercise;
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.request.SaveExerciseRequest;
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.request.UpdateExerciseRequest;
-import fr.esgi.pa.server.exercise.usecase.FindAllExercises;
-import fr.esgi.pa.server.exercise.usecase.FindOneExercise;
-import fr.esgi.pa.server.exercise.usecase.SaveOneExercise;
-import fr.esgi.pa.server.exercise.usecase.UpdateOneExercise;
+import fr.esgi.pa.server.exercise.usecase.*;
 import fr.esgi.pa.server.exercise_case.core.dto.DtoExerciseCase;
 import fr.esgi.pa.server.helper.JsonHelper;
 import fr.esgi.pa.server.language.core.Language;
@@ -53,6 +50,9 @@ class ExerciseControllerTest {
 
     @MockBean
     private UpdateOneExercise mockUpdateOneExercise;
+
+    @MockBean
+    private DeleteOneExercise mockDeleteOneExercise;
 
     @DisplayName("POST /api/exercise")
     @Nested
@@ -397,7 +397,7 @@ class ExerciseControllerTest {
         }
     }
 
-    @DisplayName("PUT /api/exercise/{di}")
+    @DisplayName("PUT /api/exercise/{id}")
     @Nested
     class UpdateOneExerciseTest {
         @Test
@@ -449,6 +449,46 @@ class ExerciseControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(JsonHelper.objectToJson(updateExerciseRequest))
             ).andExpect(status().isNoContent());
+        }
+    }
+
+    @DisplayName("DELETE /api/exercise/{id}")
+    @Nested
+    class DeleteOneExerciseTest {
+        @Test
+        void when_user_not_authenticate_should_unauthorized_error_response() throws Exception {
+            mockMvc.perform(
+                    delete("/api/exercise/23")
+            ).andExpect(status().isUnauthorized());
+        }
+
+        @WithMockUser
+        @Test
+        void when_user_is_not_admin_should_send_forbidden_error_response() throws Exception {
+            mockMvc.perform(
+                    delete("/api/exercise/23")
+                            .requestAttr("userId", "5")
+            ).andExpect(status().isForbidden());
+        }
+
+        @WithMockUser(username = "toto", password = "toto", roles = "ADMIN")
+        @ParameterizedTest
+        @ValueSource(strings = {"notnumber", "1.2", "-1", "0"})
+        void when_exercise_id_not_integer_min_1_should_send_bad_request_response(String incorrectId) throws Exception {
+            mockMvc.perform(
+                    delete("/api/exercise/" + incorrectId)
+                            .requestAttr("userId", "5")
+            ).andExpect(status().isBadRequest());
+        }
+
+        @WithMockUser(username = "toto", password = "toto", roles = "ADMIN")
+        @ParameterizedTest
+        @ValueSource(strings = {"notnumber", "1.2", "-1", "0"})
+        void when_user_id_not_integer_min_1_should_send_bad_request_response(String incorrectId) throws Exception {
+            mockMvc.perform(
+                    delete("/api/exercise/56")
+                            .requestAttr("userId", incorrectId)
+            ).andExpect(status().isBadRequest());
         }
     }
 }
