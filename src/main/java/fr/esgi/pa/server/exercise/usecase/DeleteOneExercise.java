@@ -21,6 +21,7 @@ public class DeleteOneExercise {
         if (!exerciseDao.existsById(exerciseId)) {
             throwNotFoundExceptionWithMessage(exerciseId, "%s : Exercise with id '%d' not found");
         }
+        exerciseDao.deleteById(exerciseId);
     }
 
     private void throwNotFoundExceptionWithMessage(Long userId, String formatErrorMessage) throws NotFoundException {
