@@ -3,6 +3,7 @@ package fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.dao;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.repository.ExerciseRepository;
 import fr.esgi.pa.server.exercise_case.core.dao.ExerciseCaseDao;
+import fr.esgi.pa.server.exercise_case.core.dao.ExerciseTestDao;
 import fr.esgi.pa.server.exercise_case.core.entity.ExerciseCase;
 import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.mapper.ExerciseCaseMapper;
 import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.repository.ExerciseCaseRepository;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class JpaExerciseCaseDao implements ExerciseCaseDao {
+    private final ExerciseTestDao exerciseTestDao;
     private final ExerciseRepository exerciseRepository;
     private final ExerciseCaseRepository exerciseCaseRepository;
     private final ExerciseCaseMapper exerciseCaseMapper;
@@ -34,6 +36,8 @@ public class JpaExerciseCaseDao implements ExerciseCaseDao {
 
     @Override
     public void deleteAllByExerciseId(Long exerciseId) {
-
+        var setCase = exerciseCaseRepository.findAllByExerciseId(exerciseId);
+        setCase.forEach(jpaExerciseCase -> exerciseTestDao.deleteAllByExerciseCaseId(jpaExerciseCase.getId()));
+        exerciseCaseRepository.deleteAll(setCase);
     }
 }

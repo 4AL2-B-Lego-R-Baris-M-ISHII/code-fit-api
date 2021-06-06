@@ -7,4 +7,6 @@ import java.util.Set;
 
 public interface ExerciseTestDao {
     Set<ExerciseTest> findAllByExerciseCaseId(Long exerciseCaseId) throws NotFoundException;
+
+    void deleteAllByExerciseCaseId(Long exerciseCaseId);
 }

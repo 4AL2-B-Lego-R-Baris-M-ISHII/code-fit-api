@@ -32,4 +32,9 @@ public class JpaExerciseTestDao implements ExerciseTestDao {
                 .map(exerciseTestMapper::entityToDomain)
                 .collect(Collectors.toSet());
     }
+
+    @Override
+    public void deleteAllByExerciseCaseId(Long exerciseCaseId) {
+
+    }
 }
