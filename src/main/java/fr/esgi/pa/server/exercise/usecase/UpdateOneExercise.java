@@ -1,5 +1,6 @@
 package fr.esgi.pa.server.exercise.usecase;
 
+
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.exercise.core.dao.ExerciseDao;
 import fr.esgi.pa.server.exercise.core.exception.ForbiddenSaveExerciseException;

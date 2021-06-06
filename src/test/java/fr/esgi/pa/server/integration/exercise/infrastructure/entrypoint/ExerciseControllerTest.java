@@ -436,8 +436,19 @@ class ExerciseControllerTest {
             ).andExpect(status().isBadRequest());
         }
 
-        // TODO : complete after update one exercise usecase done
-        // TODO : exception check
-        // TODO : success response
+        @WithMockUser(username = "toto", password = "toto", roles = "ADMIN")
+        @Test
+        void when_request_correct_and_usecase_done_should_send_success_not_content_response() throws Exception {
+            var updateExerciseRequest = new UpdateExerciseRequest()
+                    .setTitle("update title")
+                    .setDescription("update description");
+            doNothing().when(mockUpdateOneExercise).execute(5L, 1L, "update title", "update description");
+            mockMvc.perform(
+                    put("/api/exercise/1")
+                            .requestAttr("userId", "5")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(JsonHelper.objectToJson(updateExerciseRequest))
+            ).andExpect(status().isNoContent());
+        }
     }
 }
