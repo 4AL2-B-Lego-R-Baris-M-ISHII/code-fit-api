@@ -3,6 +3,7 @@ package fr.esgi.pa.server.exercise.infrastructure.dataprovider.dao;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.exercise.core.dao.ExerciseDao;
 import fr.esgi.pa.server.exercise.core.entity.Exercise;
+import fr.esgi.pa.server.exercise.core.exception.IncorrectExerciseException;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.entity.JpaExercise;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.mapper.ExerciseMapper;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.repository.ExerciseRepository;
@@ -47,5 +48,31 @@ public class JpaExerciseDao implements ExerciseDao {
         return exercises.stream()
                 .map(exerciseMapper::entityToDomain)
                 .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Boolean existsById(Long exerciseId) {
+        return exerciseRepository.existsById(exerciseId);
+    }
+
+    @Override
+    public Exercise save(Exercise exercise) throws IncorrectExerciseException {
+        if (exercise == null) {
+            var message = String.format("%s : Exercise is null", IllegalArgumentException.class);
+            throw new IllegalArgumentException(message);
+        }
+        checkExercisePropertyNotNull(exercise.getTitle(), "%s : Exercise title property is null");
+        checkExercisePropertyNotNull(exercise.getDescription(), "%s : Exercise description property is null");
+
+        var exerciseToSave = exerciseMapper.domainToEntity(exercise);
+        var savedExercise = exerciseRepository.save(exerciseToSave);
+        return exerciseMapper.entityToDomain(savedExercise);
+    }
+
+    private void checkExercisePropertyNotNull(String stringProperty, String formatErrorMessage) throws IncorrectExerciseException {
+        if (stringProperty == null) {
+            var message = String.format(formatErrorMessage, IncorrectExerciseException.class);
+            throw new IncorrectExerciseException(message);
+        }
     }
 }

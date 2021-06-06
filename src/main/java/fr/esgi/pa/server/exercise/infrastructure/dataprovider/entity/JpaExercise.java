@@ -21,7 +21,7 @@ public class JpaExercise {
     private String title;
 
     @NotBlank
-    @Size(max = 100)
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @NotNull
