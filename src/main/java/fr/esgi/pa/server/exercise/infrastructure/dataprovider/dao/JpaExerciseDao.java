@@ -75,4 +75,9 @@ public class JpaExerciseDao implements ExerciseDao {
             throw new IncorrectExerciseException(message);
         }
     }
+
+    @Override
+    public void deleteById(Long exerciseId) {
+
+    }
 }

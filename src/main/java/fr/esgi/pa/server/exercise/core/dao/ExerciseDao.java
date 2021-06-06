@@ -16,4 +16,6 @@ public interface ExerciseDao {
     Boolean existsById(Long exerciseId);
 
     Exercise save(Exercise exercise) throws IncorrectExerciseException;
+
+    void deleteById(Long exerciseId);
 }
