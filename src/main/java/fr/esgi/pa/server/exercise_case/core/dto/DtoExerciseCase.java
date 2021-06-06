@@ -1,4 +1,4 @@
-package fr.esgi.pa.server.exercise.core.dto;
+package fr.esgi.pa.server.exercise_case.core.dto;
 
 import fr.esgi.pa.server.language.core.Language;
 import lombok.Data;

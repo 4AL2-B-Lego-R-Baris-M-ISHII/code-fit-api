@@ -1,8 +1,8 @@
-package fr.esgi.pa.server.exercise.infrastructure.entrypoint.adapter;
+package fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.adapter;
 
 import fr.esgi.pa.server.common.core.mapper.MapperDomainToDto;
-import fr.esgi.pa.server.exercise.core.dto.DtoExerciseCase;
-import fr.esgi.pa.server.exercise.core.entity.ExerciseCase;
+import fr.esgi.pa.server.exercise_case.core.dto.DtoExerciseCase;
+import fr.esgi.pa.server.exercise_case.core.entity.ExerciseCase;
 import org.springframework.stereotype.Component;
 
 @Component

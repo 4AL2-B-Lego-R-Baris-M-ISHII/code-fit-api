@@ -1,13 +1,13 @@
 package fr.esgi.pa.server.e2e;
 
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
-import fr.esgi.pa.server.exercise.core.dao.ExerciseCaseDao;
-import fr.esgi.pa.server.exercise.core.dao.ExerciseTestDao;
 import fr.esgi.pa.server.exercise.core.dto.DtoExercise;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.util.DefaultExerciseHelper;
-import fr.esgi.pa.server.exercise.infrastructure.entrypoint.adapter.ExerciseCaseAdapter;
-import fr.esgi.pa.server.exercise.infrastructure.entrypoint.adapter.ExerciseTestAdapter;
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.request.SaveExerciseRequest;
+import fr.esgi.pa.server.exercise_case.core.dao.ExerciseCaseDao;
+import fr.esgi.pa.server.exercise_case.core.dao.ExerciseTestDao;
+import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.adapter.ExerciseCaseAdapter;
+import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.adapter.ExerciseTestAdapter;
 import fr.esgi.pa.server.helper.AuthDataHelper;
 import fr.esgi.pa.server.helper.AuthHelper;
 import fr.esgi.pa.server.language.core.LanguageDao;

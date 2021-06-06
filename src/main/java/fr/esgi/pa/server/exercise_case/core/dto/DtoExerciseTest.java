@@ -1,12 +1,11 @@
-package fr.esgi.pa.server.exercise.core.entity;
+package fr.esgi.pa.server.exercise_case.core.dto;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 @Data
 @Accessors(chain = true)
-public class ExerciseTest {
+public class DtoExerciseTest {
     private Long id;
     private String content;
-    private Long exerciseCaseId;
 }

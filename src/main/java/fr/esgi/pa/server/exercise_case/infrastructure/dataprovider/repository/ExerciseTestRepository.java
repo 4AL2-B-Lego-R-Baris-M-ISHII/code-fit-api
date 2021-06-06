@@ -1,6 +1,6 @@
-package fr.esgi.pa.server.exercise.infrastructure.dataprovider.repository;
+package fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.repository;
 
-import fr.esgi.pa.server.exercise.infrastructure.dataprovider.entity.JpaExerciseTest;
+import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.entity.JpaExerciseTest;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Set;

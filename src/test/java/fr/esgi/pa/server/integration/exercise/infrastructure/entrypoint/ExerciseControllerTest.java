@@ -2,13 +2,13 @@ package fr.esgi.pa.server.integration.exercise.infrastructure.entrypoint;
 
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.exercise.core.dto.DtoExercise;
-import fr.esgi.pa.server.exercise.core.dto.DtoExerciseCase;
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.request.SaveExerciseRequest;
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.request.UpdateExerciseRequest;
 import fr.esgi.pa.server.exercise.usecase.FindAllExercises;
 import fr.esgi.pa.server.exercise.usecase.FindOneExercise;
 import fr.esgi.pa.server.exercise.usecase.SaveOneExercise;
 import fr.esgi.pa.server.exercise.usecase.UpdateOneExercise;
+import fr.esgi.pa.server.exercise_case.core.dto.DtoExerciseCase;
 import fr.esgi.pa.server.helper.JsonHelper;
 import fr.esgi.pa.server.language.core.Language;
 import fr.esgi.pa.server.language.core.LanguageName;

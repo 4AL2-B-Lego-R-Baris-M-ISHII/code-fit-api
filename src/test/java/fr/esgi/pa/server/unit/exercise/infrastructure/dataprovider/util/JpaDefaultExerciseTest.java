@@ -1,14 +1,14 @@
 package fr.esgi.pa.server.unit.exercise.infrastructure.dataprovider.util;
 
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.entity.JpaExercise;
-import fr.esgi.pa.server.exercise.infrastructure.dataprovider.entity.JpaExerciseCase;
-import fr.esgi.pa.server.exercise.infrastructure.dataprovider.entity.JpaExerciseTest;
-import fr.esgi.pa.server.exercise.infrastructure.dataprovider.repository.ExerciseCaseRepository;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.repository.ExerciseRepository;
-import fr.esgi.pa.server.exercise.infrastructure.dataprovider.repository.ExerciseTestRepository;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.util.DefaultExerciseHelper;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.util.DefaultExerciseValues;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.util.JpaDefaultExercise;
+import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.entity.JpaExerciseCase;
+import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.entity.JpaExerciseTest;
+import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.repository.ExerciseCaseRepository;
+import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.repository.ExerciseTestRepository;
 import fr.esgi.pa.server.language.core.Language;
 import fr.esgi.pa.server.language.core.LanguageName;
 import org.junit.jupiter.api.BeforeEach;

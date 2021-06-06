@@ -1,11 +1,11 @@
-package fr.esgi.pa.server.unit.exercise.infrastructure.dataprovider.dao;
+package fr.esgi.pa.server.unit.exercise_case.infrastructure.dataprovider.dao;
 
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
-import fr.esgi.pa.server.exercise.infrastructure.dataprovider.dao.JpaExerciseCaseDao;
-import fr.esgi.pa.server.exercise.infrastructure.dataprovider.entity.JpaExerciseCase;
-import fr.esgi.pa.server.exercise.infrastructure.dataprovider.mapper.ExerciseCaseMapper;
-import fr.esgi.pa.server.exercise.infrastructure.dataprovider.repository.ExerciseCaseRepository;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.repository.ExerciseRepository;
+import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.dao.JpaExerciseCaseDao;
+import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.entity.JpaExerciseCase;
+import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.mapper.ExerciseCaseMapper;
+import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.repository.ExerciseCaseRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

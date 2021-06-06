@@ -2,11 +2,11 @@ package fr.esgi.pa.server.exercise.infrastructure.dataprovider.util;
 
 import fr.esgi.pa.server.exercise.core.util.DefaultExercise;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.entity.JpaExercise;
-import fr.esgi.pa.server.exercise.infrastructure.dataprovider.entity.JpaExerciseCase;
-import fr.esgi.pa.server.exercise.infrastructure.dataprovider.entity.JpaExerciseTest;
-import fr.esgi.pa.server.exercise.infrastructure.dataprovider.repository.ExerciseCaseRepository;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.repository.ExerciseRepository;
-import fr.esgi.pa.server.exercise.infrastructure.dataprovider.repository.ExerciseTestRepository;
+import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.entity.JpaExerciseCase;
+import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.entity.JpaExerciseTest;
+import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.repository.ExerciseCaseRepository;
+import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.repository.ExerciseTestRepository;
 import fr.esgi.pa.server.language.core.Language;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

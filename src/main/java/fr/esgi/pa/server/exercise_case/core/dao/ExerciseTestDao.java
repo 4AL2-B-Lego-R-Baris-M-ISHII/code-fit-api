@@ -1,7 +1,7 @@
-package fr.esgi.pa.server.exercise.core.dao;
+package fr.esgi.pa.server.exercise_case.core.dao;
 
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
-import fr.esgi.pa.server.exercise.core.entity.ExerciseTest;
+import fr.esgi.pa.server.exercise_case.core.entity.ExerciseTest;
 
 import java.util.Set;
 

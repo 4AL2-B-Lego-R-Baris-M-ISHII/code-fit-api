@@ -1,14 +1,14 @@
 package fr.esgi.pa.server.unit.exercise.usecase;
 
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
-import fr.esgi.pa.server.exercise.core.dao.ExerciseCaseDao;
 import fr.esgi.pa.server.exercise.core.dao.ExerciseDao;
 import fr.esgi.pa.server.exercise.core.dto.DtoExercise;
 import fr.esgi.pa.server.exercise.core.entity.Exercise;
-import fr.esgi.pa.server.exercise.core.entity.ExerciseCase;
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.adapter.ExerciseAdapter;
-import fr.esgi.pa.server.exercise.infrastructure.entrypoint.adapter.ExerciseCaseAdapter;
 import fr.esgi.pa.server.exercise.usecase.FindAllExercises;
+import fr.esgi.pa.server.exercise_case.core.dao.ExerciseCaseDao;
+import fr.esgi.pa.server.exercise_case.core.entity.ExerciseCase;
+import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.adapter.ExerciseCaseAdapter;
 import fr.esgi.pa.server.language.core.Language;
 import fr.esgi.pa.server.language.core.LanguageDao;
 import fr.esgi.pa.server.language.core.LanguageName;

@@ -1,4 +1,4 @@
-package fr.esgi.pa.server.exercise.core.entity;
+package fr.esgi.pa.server.exercise_case.core.entity;
 
 import lombok.Data;
 import lombok.experimental.Accessors;

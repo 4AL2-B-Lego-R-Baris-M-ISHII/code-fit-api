@@ -1,4 +1,4 @@
-package fr.esgi.pa.server.exercise.infrastructure.dataprovider.entity;
+package fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;

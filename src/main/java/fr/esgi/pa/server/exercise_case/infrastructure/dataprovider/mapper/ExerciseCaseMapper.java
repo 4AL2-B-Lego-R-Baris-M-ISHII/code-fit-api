@@ -1,8 +1,8 @@
-package fr.esgi.pa.server.exercise.infrastructure.dataprovider.mapper;
+package fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.mapper;
 
 import fr.esgi.pa.server.common.core.mapper.MapperEntityToDomain;
-import fr.esgi.pa.server.exercise.core.entity.ExerciseCase;
-import fr.esgi.pa.server.exercise.infrastructure.dataprovider.entity.JpaExerciseCase;
+import fr.esgi.pa.server.exercise_case.core.entity.ExerciseCase;
+import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.entity.JpaExerciseCase;
 import org.springframework.stereotype.Component;
 
 @Component

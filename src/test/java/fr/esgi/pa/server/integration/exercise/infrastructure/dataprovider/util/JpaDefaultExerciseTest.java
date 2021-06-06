@@ -1,17 +1,20 @@
 package fr.esgi.pa.server.integration.exercise.infrastructure.dataprovider.util;
 
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
-import fr.esgi.pa.server.exercise.infrastructure.dataprovider.repository.ExerciseCaseRepository;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.repository.ExerciseRepository;
-import fr.esgi.pa.server.exercise.infrastructure.dataprovider.repository.ExerciseTestRepository;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.util.JpaDefaultExercise;
+import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.repository.ExerciseCaseRepository;
+import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.repository.ExerciseTestRepository;
 import fr.esgi.pa.server.language.core.LanguageDao;
 import fr.esgi.pa.server.language.core.LanguageName;
 import fr.esgi.pa.server.role.core.RoleDao;
 import fr.esgi.pa.server.role.core.RoleName;
 import fr.esgi.pa.server.user.core.User;
 import fr.esgi.pa.server.user.core.UserDao;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 

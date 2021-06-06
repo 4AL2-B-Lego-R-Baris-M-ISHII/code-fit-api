@@ -1,11 +1,11 @@
-package fr.esgi.pa.server.exercise.infrastructure.dataprovider.dao;
+package fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.dao;
 
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
-import fr.esgi.pa.server.exercise.core.dao.ExerciseCaseDao;
-import fr.esgi.pa.server.exercise.core.entity.ExerciseCase;
-import fr.esgi.pa.server.exercise.infrastructure.dataprovider.mapper.ExerciseCaseMapper;
-import fr.esgi.pa.server.exercise.infrastructure.dataprovider.repository.ExerciseCaseRepository;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.repository.ExerciseRepository;
+import fr.esgi.pa.server.exercise_case.core.dao.ExerciseCaseDao;
+import fr.esgi.pa.server.exercise_case.core.entity.ExerciseCase;
+import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.mapper.ExerciseCaseMapper;
+import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.repository.ExerciseCaseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
