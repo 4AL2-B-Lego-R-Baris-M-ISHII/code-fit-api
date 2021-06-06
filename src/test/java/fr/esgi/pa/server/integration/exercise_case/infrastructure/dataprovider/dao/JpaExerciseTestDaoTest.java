@@ -10,12 +10,14 @@ import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.repository.Ex
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+@DirtiesContext
 @SpringBootTest
 class JpaExerciseTestDaoTest {
 

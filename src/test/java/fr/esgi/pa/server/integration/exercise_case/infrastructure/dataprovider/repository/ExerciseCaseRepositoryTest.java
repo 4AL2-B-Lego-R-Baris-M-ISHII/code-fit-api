@@ -8,11 +8,13 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+@DirtiesContext
 @SpringBootTest
 class ExerciseCaseRepositoryTest {
 
@@ -29,13 +31,22 @@ class ExerciseCaseRepositoryTest {
             var exerciseToSave = new JpaExercise().setUserId(3L).setTitle("title").setDescription("description");
             var savedExercise = exerciseRepository.save(exerciseToSave);
 
+            var otherExerciseToSave = new JpaExercise().setUserId(3L).setTitle("title").setDescription("description");
+            sut.saveAll(Set.of(new JpaExerciseCase()
+                    .setExerciseId(otherExerciseToSave.getId())
+                    .setIsValid(false)
+                    .setSolution("other solution exercise case repository")
+                    .setLanguageId(6L)
+                    .setStartContent("start other content exercise case repository")
+            ));
+
             var setCaseToSave = Set.of(
                     new JpaExerciseCase()
                             .setExerciseId(savedExercise.getId())
                             .setIsValid(false)
-                            .setSolution("solution")
+                            .setSolution("solution exercise case repository")
                             .setLanguageId(5L)
-                            .setStartContent("start content")
+                            .setStartContent("start content exercise case repository")
             );
 
             var savedSetCase = sut.saveAll(setCaseToSave);
