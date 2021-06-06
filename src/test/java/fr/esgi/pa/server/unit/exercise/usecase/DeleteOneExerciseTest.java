@@ -42,7 +42,7 @@ class DeleteOneExerciseTest {
     }
 
     @Test
-    void when_exercise_not_found_should_throw_NotFoundException() throws NotFoundException {
+    void when_exercise_not_found_should_throw_NotFoundException() {
         when(mockUserDao.existsById(userId)).thenReturn(true);
         when(mockExerciseDao.existsById(exerciseId)).thenReturn(false);
 

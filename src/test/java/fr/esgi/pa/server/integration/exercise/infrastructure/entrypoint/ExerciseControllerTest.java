@@ -449,6 +449,8 @@ class ExerciseControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(JsonHelper.objectToJson(updateExerciseRequest))
             ).andExpect(status().isNoContent());
+
+            verify(mockUpdateOneExercise, times(1)).execute(5L, 1L, "update title", "update description");
         }
     }
 
@@ -489,6 +491,19 @@ class ExerciseControllerTest {
                     delete("/api/exercise/56")
                             .requestAttr("userId", incorrectId)
             ).andExpect(status().isBadRequest());
+        }
+
+        @WithMockUser(username = "toto", password = "toto", roles = "ADMIN")
+        @Test
+        void when_usecase_deleteOneExercise_call_and_success_should_send_success_no_content_response() throws Exception {
+            doNothing().when(mockDeleteOneExercise).execute(5L, 56L);
+
+            mockMvc.perform(
+                    delete("/api/exercise/56")
+                            .requestAttr("userId", 5)
+            ).andExpect(status().isNoContent());
+
+            verify(mockDeleteOneExercise, times(1)).execute(5L, 56L);
         }
     }
 }

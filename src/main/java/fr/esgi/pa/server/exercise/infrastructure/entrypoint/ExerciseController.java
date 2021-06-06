@@ -97,7 +97,8 @@ public class ExerciseController {
             @Min(value = 1, message = "id has to be equal or more than 1") String userId,
             @PathVariable("id")
             @Min(value = 1, message = "id has to be equal or more than 1") Long exerciseId
-    ) {
-        return null;
+    ) throws NotFoundException {
+        deleteOneExercise.execute(Long.parseLong(userId), exerciseId);
+        return ResponseEntity.noContent().build();
     }
 }
