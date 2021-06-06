@@ -71,4 +71,47 @@ class JpaExerciseTestDaoTest {
 
         assertThat(result).isEqualTo(expected);
     }
+
+    @Test
+    void deleteAllByExerciseCaseId_should_deleteAllExerciseTests_with_exerciseCaseId() {
+        var otherExerciseCaseToSave = new JpaExerciseCase()
+                .setExerciseId(4L)
+                .setIsValid(false)
+                .setLanguageId(7L)
+                .setSolution("other solution")
+                .setStartContent("other start content");
+        var savedOtherExerciseCase = exerciseCaseRepository.save(otherExerciseCaseToSave);
+        var setOtherExerciseTestToSave = new JpaExerciseTest()
+                .setContent("other content")
+                .setExerciseCaseId(savedOtherExerciseCase.getId());
+        exerciseTestRepository.save(setOtherExerciseTestToSave);
+
+        var exerciseCaseToSave = new JpaExerciseCase()
+                .setExerciseId(4L)
+                .setIsValid(false)
+                .setSolution("solution")
+                .setLanguageId(7L)
+                .setStartContent("start content");
+        var savedExerciseCase = exerciseCaseRepository.save(exerciseCaseToSave);
+
+        var setExerciseTestToSave = Set.of(
+                new JpaExerciseTest()
+                        .setContent("content 1")
+                        .setExerciseCaseId(savedExerciseCase.getId()),
+                new JpaExerciseTest()
+                        .setContent("content 2")
+                        .setExerciseCaseId(savedExerciseCase.getId())
+        );
+        exerciseTestRepository.saveAll(setExerciseTestToSave);
+
+        var checkSavedTests = exerciseTestRepository.findAllByExerciseCaseId(savedExerciseCase.getId());
+        assertThat(checkSavedTests).isNotNull();
+        assertThat(checkSavedTests.size()).isEqualTo(setExerciseTestToSave.size());
+
+        sut.deleteAllByExerciseCaseId(savedExerciseCase.getId());
+
+        var checkDeleteTests = exerciseTestRepository.findAllByExerciseCaseId(savedExerciseCase.getId());
+        assertThat(checkDeleteTests).isNotNull();
+        assertThat(checkDeleteTests.size()).isEqualTo(0);
+    }
 }

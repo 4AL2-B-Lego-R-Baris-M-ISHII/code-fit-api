@@ -35,7 +35,6 @@ public class JpaExerciseTestDao implements ExerciseTestDao {
     @Override
     public void deleteAllByExerciseCaseId(Long exerciseCaseId) {
         var setTest = exerciseTestRepository.findAllByExerciseCaseId(exerciseCaseId);
-
         exerciseTestRepository.deleteAll(setTest);
     }
 }
