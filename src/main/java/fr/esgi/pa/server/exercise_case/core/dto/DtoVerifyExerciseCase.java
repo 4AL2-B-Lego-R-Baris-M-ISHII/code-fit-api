@@ -4,12 +4,11 @@ import fr.esgi.pa.server.code.core.Code;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @Data
 @Accessors(chain = true)
 public class DtoVerifyExerciseCase {
-    Set<Code> setCode;
+    List<Code> codeList;
     Boolean isExerciseCaseValid;
 }

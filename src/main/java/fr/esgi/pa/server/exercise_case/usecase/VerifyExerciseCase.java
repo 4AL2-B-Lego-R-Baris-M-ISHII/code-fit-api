@@ -12,7 +12,7 @@ import fr.esgi.pa.server.language.core.LanguageDao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 
 @Service
 @RequiredArgsConstructor
@@ -29,17 +29,18 @@ public class VerifyExerciseCase {
 
         var compiler = compilerRepository.findByLanguage(foundLanguage);
         var result = new DtoVerifyExerciseCase();
-        var setCode = new HashSet<Code>();
+        var codeList = new ArrayList<Code>();
         var isValid = true;
         for (ExerciseTest exerciseTest : setTest) {
-            var resultCode = compiler.compile(exerciseTest.getContent(), foundLanguage);
+            var contentToCompile = exerciseCase.getSolution() + System.getProperty("line.separator") + exerciseTest.getContent();
+            var resultCode = compiler.compile(contentToCompile, foundLanguage);
             if (resultCode.getCodeState() != CodeState.SUCCESS) {
                 isValid = false;
             }
-            setCode.add(resultCode);
+            codeList.add(resultCode);
         }
         result.setIsExerciseCaseValid(isValid);
-        result.setSetCode(setCode);
+        result.setCodeList(codeList);
         return result;
     }
 }
