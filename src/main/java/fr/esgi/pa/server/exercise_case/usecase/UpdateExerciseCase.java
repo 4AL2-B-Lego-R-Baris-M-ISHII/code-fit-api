@@ -37,6 +37,7 @@ public class UpdateExerciseCase {
         foundExerciseCase.setStartContent(startContent);
         checkSetTestIfContainGivenExerciseCaseId(exerciseCaseId, setTest);
 
+        exerciseTestDao.deleteAllByExerciseCaseId(foundExerciseCase.getId());
         exerciseTestDao.saveAll(setTest);
         exerciseCaseDao.saveOne(foundExerciseCase);
     }

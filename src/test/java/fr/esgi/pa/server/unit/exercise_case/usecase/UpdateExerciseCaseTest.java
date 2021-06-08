@@ -198,6 +198,40 @@ class UpdateExerciseCaseTest {
     }
 
     @Test
+    void when_check_set_test_should_delete_all_tests_by_exerciseCaseId() throws NotFoundException, ForbiddenException {
+        when(mockUserDao.existsById(userId)).thenReturn(true);
+        var foundExerciseCase = new ExerciseCase()
+                .setId(exerciseCaseId)
+                .setExerciseId(exerciseId)
+                .setLanguageId(languageId)
+                .setIsValid(false)
+                .setSolution("old solution")
+                .setStartContent("old start content");
+        assertThat(foundExerciseCase.getSolution()).isNotEqualTo(solution);
+        assertThat(foundExerciseCase.getStartContent()).isNotEqualTo(startContent);
+        when(mockExerciseCaseDao.findById(exerciseCaseId)).thenReturn(foundExerciseCase);
+        var foundExercise = new Exercise()
+                .setId(exerciseId)
+                .setUserId(userId)
+                .setTitle("title exercise")
+                .setDescription("description exercise");
+        when(mockExerciseDao.findById(exerciseId)).thenReturn(foundExercise);
+        var setTest = Set.of(
+                new ExerciseTest()
+                        .setId(2L)
+                        .setExerciseCaseId(exerciseCaseId)
+                        .setContent("content test 2"),
+                new ExerciseTest()
+                        .setExerciseCaseId(exerciseCaseId)
+                        .setContent("new content test")
+        );
+
+        sut.execute(userId, exerciseCaseId, solution, startContent, setTest);
+
+        verify(mockExerciseTestDao, times(1)).deleteAllByExerciseCaseId(foundExerciseCase.getId());
+    }
+
+    @Test
     void when_set_test_correct_should_save_all_tests() throws NotFoundException, ForbiddenException {
         when(mockUserDao.existsById(userId)).thenReturn(true);
         var foundExerciseCase = new ExerciseCase()
@@ -225,6 +259,7 @@ class UpdateExerciseCaseTest {
                         .setExerciseCaseId(exerciseCaseId)
                         .setContent("new content test")
         );
+        doNothing().when(mockExerciseTestDao).deleteAllByExerciseCaseId(foundExerciseCase.getId());
 
         sut.execute(userId, exerciseCaseId, solution, startContent, setTest);
 
@@ -259,6 +294,7 @@ class UpdateExerciseCaseTest {
                         .setExerciseCaseId(exerciseCaseId)
                         .setContent("new content test")
         );
+        doNothing().when(mockExerciseTestDao).deleteAllByExerciseCaseId(foundExerciseCase.getId());
         when(mockExerciseTestDao.saveAll(setTest)).thenReturn(setTest);
 
         sut.execute(userId, exerciseCaseId, solution, startContent, setTest);
@@ -272,4 +308,5 @@ class UpdateExerciseCaseTest {
                 .setStartContent(startContent);
         verify(mockExerciseCaseDao, times(1)).saveOne(expectedSave);
     }
+
 }
