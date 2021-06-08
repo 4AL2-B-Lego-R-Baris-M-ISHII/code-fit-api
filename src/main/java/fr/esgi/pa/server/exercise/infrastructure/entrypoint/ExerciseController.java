@@ -2,7 +2,7 @@ package fr.esgi.pa.server.exercise.infrastructure.entrypoint;
 
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.exercise.core.dto.DtoExercise;
-import fr.esgi.pa.server.exercise.core.exception.ForbiddenSaveExerciseException;
+import fr.esgi.pa.server.exercise.core.exception.ForbiddenException;
 import fr.esgi.pa.server.exercise.core.exception.IncorrectExerciseException;
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.request.SaveExerciseRequest;
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.request.UpdateExerciseRequest;
@@ -84,7 +84,7 @@ public class ExerciseController {
             @PathVariable("id")
             @Min(value = 1, message = "id has to be equal or more than 1") Long exerciseId,
             @Valid @RequestBody UpdateExerciseRequest request
-    ) throws IncorrectExerciseException, NotFoundException, ForbiddenSaveExerciseException {
+    ) throws IncorrectExerciseException, NotFoundException, ForbiddenException {
         updateOneExercise.execute(Long.parseLong(userId), exerciseId, request.getTitle(), request.getDescription());
         return ResponseEntity.noContent().build();
     }

@@ -3,7 +3,7 @@ package fr.esgi.pa.server.unit.exercise.usecase;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.exercise.core.dao.ExerciseDao;
 import fr.esgi.pa.server.exercise.core.entity.Exercise;
-import fr.esgi.pa.server.exercise.core.exception.ForbiddenSaveExerciseException;
+import fr.esgi.pa.server.exercise.core.exception.ForbiddenException;
 import fr.esgi.pa.server.exercise.core.exception.IncorrectExerciseException;
 import fr.esgi.pa.server.exercise.usecase.UpdateOneExercise;
 import fr.esgi.pa.server.user.core.UserDao;
@@ -44,7 +44,7 @@ class UpdateOneExerciseTest {
     }
 
     @Test
-    void when_found_exercise_and_param_title_and_description_not_null_should_update_with_new_params() throws NotFoundException, IncorrectExerciseException, ForbiddenSaveExerciseException {
+    void when_found_exercise_and_param_title_and_description_not_null_should_update_with_new_params() throws NotFoundException, IncorrectExerciseException, ForbiddenException {
         when(mockUserDao.existsById(userId)).thenReturn(true);
         var foundExercise = new Exercise()
                 .setId(exerciseId)
@@ -64,7 +64,7 @@ class UpdateOneExerciseTest {
     }
 
     @Test
-    void when_found_exercise_and_param_title_null_should_not_update_title() throws NotFoundException, IncorrectExerciseException, ForbiddenSaveExerciseException {
+    void when_found_exercise_and_param_title_null_should_not_update_title() throws NotFoundException, IncorrectExerciseException, ForbiddenException {
         when(mockUserDao.existsById(userId)).thenReturn(true);
         var foundExercise = new Exercise()
                 .setId(exerciseId)
@@ -84,7 +84,7 @@ class UpdateOneExerciseTest {
     }
 
     @Test
-    void when_found_exercise_and_param_description_null_should_not_update_description() throws NotFoundException, IncorrectExerciseException, ForbiddenSaveExerciseException {
+    void when_found_exercise_and_param_description_null_should_not_update_description() throws NotFoundException, IncorrectExerciseException, ForbiddenException {
         when(mockUserDao.existsById(userId)).thenReturn(true);
         var foundExercise = new Exercise()
                 .setId(exerciseId)
@@ -118,7 +118,7 @@ class UpdateOneExerciseTest {
         assertThat(otherUserId).isNotEqualTo(userId);
 
         assertThatThrownBy(() -> sut.execute(otherUserId, exerciseId, "new title", null))
-                .isExactlyInstanceOf(ForbiddenSaveExerciseException.class)
-                .hasMessage("%s : Exercise can be update by only the creator", ForbiddenSaveExerciseException.class);
+                .isExactlyInstanceOf(ForbiddenException.class)
+                .hasMessage("%s : Exercise can be update by only the creator", ForbiddenException.class);
     }
 }

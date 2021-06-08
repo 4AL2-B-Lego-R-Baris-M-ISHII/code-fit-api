@@ -8,4 +8,6 @@ public interface ExerciseTestDao {
     Set<ExerciseTest> findAllByExerciseCaseId(Long exerciseCaseId);
 
     void deleteAllByExerciseCaseId(Long exerciseCaseId);
+
+    Set<ExerciseTest> saveAll(Set<ExerciseTest> setTest);
 }

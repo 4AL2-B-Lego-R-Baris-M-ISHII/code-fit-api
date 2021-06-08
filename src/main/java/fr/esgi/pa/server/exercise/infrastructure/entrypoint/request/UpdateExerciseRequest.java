@@ -8,7 +8,7 @@ import javax.validation.constraints.Size;
 @Data
 @Accessors(chain = true)
 public class UpdateExerciseRequest {
-    @Size(max = 30)
+    @Size(max = 60000)
     private String title;
 
     @Size(max = 100)
