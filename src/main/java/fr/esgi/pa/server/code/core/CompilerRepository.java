@@ -1,6 +1,5 @@
-package fr.esgi.pa.server.code.infrastructure.device.repository;
+package fr.esgi.pa.server.code.core;
 
-import fr.esgi.pa.server.code.core.Compiler;
 import fr.esgi.pa.server.language.core.Language;
 
 public interface CompilerRepository {
