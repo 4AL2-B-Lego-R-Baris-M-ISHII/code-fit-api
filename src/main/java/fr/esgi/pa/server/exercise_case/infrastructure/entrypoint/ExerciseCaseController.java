@@ -5,6 +5,7 @@ import fr.esgi.pa.server.exercise.core.exception.ForbiddenException;
 import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.adapter.ExerciseTestAdapter;
 import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.request.UpdateExerciseCaseRequest;
 import fr.esgi.pa.server.exercise_case.usecase.UpdateExerciseCase;
+import fr.esgi.pa.server.exercise_case.usecase.VerifyExerciseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,6 +18,7 @@ import javax.validation.constraints.Pattern;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.ResponseEntity.noContent;
+import static org.springframework.http.ResponseEntity.ok;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -25,6 +27,7 @@ import static org.springframework.http.ResponseEntity.noContent;
 @RequestMapping("/api/exercise-case")
 public class ExerciseCaseController {
     private final UpdateExerciseCase updateExerciseCase;
+    private final VerifyExerciseCase verifyExerciseCase;
     private final ExerciseTestAdapter exerciseTestAdapter;
 
     @PutMapping("{id}")
@@ -48,6 +51,11 @@ public class ExerciseCaseController {
                 request.getStartContent(),
                 setTest
         );
-        return noContent().build();
+        if (!request.getVerifyCode()) {
+            return noContent().build();
+        }
+
+        var result = verifyExerciseCase.execute(exerciseCaseId);
+        return ok(result);
     }
 }
