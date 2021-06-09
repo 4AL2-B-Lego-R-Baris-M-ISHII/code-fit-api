@@ -18,4 +18,6 @@ public class UpdateExerciseCaseRequest {
 
     @NotEmpty
     private Set<UpdateExerciseTestRequest> tests;
+
+    private Boolean verifyCode;
 }

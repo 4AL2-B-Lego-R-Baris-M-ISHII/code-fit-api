@@ -6,6 +6,7 @@ import fr.esgi.pa.server.exercise.core.dao.ExerciseDao;
 import fr.esgi.pa.server.exercise.core.exception.ForbiddenException;
 import fr.esgi.pa.server.exercise_case.core.dao.ExerciseCaseDao;
 import fr.esgi.pa.server.exercise_case.core.dao.ExerciseTestDao;
+import fr.esgi.pa.server.exercise_case.core.entity.ExerciseCase;
 import fr.esgi.pa.server.exercise_case.core.entity.ExerciseTest;
 import fr.esgi.pa.server.user.core.UserDao;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +50,7 @@ public class UpdateExerciseCase {
         }
     }
 
-    private void checkIfUserIsCreatorOfExercise(Long userId, fr.esgi.pa.server.exercise_case.core.entity.ExerciseCase foundExerciseCase) throws NotFoundException, ForbiddenException {
+    private void checkIfUserIsCreatorOfExercise(Long userId, ExerciseCase foundExerciseCase) throws NotFoundException, ForbiddenException {
         var foundExercise = exerciseDao.findById(foundExerciseCase.getExerciseId());
         if (!foundExercise.getUserId().equals(userId)) {
             var message = String.format(

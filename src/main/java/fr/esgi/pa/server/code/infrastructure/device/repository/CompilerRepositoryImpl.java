@@ -1,6 +1,7 @@
 package fr.esgi.pa.server.code.infrastructure.device.repository;
 
 import fr.esgi.pa.server.code.core.Compiler;
+import fr.esgi.pa.server.code.core.CompilerRepository;
 import fr.esgi.pa.server.code.infrastructure.device.compiler.CCompiler;
 import fr.esgi.pa.server.code.infrastructure.device.compiler.JavaCompiler;
 import fr.esgi.pa.server.language.core.Language;
