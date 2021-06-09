@@ -3,7 +3,7 @@ package fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.adapter;
 import fr.esgi.pa.server.common.core.mapper.MapperDomainToDto;
 import fr.esgi.pa.server.exercise_case.core.dto.DtoExerciseTest;
 import fr.esgi.pa.server.exercise_case.core.entity.ExerciseTest;
-import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.request.UpdateExerciseTestRequest;
+import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.request.ExerciseTestRequest;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,7 +16,7 @@ public class ExerciseTestAdapter implements
                 .setContent(exerciseTest.getContent());
     }
 
-    public ExerciseTest requestToDomain(UpdateExerciseTestRequest request, Long exerciseCaseId) {
+    public ExerciseTest requestToDomain(ExerciseTestRequest request, Long exerciseCaseId) {
         return new ExerciseTest()
                 .setId(request.getId())
                 .setContent(request.getContent())

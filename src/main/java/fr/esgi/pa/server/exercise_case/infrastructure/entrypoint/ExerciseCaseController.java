@@ -3,7 +3,9 @@ package fr.esgi.pa.server.exercise_case.infrastructure.entrypoint;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.exercise.core.exception.ForbiddenException;
 import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.adapter.ExerciseTestAdapter;
+import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.request.SaveExerciseCaseRequest;
 import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.request.UpdateExerciseCaseRequest;
+import fr.esgi.pa.server.exercise_case.usecase.CreateExerciseCase;
 import fr.esgi.pa.server.exercise_case.usecase.UpdateExerciseCase;
 import fr.esgi.pa.server.exercise_case.usecase.VerifyExerciseCase;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
+import java.net.URI;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.ResponseEntity.noContent;
@@ -26,9 +29,26 @@ import static org.springframework.http.ResponseEntity.ok;
 @RequiredArgsConstructor
 @RequestMapping("/api/exercise-case")
 public class ExerciseCaseController {
+    private final CreateExerciseCase createExerciseCase;
     private final UpdateExerciseCase updateExerciseCase;
     private final VerifyExerciseCase verifyExerciseCase;
     private final ExerciseTestAdapter exerciseTestAdapter;
+
+    @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<URI> createOne(
+            @RequestAttribute("userId")
+            @Pattern(regexp = "^\\d+$", message = "id has to be an integer")
+            @Min(value = 1, message = "id has to be equal or more than 1") String userId,
+            @Valid @RequestBody SaveExerciseCaseRequest request
+    ) {
+        createExerciseCase.execute(
+                Long.parseLong(userId),
+                request.getExerciseId(),
+                request.getLanguageId()
+        );
+        return null;
+    }
 
     @PutMapping("{id}")
     @PreAuthorize("hasRole('ADMIN')")
