@@ -1,5 +1,6 @@
 package fr.esgi.pa.server.exercise_case.infrastructure.entrypoint;
 
+import fr.esgi.pa.server.common.core.exception.AlreadyCreatedException;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.exercise.core.exception.ForbiddenException;
 import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.adapter.ExerciseTestAdapter;
@@ -41,7 +42,7 @@ public class ExerciseCaseController {
             @Pattern(regexp = "^\\d+$", message = "id has to be an integer")
             @Min(value = 1, message = "id has to be equal or more than 1") String userId,
             @Valid @RequestBody SaveExerciseCaseRequest request
-    ) {
+    ) throws NotFoundException, ForbiddenException, AlreadyCreatedException {
         createExerciseCase.execute(
                 Long.parseLong(userId),
                 request.getExerciseId(),
