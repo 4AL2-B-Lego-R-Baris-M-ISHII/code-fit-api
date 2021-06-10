@@ -3,12 +3,12 @@ package fr.esgi.pa.server.e2e;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.exercise.core.dao.ExerciseDao;
 import fr.esgi.pa.server.exercise.core.dto.DtoExercise;
-import fr.esgi.pa.server.exercise.infrastructure.dataprovider.util.DefaultExerciseHelper;
-import fr.esgi.pa.server.exercise.infrastructure.dataprovider.util.DefaultExerciseValues;
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.request.SaveExerciseRequest;
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.request.UpdateExerciseRequest;
 import fr.esgi.pa.server.exercise_case.core.dao.ExerciseCaseDao;
 import fr.esgi.pa.server.exercise_case.core.dao.ExerciseTestDao;
+import fr.esgi.pa.server.exercise_case.core.utils.DefaultExerciseCaseHelper;
+import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.utils.DefaultExerciseCaseValues;
 import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.adapter.ExerciseCaseAdapter;
 import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.adapter.ExerciseTestAdapter;
 import fr.esgi.pa.server.helper.AuthDataHelper;
@@ -46,7 +46,7 @@ public class ExerciseApiTest {
     private AuthHelper authHelper;
 
     @Autowired
-    private DefaultExerciseHelper defaultExerciseHelper;
+    private DefaultExerciseCaseHelper defaultExerciseCaseHelper;
 
     @Autowired
     private ExerciseDao exerciseDao;
@@ -140,7 +140,7 @@ public class ExerciseApiTest {
     @Test
     void should_crud_exercise() throws NotFoundException, IncorrectLanguageNameException {
         var foundLanguage = languageDao.findByLanguageName(LanguageName.JAVA);
-        var javaDefaultValues = defaultExerciseHelper.getValuesByLanguage(foundLanguage);
+        var javaDefaultValues = defaultExerciseCaseHelper.getValuesByLanguage(foundLanguage);
         var exerciseRequest = new SaveExerciseRequest().setTitle("title exercise")
                 .setTitle("simple exercise")
                 .setDescription("return the string that is in parameter")
@@ -189,7 +189,7 @@ public class ExerciseApiTest {
     }
 
     private DtoExercise getOneExerciseRequestAndAssertions(
-            DefaultExerciseValues javaDefaultValues,
+            DefaultExerciseCaseValues javaDefaultValues,
             SaveExerciseRequest exerciseRequest,
             String uriOneExercise) throws NotFoundException, IncorrectLanguageNameException {
         var getResponse = given()

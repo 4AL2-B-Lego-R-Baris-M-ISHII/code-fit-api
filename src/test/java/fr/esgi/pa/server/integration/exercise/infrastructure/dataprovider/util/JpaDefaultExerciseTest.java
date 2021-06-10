@@ -2,7 +2,7 @@ package fr.esgi.pa.server.integration.exercise.infrastructure.dataprovider.util;
 
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.repository.ExerciseRepository;
-import fr.esgi.pa.server.exercise.infrastructure.dataprovider.util.JpaDefaultExercise;
+import fr.esgi.pa.server.exercise.infrastructure.dataprovider.utils.JpaDefaultExercise;
 import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.repository.ExerciseCaseRepository;
 import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.repository.ExerciseTestRepository;
 import fr.esgi.pa.server.language.core.LanguageDao;
