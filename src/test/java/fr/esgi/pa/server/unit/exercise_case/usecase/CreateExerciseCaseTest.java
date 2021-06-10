@@ -8,6 +8,7 @@ import fr.esgi.pa.server.exercise.core.entity.Exercise;
 import fr.esgi.pa.server.exercise.core.exception.ForbiddenException;
 import fr.esgi.pa.server.exercise_case.core.dao.ExerciseCaseDao;
 import fr.esgi.pa.server.exercise_case.core.entity.ExerciseCase;
+import fr.esgi.pa.server.exercise_case.core.utils.DefaultExerciseCase;
 import fr.esgi.pa.server.exercise_case.usecase.CreateExerciseCase;
 import fr.esgi.pa.server.language.core.Language;
 import fr.esgi.pa.server.language.core.LanguageDao;
@@ -44,10 +45,19 @@ class CreateExerciseCaseTest {
     @Mock
     private LanguageDao mockLanguageDao;
 
+    @Mock
+    private DefaultExerciseCase mockDefaultExerciseCase;
+
 
     @BeforeEach
     void setup() {
-        sut = new CreateExerciseCase(mockUserDao, mockExerciseDao, mockExerciseCaseDao, mockLanguageDao);
+        sut = new CreateExerciseCase(
+                mockUserDao,
+                mockExerciseDao,
+                mockExerciseCaseDao,
+                mockLanguageDao,
+                mockDefaultExerciseCase
+        );
     }
 
     @Test
@@ -147,4 +157,65 @@ class CreateExerciseCaseTest {
                 );
     }
 
+    @Test
+    void when_exercise_case_with_given_language_not_create_should_create_default_exercise_case() throws NotFoundException, ForbiddenException, AlreadyCreatedException {
+        var foundExercise = new Exercise()
+                .setId(exerciseId)
+                .setTitle("title")
+                .setDescription("description")
+                .setUserId(userId);
+        when(mockExerciseDao.findById(exerciseId)).thenReturn(foundExercise);
+        when(mockUserDao.existsById(userId)).thenReturn(true);
+        var foundLanguage = new Language()
+                .setId(languageId)
+                .setFileExtension("java")
+                .setLanguageName(LanguageName.JAVA);
+        when(mockLanguageDao.findById(languageId)).thenReturn(foundLanguage);
+        var otherLanguageId = 5L;
+        var exerciseCase = new ExerciseCase()
+                .setId(23L)
+                .setExerciseId(exerciseId)
+                .setLanguageId(otherLanguageId)
+                .setSolution("solution")
+                .setStartContent("start content")
+                .setIsValid(false);
+        assertThat(languageId).isNotEqualTo(otherLanguageId);
+        when(mockExerciseCaseDao.findAllByExerciseId(exerciseId)).thenReturn(Set.of(exerciseCase));
+
+        sut.execute(userId, exerciseId, languageId);
+
+        verify(mockDefaultExerciseCase, times(1)).createExerciseCase(exerciseId, foundLanguage);
+    }
+
+    @Test
+    void when_default_exercise_case_create_should_return_created_exercise_case_id() throws AlreadyCreatedException, NotFoundException, ForbiddenException {
+        var foundExercise = new Exercise()
+                .setId(exerciseId)
+                .setTitle("title")
+                .setDescription("description")
+                .setUserId(userId);
+        when(mockExerciseDao.findById(exerciseId)).thenReturn(foundExercise);
+        when(mockUserDao.existsById(userId)).thenReturn(true);
+        var foundLanguage = new Language()
+                .setId(languageId)
+                .setFileExtension("java")
+                .setLanguageName(LanguageName.JAVA);
+        when(mockLanguageDao.findById(languageId)).thenReturn(foundLanguage);
+        var otherLanguageId = 5L;
+        var exerciseCase = new ExerciseCase()
+                .setId(23L)
+                .setExerciseId(exerciseId)
+                .setLanguageId(otherLanguageId)
+                .setSolution("solution")
+                .setStartContent("start content")
+                .setIsValid(false);
+        assertThat(languageId).isNotEqualTo(otherLanguageId);
+        when(mockExerciseCaseDao.findAllByExerciseId(exerciseId)).thenReturn(Set.of(exerciseCase));
+        var createdExerciseCaseId = 56L;
+        when(mockDefaultExerciseCase.createExerciseCase(exerciseId, foundLanguage)).thenReturn(createdExerciseCaseId);
+
+        var result = sut.execute(userId, exerciseId, languageId);
+
+        assertThat(result).isEqualTo(createdExerciseCaseId);
+    }
 }

@@ -7,6 +7,7 @@ import fr.esgi.pa.server.exercise.core.dao.ExerciseDao;
 import fr.esgi.pa.server.exercise.core.exception.ForbiddenException;
 import fr.esgi.pa.server.exercise_case.core.dao.ExerciseCaseDao;
 import fr.esgi.pa.server.exercise_case.core.entity.ExerciseCase;
+import fr.esgi.pa.server.exercise_case.core.utils.DefaultExerciseCase;
 import fr.esgi.pa.server.language.core.Language;
 import fr.esgi.pa.server.language.core.LanguageDao;
 import fr.esgi.pa.server.user.core.UserDao;
@@ -22,6 +23,7 @@ public class CreateExerciseCase {
     private final ExerciseDao exerciseDao;
     private final ExerciseCaseDao exerciseCaseDao;
     private final LanguageDao languageDao;
+    private final DefaultExerciseCase defaultExerciseCase;
 
     public Long execute(long userId, long exerciseId, long languageId) throws NotFoundException, ForbiddenException, AlreadyCreatedException {
         var foundExercise = exerciseDao.findById(exerciseId);
@@ -31,9 +33,9 @@ public class CreateExerciseCase {
         var foundLanguage = languageDao.findById(languageId);
         var setExerciseCase = exerciseCaseDao.findAllByExerciseId(exerciseId);
 
-        checkIfSetExerciseCaseContainFoundLanguage(foundLanguage, setExerciseCase);
+        throwExceptionIfSetExerciseCaseContainFoundLanguage(foundLanguage, setExerciseCase);
 
-        return null;
+        return defaultExerciseCase.createExerciseCase(exerciseId, foundLanguage);
     }
 
     private void checkIfUserExists(long userId) throws NotFoundException {
@@ -53,7 +55,7 @@ public class CreateExerciseCase {
         }
     }
 
-    private void checkIfSetExerciseCaseContainFoundLanguage(Language foundLanguage, Set<ExerciseCase> setExerciseCase) throws AlreadyCreatedException {
+    private void throwExceptionIfSetExerciseCaseContainFoundLanguage(Language foundLanguage, Set<ExerciseCase> setExerciseCase) throws AlreadyCreatedException {
         if (isExerciseCaseWithFoundLanguage(foundLanguage, setExerciseCase)) {
             var message = String.format(
                     "%s : Exercise case with language '%s' already created",
