@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -21,8 +22,7 @@ import javax.validation.constraints.Pattern;
 import java.net.URI;
 import java.util.stream.Collectors;
 
-import static org.springframework.http.ResponseEntity.noContent;
-import static org.springframework.http.ResponseEntity.ok;
+import static org.springframework.http.ResponseEntity.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -43,12 +43,17 @@ public class ExerciseCaseController {
             @Min(value = 1, message = "id has to be equal or more than 1") String userId,
             @Valid @RequestBody SaveExerciseCaseRequest request
     ) throws NotFoundException, ForbiddenException, AlreadyCreatedException {
-        createExerciseCase.execute(
+        var newExerciseCaseId = createExerciseCase.execute(
                 Long.parseLong(userId),
                 request.getExerciseId(),
                 request.getLanguageId()
         );
-        return null;
+
+        var uri = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(newExerciseCaseId)
+                .toUri();
+        return created(uri).build();
     }
 
     @PutMapping("{id}")

@@ -1,5 +1,8 @@
 package fr.esgi.pa.server.integration.exercise_case.infrastructure.entrypoint;
 
+import fr.esgi.pa.server.common.core.exception.AlreadyCreatedException;
+import fr.esgi.pa.server.common.core.exception.NotFoundException;
+import fr.esgi.pa.server.exercise.core.exception.ForbiddenException;
 import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.request.SaveExerciseCaseRequest;
 import fr.esgi.pa.server.exercise_case.usecase.CreateExerciseCase;
 import fr.esgi.pa.server.helper.JsonHelper;
@@ -15,9 +18,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -119,5 +123,89 @@ class ExerciseCaseControllerTest {
         }
 
         // TODO : continue after use case done
+        @WithMockUser(username = "toto", password = "toto", roles = "ADMIN")
+        @Test
+        void when_use_case_throw_NotFoundException_should_send_not_found_error_response() throws Exception {
+            var request = new SaveExerciseCaseRequest()
+                    .setExerciseId(exerciseId)
+                    .setLanguageId(languageId);
+            when(mockCreateExerciseCase.execute(3L, exerciseId, languageId))
+                    .thenThrow(new NotFoundException("not found exception thrown"));
+            var content = mockMvc.perform(
+                    post("/api/exercise-case")
+                            .requestAttr("userId", "3")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(JsonHelper.objectToJson(request)))
+                    .andExpect(status().isNotFound())
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
+            assertThat(content).isEqualTo("not found exception thrown");
+        }
+
+        @WithMockUser(username = "toto", password = "toto", roles = "ADMIN")
+        @Test
+        void when_use_case_throw_ForbiddenException_should_send_forbidden_error_response() throws Exception {
+            var request = new SaveExerciseCaseRequest()
+                    .setExerciseId(exerciseId)
+                    .setLanguageId(languageId);
+            when(mockCreateExerciseCase.execute(3L, exerciseId, languageId))
+                    .thenThrow(new ForbiddenException("forbidden exception thrown"));
+            var content = mockMvc.perform(
+                    post("/api/exercise-case")
+                            .requestAttr("userId", "3")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(JsonHelper.objectToJson(request)))
+                    .andExpect(status().isForbidden())
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
+            assertThat(content).isEqualTo("forbidden exception thrown");
+        }
+
+        @WithMockUser(username = "toto", password = "toto", roles = "ADMIN")
+        @Test
+        void when_use_case_throw_AlreadyCreatedException_should_send_forbidden_error_response() throws Exception {
+            var request = new SaveExerciseCaseRequest()
+                    .setExerciseId(exerciseId)
+                    .setLanguageId(languageId);
+            when(mockCreateExerciseCase.execute(3L, exerciseId, languageId))
+                    .thenThrow(new AlreadyCreatedException("already created exception thrown"));
+            var content = mockMvc.perform(
+                    post("/api/exercise-case")
+                            .requestAttr("userId", "3")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(JsonHelper.objectToJson(request)))
+                    .andExpect(status().isForbidden())
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
+            assertThat(content).isEqualTo("already created exception thrown");
+        }
+
+        @WithMockUser(username = "toto", password = "toto", roles = "ADMIN")
+        @Test
+        void when_use_case_return_id_of_new_exercise_case_should_send_success_response_with_uri() throws Exception {
+            var request = new SaveExerciseCaseRequest()
+                    .setExerciseId(exerciseId)
+                    .setLanguageId(languageId);
+            when(mockCreateExerciseCase.execute(3L, exerciseId, languageId))
+                    .thenReturn(456L);
+            var location = mockMvc.perform(
+                    post("/api/exercise-case")
+                            .requestAttr("userId", "3")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(JsonHelper.objectToJson(request)))
+                    .andExpect(status().isCreated())
+                    .andReturn()
+                    .getResponse()
+                    .getHeader("Location");
+
+            var expectedURI = ServletUriComponentsBuilder.fromCurrentRequest()
+                    .path("/api/exercise-case/{id}")
+                    .buildAndExpand("456")
+                    .toUri();
+            assertThat(location).isEqualTo(expectedURI.toString());
+        }
     }
 }
