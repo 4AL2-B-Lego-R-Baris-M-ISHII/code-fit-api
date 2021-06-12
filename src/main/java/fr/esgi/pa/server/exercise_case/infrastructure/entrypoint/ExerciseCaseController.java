@@ -3,10 +3,12 @@ package fr.esgi.pa.server.exercise_case.infrastructure.entrypoint;
 import fr.esgi.pa.server.common.core.exception.AlreadyCreatedException;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.exercise.core.exception.ForbiddenException;
+import fr.esgi.pa.server.exercise_case.core.dto.DtoExerciseCase;
 import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.adapter.ExerciseTestAdapter;
 import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.request.SaveExerciseCaseRequest;
 import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.request.UpdateExerciseCaseRequest;
 import fr.esgi.pa.server.exercise_case.usecase.CreateExerciseCase;
+import fr.esgi.pa.server.exercise_case.usecase.GetOneExerciseCase;
 import fr.esgi.pa.server.exercise_case.usecase.UpdateExerciseCase;
 import fr.esgi.pa.server.exercise_case.usecase.VerifyExerciseCase;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,7 @@ public class ExerciseCaseController {
     private final CreateExerciseCase createExerciseCase;
     private final UpdateExerciseCase updateExerciseCase;
     private final VerifyExerciseCase verifyExerciseCase;
+    private final GetOneExerciseCase getOneExerciseCase;
     private final ExerciseTestAdapter exerciseTestAdapter;
 
     @PostMapping
@@ -83,5 +86,17 @@ public class ExerciseCaseController {
 
         var result = verifyExerciseCase.execute(exerciseCaseId);
         return ok(result);
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<DtoExerciseCase> getOneById(
+            @RequestAttribute("userId")
+            @Pattern(regexp = "^\\d+$", message = "id has to be an integer")
+            @Min(value = 1, message = "id has to be equal or more than 1") String userId,
+            @PathVariable("id")
+            @Min(value = 1, message = "id has to be equal or more than 1") Long exerciseCaseId
+    ) throws NotFoundException, ForbiddenException {
+        var dtoExerciseCase = getOneExerciseCase.execute(Long.valueOf(userId), exerciseCaseId);
+        return ok(dtoExerciseCase);
     }
 }
