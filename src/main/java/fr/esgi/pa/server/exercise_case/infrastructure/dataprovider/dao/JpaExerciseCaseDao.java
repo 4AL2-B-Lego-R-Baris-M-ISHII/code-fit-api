@@ -55,4 +55,17 @@ public class JpaExerciseCaseDao implements ExerciseCaseDao {
         var savedExerciseCase = exerciseCaseRepository.save(jpaExerciseCaseToSave);
         return exerciseCaseMapper.entityToDomain(savedExerciseCase);
     }
+
+    @Override
+    public void deleteById(Long exerciseCaseId) throws NotFoundException {
+        if (!exerciseCaseRepository.existsById(exerciseCaseId)) {
+            var message = String.format(
+                    "%s : Exercise case with id '%d' not found",
+                    CommonExceptionState.NOT_FOUND,
+                    exerciseCaseId
+            );
+            throw new NotFoundException(message);
+        }
+        exerciseCaseRepository.deleteById(exerciseCaseId);
+    }
 }

@@ -7,10 +7,7 @@ import fr.esgi.pa.server.exercise_case.core.dto.DtoExerciseCase;
 import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.adapter.ExerciseTestAdapter;
 import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.request.SaveExerciseCaseRequest;
 import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.request.UpdateExerciseCaseRequest;
-import fr.esgi.pa.server.exercise_case.usecase.CreateExerciseCase;
-import fr.esgi.pa.server.exercise_case.usecase.GetOneExerciseCase;
-import fr.esgi.pa.server.exercise_case.usecase.UpdateExerciseCase;
-import fr.esgi.pa.server.exercise_case.usecase.VerifyExerciseCase;
+import fr.esgi.pa.server.exercise_case.usecase.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -36,6 +33,7 @@ public class ExerciseCaseController {
     private final UpdateExerciseCase updateExerciseCase;
     private final VerifyExerciseCase verifyExerciseCase;
     private final GetOneExerciseCase getOneExerciseCase;
+    private final DeleteOneExerciseCase deleteOneExerciseCase;
     private final ExerciseTestAdapter exerciseTestAdapter;
 
     @PostMapping
@@ -98,5 +96,15 @@ public class ExerciseCaseController {
     ) throws NotFoundException, ForbiddenException {
         var dtoExerciseCase = getOneExerciseCase.execute(Long.valueOf(userId), exerciseCaseId);
         return ok(dtoExerciseCase);
+    }
+
+    @DeleteMapping("{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> deleteOneById(
+            @PathVariable("id")
+            @Min(value = 1, message = "id has to be equal or more than 1") Long exerciseCaseId
+    ) throws NotFoundException {
+        deleteOneExerciseCase.execute(exerciseCaseId);
+        return noContent().build();
     }
 }

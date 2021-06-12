@@ -171,4 +171,32 @@ class JpaExerciseCaseDaoTest {
             assertThat(result).isEqualTo(expected);
         }
     }
+
+    @Nested
+    class DeleteById {
+
+        private final long exerciseCaseId = 153L;
+
+        @Test
+        void when_exercise_case_not_exists_should_throw_NotFoundException() {
+            when(mockExerciseCaseRepository.existsById(exerciseCaseId)).thenReturn(false);
+
+            assertThatThrownBy(() -> sut.deleteById(exerciseCaseId))
+                    .isExactlyInstanceOf(NotFoundException.class)
+                    .hasMessage(
+                            "%s : Exercise case with id '%d' not found",
+                            CommonExceptionState.NOT_FOUND,
+                            exerciseCaseId
+                    );
+        }
+
+        @Test
+        void when_exercise_case_exists_should_delete_exercise_case() throws NotFoundException {
+            when(mockExerciseCaseRepository.existsById(exerciseCaseId)).thenReturn(true);
+
+            sut.deleteById(exerciseCaseId);
+
+            verify(mockExerciseCaseRepository, times(1)).deleteById(exerciseCaseId);
+        }
+    }
 }
