@@ -95,8 +95,8 @@ public class ExerciseCaseController {
             @Min(value = 1, message = "id has to be equal or more than 1") String userId,
             @PathVariable("id")
             @Min(value = 1, message = "id has to be equal or more than 1") Long exerciseCaseId
-    ) throws NotFoundException {
-        var dtoExerciseCase = getOneExerciseCase.execute(exerciseCaseId);
+    ) throws NotFoundException, ForbiddenException {
+        var dtoExerciseCase = getOneExerciseCase.execute(Long.valueOf(userId), exerciseCaseId);
         return ok(dtoExerciseCase);
     }
 }

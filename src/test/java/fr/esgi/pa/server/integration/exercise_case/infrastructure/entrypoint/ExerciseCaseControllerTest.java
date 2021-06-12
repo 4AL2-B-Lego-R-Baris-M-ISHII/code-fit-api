@@ -258,13 +258,13 @@ class ExerciseCaseControllerTest {
                             .requestAttr("userId", "123")
             ).andExpect(status().isOk());
 
-            verify(mockGetOneExerciseCase, times(1)).execute(123L);
+            verify(mockGetOneExerciseCase, times(1)).execute(123L, 123L);
         }
 
         @WithMockUser(username = "toto", password = "toto", roles = "USER")
         @Test
         void when_getOneExercise_throw_NotFoundException_should_send_not_found_error_response() throws Exception {
-            when(mockGetOneExerciseCase.execute(123L)).thenThrow(new NotFoundException("toto"));
+            when(mockGetOneExerciseCase.execute(1L, 123L)).thenThrow(new NotFoundException("toto"));
 
             mockMvc.perform(
                     get("/api/exercise-case/123")
@@ -285,7 +285,7 @@ class ExerciseCaseControllerTest {
                     .setSolution("solution")
                     .setIsValid(false)
                     .setStartContent("start content");
-            when(mockGetOneExerciseCase.execute(123L)).thenReturn(expectedDto);
+            when(mockGetOneExerciseCase.execute(1L, 123L)).thenReturn(expectedDto);
 
             var contentAsString = mockMvc.perform(
                     get("/api/exercise-case/123")
