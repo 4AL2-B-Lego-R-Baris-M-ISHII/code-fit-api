@@ -19,7 +19,10 @@ import fr.esgi.pa.server.language.core.exception.IncorrectLanguageNameException;
 import fr.esgi.pa.server.role.core.RoleDao;
 import fr.esgi.pa.server.role.core.RoleName;
 import io.restassured.http.ContentType;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -87,54 +90,6 @@ public class ExerciseApiTest {
                 e.printStackTrace();
             }
         });
-    }
-
-    @Nested
-    @DisplayName("POST /api/exercise")
-    class PostOneExercise {
-//        @Test
-//        void should_create_exercise() throws NotFoundException {
-//            var foundLanguage = languageDao.findByName(LanguageName.JAVA);
-//            var test1 = new SaveTestExerciseRequest().setContent(
-//                    "public class Main {\n" +
-//                            "    public static void main(String[] args) {\n" +
-//                            "        System.out.print(Solution.exercise1(\"toto\"));\n" +
-//                            "    }\n" +
-//                            "}"
-//            ).setExpectedOutput("toto");
-//            var test2 = new SaveTestExerciseRequest().setContent(
-//                    "public class Main {\n" +
-//                            "    public static void main(String[] args) {\n" +
-//                            "        System.out.print(Solution.exercise1(\"Jacques Tati\"));\n" +
-//                            "    }\n" +
-//                            "}"
-//            ).setExpectedOutput("Jacques Tati");
-//            var listTestRequest = List.of(test1, test2);
-//            var solutionText = "class Solution {\n" +
-//                    "    public static String exercise1(String test) {\n" +
-//                    "        return test;\n" +
-//                    "    }\n" +
-//                    "}";
-//
-//            var exerciseRequest = new SaveExerciseRequest().setTitle("title exercise")
-//                    .setTitle("simple exercise")
-//                    .setDescription("return the string that is in parameter")
-//                    .setTests(listTestRequest)
-//                    .setSolution(solutionText)
-//                    .setLanguageId(foundLanguage.getId());
-//            var response = given()
-//                    .header("Authorization", "Bearer " + authData.getToken())
-//                    .contentType(ContentType.JSON)
-//                    .body(exerciseRequest)
-//                    .when()
-//                    .post("/api/exercise/")
-//                    .then()
-//                    .statusCode(201)
-//                    .extract()
-//                    .header("Location");
-//            assertThat(response).isNotNull();
-//            assertThat(response).contains("/api/exercise/");
-//        }
     }
 
     @Test
