@@ -7,6 +7,7 @@ import fr.esgi.pa.server.exercise_case.core.dto.DtoExerciseCase;
 import fr.esgi.pa.server.exercise_case.core.dto.DtoExerciseTest;
 import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.request.SaveExerciseCaseRequest;
 import fr.esgi.pa.server.exercise_case.usecase.CreateExerciseCase;
+import fr.esgi.pa.server.exercise_case.usecase.DeleteOneExerciseCase;
 import fr.esgi.pa.server.exercise_case.usecase.GetOneExerciseCase;
 import fr.esgi.pa.server.helper.JsonHelper;
 import fr.esgi.pa.server.language.core.Language;
@@ -29,8 +30,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -44,6 +44,9 @@ class ExerciseCaseControllerTest {
 
     @MockBean
     private GetOneExerciseCase mockGetOneExerciseCase;
+
+    @MockBean
+    private DeleteOneExerciseCase mockDeleteOneExerciseCase;
 
     @DisplayName("POST /api/exercise-case")
     @Nested
@@ -221,7 +224,7 @@ class ExerciseCaseControllerTest {
 
     @DisplayName("GET /api/exercise-case/{id}")
     @Nested
-    class GetOneBYIdExerciseCase {
+    class GetOneByIdExerciseCase {
         @Test
         void when_user_not_authenticate_should_send_unauthorized_error_response() throws Exception {
             mockMvc.perform(
@@ -263,7 +266,7 @@ class ExerciseCaseControllerTest {
 
         @WithMockUser(username = "toto", password = "toto", roles = "USER")
         @Test
-        void when_getOneExercise_throw_NotFoundException_should_send_not_found_error_response() throws Exception {
+        void when_getOneExerciseCase_throw_NotFoundException_should_send_not_found_error_response() throws Exception {
             when(mockGetOneExerciseCase.execute(1L, 123L)).thenThrow(new NotFoundException("toto"));
 
             mockMvc.perform(
@@ -275,7 +278,7 @@ class ExerciseCaseControllerTest {
 
         @WithMockUser(username = "toto", password = "toto", roles = "USER")
         @Test
-        void when_getOneExercise_return_dto_exercise_case_should_send_success_response_and_returned_dto() throws Exception {
+        void when_getOneExerciseCase_return_dto_exercise_case_should_send_success_response_and_returned_dto() throws Exception {
             var expectedDto = new DtoExerciseCase()
                     .setId(123L)
                     .setLanguage(new Language().setId(3L).setLanguageName(LanguageName.JAVA).setFileExtension("java"))
@@ -298,6 +301,44 @@ class ExerciseCaseControllerTest {
             assertThat(contentAsString).isNotBlank();
             var response = JsonHelper.jsonToObject(contentAsString, DtoExerciseCase.class);
             assertThat(response).isEqualTo(expectedDto);
+        }
+    }
+
+    @DisplayName("DELETE /api/exercise-case/{id}")
+    @Nested
+    class DeleteOneByExerciseCase {
+        @Test
+        void when_user_not_authorized_should_send_unauthorized_error_response() throws Exception {
+            mockMvc.perform(
+                    delete("/api/exercise-case/45")
+            ).andExpect(status().isUnauthorized());
+        }
+
+        @WithMockUser(username = "toto", password = "toto", roles = "USER")
+        @Test
+        void when_user_not_admin_should_send_forbidden_error_response() throws Exception {
+            mockMvc.perform(
+                    delete("/api/exercise-case/45")
+            ).andExpect(status().isForbidden());
+        }
+
+        @WithMockUser(username = "toto", password = "toto", roles = "ADMIN")
+        @ParameterizedTest
+        @ValueSource(strings = {"0", "2.1", "notnumber", "-1"})
+        void when_exercise_case_id_not_correct_should_send_bad_request_error_response(String incorrectExerciseCaseId) throws Exception {
+            mockMvc.perform(
+                    delete("/api/exercise-case/" + incorrectExerciseCaseId)
+            ).andExpect(status().isBadRequest());
+        }
+
+        @WithMockUser(username = "toto", password = "toto", roles = "ADMIN")
+        @Test
+        void when_exercise_case_id_is_correct_should_call_usecase_deleteOneExerciseCase() throws Exception {
+            mockMvc.perform(
+                    delete("/api/exercise-case/123")
+            ).andExpect(status().isNoContent());
+
+            verify(mockDeleteOneExerciseCase, times(1)).execute(123L);
         }
     }
 }

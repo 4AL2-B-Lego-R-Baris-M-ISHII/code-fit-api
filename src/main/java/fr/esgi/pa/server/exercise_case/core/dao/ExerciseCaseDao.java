@@ -15,4 +15,6 @@ public interface ExerciseCaseDao {
     ExerciseCase findById(Long exerciseCaseId) throws NotFoundException;
 
     ExerciseCase saveOne(ExerciseCase exerciseCaseToSave);
+
+    void deleteById(Long exerciseCaseId) throws NotFoundException;
 }
