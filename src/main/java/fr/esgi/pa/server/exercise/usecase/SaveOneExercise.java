@@ -1,7 +1,7 @@
 package fr.esgi.pa.server.exercise.usecase;
 
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
-import fr.esgi.pa.server.exercise.core.util.DefaultExercise;
+import fr.esgi.pa.server.exercise.core.utils.DefaultExercise;
 import fr.esgi.pa.server.language.core.Language;
 import fr.esgi.pa.server.language.core.LanguageDao;
 import fr.esgi.pa.server.language.core.exception.IncorrectLanguageNameException;

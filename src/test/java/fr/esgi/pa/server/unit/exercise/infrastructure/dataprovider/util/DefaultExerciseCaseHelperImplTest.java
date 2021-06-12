@@ -1,7 +1,7 @@
 package fr.esgi.pa.server.unit.exercise.infrastructure.dataprovider.util;
 
-import fr.esgi.pa.server.exercise.infrastructure.dataprovider.util.DefaultExerciseHelperImpl;
-import fr.esgi.pa.server.exercise.infrastructure.dataprovider.util.DefaultExerciseValues;
+import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.utils.DefaultExerciseCaseHelperImpl;
+import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.utils.DefaultExerciseCaseValues;
 import fr.esgi.pa.server.language.core.Language;
 import fr.esgi.pa.server.language.core.LanguageName;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,13 +14,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-class DefaultExerciseHelperImplTest {
+class DefaultExerciseCaseHelperImplTest {
 
-    private DefaultExerciseHelperImpl sut;
+    private DefaultExerciseCaseHelperImpl sut;
 
     @BeforeEach
     void setup() {
-        sut = new DefaultExerciseHelperImpl();
+        sut = new DefaultExerciseCaseHelperImpl();
     }
 
     @Nested
@@ -35,7 +35,7 @@ class DefaultExerciseHelperImplTest {
             var result = sut.getValuesByLanguage(javaLanguage);
 
             assertThat(result).isNotNull();
-            assertThat(result).isExactlyInstanceOf(DefaultExerciseValues.class);
+            assertThat(result).isExactlyInstanceOf(DefaultExerciseCaseValues.class);
         }
 
         @Test
@@ -93,7 +93,7 @@ class DefaultExerciseHelperImplTest {
             var result = sut.getValuesByLanguage(cLanguage);
 
             assertThat(result).isNotNull();
-            assertThat(result).isExactlyInstanceOf(DefaultExerciseValues.class);
+            assertThat(result).isExactlyInstanceOf(DefaultExerciseCaseValues.class);
         }
 
         @Test

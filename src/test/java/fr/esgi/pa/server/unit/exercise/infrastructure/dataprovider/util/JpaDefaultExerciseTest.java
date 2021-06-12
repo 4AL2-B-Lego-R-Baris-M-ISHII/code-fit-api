@@ -2,13 +2,13 @@ package fr.esgi.pa.server.unit.exercise.infrastructure.dataprovider.util;
 
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.entity.JpaExercise;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.repository.ExerciseRepository;
-import fr.esgi.pa.server.exercise.infrastructure.dataprovider.util.DefaultExerciseHelper;
-import fr.esgi.pa.server.exercise.infrastructure.dataprovider.util.DefaultExerciseValues;
-import fr.esgi.pa.server.exercise.infrastructure.dataprovider.util.JpaDefaultExercise;
+import fr.esgi.pa.server.exercise.infrastructure.dataprovider.utils.JpaDefaultExercise;
+import fr.esgi.pa.server.exercise_case.core.utils.DefaultExerciseCaseHelper;
 import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.entity.JpaExerciseCase;
 import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.entity.JpaExerciseTest;
 import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.repository.ExerciseCaseRepository;
 import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.repository.ExerciseTestRepository;
+import fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.utils.DefaultExerciseCaseValues;
 import fr.esgi.pa.server.language.core.Language;
 import fr.esgi.pa.server.language.core.LanguageName;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,7 +38,7 @@ class JpaDefaultExerciseTest {
     private ExerciseTestRepository mockExerciseTestRepository;
 
     @Mock
-    private DefaultExerciseHelper mockDefaultExerciseHelper;
+    private DefaultExerciseCaseHelper mockDefaultExerciseCaseHelper;
 
     private final Language language = new Language().setId(1L)
             .setLanguageName(LanguageName.JAVA)
@@ -46,7 +46,7 @@ class JpaDefaultExerciseTest {
 
     @BeforeEach
     void setup() {
-        sut = new JpaDefaultExercise(mockExerciseRepository, mockExerciseCaseRepository, mockExerciseTestRepository, mockDefaultExerciseHelper);
+        sut = new JpaDefaultExercise(mockExerciseRepository, mockExerciseCaseRepository, mockExerciseTestRepository, mockDefaultExerciseCaseHelper);
     }
 
     @Test
@@ -61,11 +61,11 @@ class JpaDefaultExerciseTest {
                 .setUserId(userId)
                 .setId(2L);
         when(mockExerciseRepository.save(exerciseToSave)).thenReturn(savedExercise);
-        var defaultValues = new DefaultExerciseValues()
+        var defaultValues = new DefaultExerciseCaseValues()
                 .setSolution("a solution")
                 .setStartContent("a start content")
                 .setTestContent("one test");
-        when(mockDefaultExerciseHelper.getValuesByLanguage(language)).thenReturn(defaultValues);
+        when(mockDefaultExerciseCaseHelper.getValuesByLanguage(language)).thenReturn(defaultValues);
         var exerciseCaseToSave = new JpaExerciseCase()
                 .setExerciseId(savedExercise.getId())
                 .setIsValid(false)
@@ -102,11 +102,11 @@ class JpaDefaultExerciseTest {
                 .setUserId(userId)
                 .setId(2L);
         when(mockExerciseRepository.save(exerciseToSave)).thenReturn(savedExercise);
-        var defaultValues = new DefaultExerciseValues()
+        var defaultValues = new DefaultExerciseCaseValues()
                 .setSolution("a solution")
                 .setStartContent("a start content")
                 .setTestContent("one test");
-        when(mockDefaultExerciseHelper.getValuesByLanguage(language)).thenReturn(defaultValues);
+        when(mockDefaultExerciseCaseHelper.getValuesByLanguage(language)).thenReturn(defaultValues);
         var exerciseCaseToSave = new JpaExerciseCase()
                 .setExerciseId(savedExercise.getId())
                 .setIsValid(false)

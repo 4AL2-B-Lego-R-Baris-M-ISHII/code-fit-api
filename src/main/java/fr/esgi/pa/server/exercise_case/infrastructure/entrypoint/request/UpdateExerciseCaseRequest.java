@@ -17,7 +17,7 @@ public class UpdateExerciseCaseRequest {
     private String startContent;
 
     @NotEmpty
-    private Set<UpdateExerciseTestRequest> tests;
+    private Set<ExerciseTestRequest> tests;
 
     private Boolean verifyCode;
 }

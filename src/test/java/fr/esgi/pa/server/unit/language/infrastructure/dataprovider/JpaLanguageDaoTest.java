@@ -1,9 +1,11 @@
 package fr.esgi.pa.server.unit.language.infrastructure.dataprovider;
 
 import fr.esgi.pa.server.common.core.exception.AlreadyCreatedException;
+import fr.esgi.pa.server.common.core.exception.CommonExceptionState;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.language.core.LanguageName;
 import fr.esgi.pa.server.language.core.exception.IncorrectLanguageNameException;
+import fr.esgi.pa.server.language.core.exception.LanguageExceptionState;
 import fr.esgi.pa.server.language.infrastructure.dataprovider.JpaLanguage;
 import fr.esgi.pa.server.language.infrastructure.dataprovider.JpaLanguageDao;
 import fr.esgi.pa.server.language.infrastructure.dataprovider.LanguageMapper;
@@ -45,7 +47,11 @@ class JpaLanguageDaoTest {
 
             assertThatThrownBy(() -> sut.createLanguage(LanguageName.C, "c"))
                     .isExactlyInstanceOf(AlreadyCreatedException.class)
-                    .hasMessage(JpaLanguageDao.class + " : language with language name '" + LanguageName.C + "' already created");
+                    .hasMessage(
+                            "%s : language with language name '%s' already created",
+                            CommonExceptionState.ALREADY_CREATED,
+                            LanguageName.C
+                    );
         }
 
         @Test
@@ -72,7 +78,11 @@ class JpaLanguageDaoTest {
 
             assertThatThrownBy(() -> sut.findByLanguageName(LanguageName.C))
                     .isExactlyInstanceOf(NotFoundException.class)
-                    .hasMessage(JpaLanguageDao.class + " : language name '" + LanguageName.C + "' not found");
+                    .hasMessage(
+                            "%s : language name '%s' not found",
+                            CommonExceptionState.NOT_FOUND,
+                            LanguageName.C
+                    );
         }
 
         @Test
@@ -94,8 +104,13 @@ class JpaLanguageDaoTest {
             var incorrectLanguage = "incorrect language";
             assertThatThrownBy(() -> sut.findByStrLanguage(incorrectLanguage))
                     .isExactlyInstanceOf(IncorrectLanguageNameException.class)
-                    .hasMessage(String.format("%s : Language '%s' is incorrect", sut.getClass(), incorrectLanguage));
-
+                    .hasMessage(
+                            String.format(
+                                    "%s : Language '%s' is incorrect",
+                                    LanguageExceptionState.INCORRECT_LANGUAGE_NAME,
+                                    incorrectLanguage
+                            )
+                    );
         }
 
         @Test
@@ -119,7 +134,11 @@ class JpaLanguageDaoTest {
 
             assertThatThrownBy(() -> sut.findById(languageId))
                     .isExactlyInstanceOf(NotFoundException.class)
-                    .hasMessage("%s : language with id '%d' not found", NotFoundException.class, languageId);
+                    .hasMessage(
+                            "%s : language with id '%d' not found",
+                            CommonExceptionState.NOT_FOUND,
+                            languageId
+                    );
         }
 
         @Test

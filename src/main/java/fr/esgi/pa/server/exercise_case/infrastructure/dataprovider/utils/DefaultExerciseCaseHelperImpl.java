@@ -1,22 +1,23 @@
-package fr.esgi.pa.server.exercise.infrastructure.dataprovider.util;
+package fr.esgi.pa.server.exercise_case.infrastructure.dataprovider.utils;
 
+import fr.esgi.pa.server.exercise_case.core.utils.DefaultExerciseCaseHelper;
 import fr.esgi.pa.server.language.core.Language;
 import fr.esgi.pa.server.language.core.LanguageName;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DefaultExerciseHelperImpl implements DefaultExerciseHelper {
+public class DefaultExerciseCaseHelperImpl implements DefaultExerciseCaseHelper {
 
     @Override
-    public DefaultExerciseValues getValuesByLanguage(Language language) {
+    public DefaultExerciseCaseValues getValuesByLanguage(Language language) {
         if (language.getLanguageName() == LanguageName.JAVA) {
             return getJavaDefaultExerciseValues();
         }
         return getCDefaultExerciseValues();
     }
 
-    private DefaultExerciseValues getCDefaultExerciseValues() {
-        return new DefaultExerciseValues()
+    private DefaultExerciseCaseValues getCDefaultExerciseValues() {
+        return new DefaultExerciseCaseValues()
                 .setStartContent("#include <string.h>\n" +
                         "\n" +
                         "char* exercise1(char *test) {\n" +
@@ -41,8 +42,8 @@ public class DefaultExerciseHelperImpl implements DefaultExerciseHelper {
                         "}\n");
     }
 
-    private DefaultExerciseValues getJavaDefaultExerciseValues() {
-        return new DefaultExerciseValues()
+    private DefaultExerciseCaseValues getJavaDefaultExerciseValues() {
+        return new DefaultExerciseCaseValues()
                 .setStartContent("class Solution {\n" +
                         "    public static String exercise1(String test) {\n" +
                         "        // CODE HERE\n" +

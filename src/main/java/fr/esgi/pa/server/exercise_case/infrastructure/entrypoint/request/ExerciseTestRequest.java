@@ -8,7 +8,7 @@ import javax.validation.constraints.Size;
 
 @Data
 @Accessors(chain = true)
-public class UpdateExerciseTestRequest {
+public class ExerciseTestRequest {
     private Long id;
 
     @NotBlank
