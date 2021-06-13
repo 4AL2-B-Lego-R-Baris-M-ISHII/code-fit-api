@@ -2,7 +2,7 @@ package fr.esgi.pa.server.unit.code.usecase;
 
 import fr.esgi.pa.server.code.core.Compiler;
 import fr.esgi.pa.server.code.core.CompilerRepository;
-import fr.esgi.pa.server.code.usecase.CompileCode;
+import fr.esgi.pa.server.code.usecase.TestCompileCode;
 import fr.esgi.pa.server.language.core.LanguageDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,7 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class CompileCodeTest {
+class TestCompileCodeTest {
     @Mock
     private CompilerRepository mockCompilerRepository;
 
@@ -20,11 +20,11 @@ class CompileCodeTest {
     @Mock
     private Compiler mockCompiler;
 
-    private CompileCode sut;
+    private TestCompileCode sut;
 
     @BeforeEach
     void setup() {
-        sut = new CompileCode(mockCompilerRepository, mockLanguageDao);
+        sut = new TestCompileCode(mockCompilerRepository, mockLanguageDao);
     }
 //
 //    @Test

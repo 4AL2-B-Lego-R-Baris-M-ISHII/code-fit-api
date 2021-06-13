@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class CompileCode {
+public class TestCompileCode {
     private final CompilerRepository compilerRepository;
     private final LanguageDao languageDao;
 
