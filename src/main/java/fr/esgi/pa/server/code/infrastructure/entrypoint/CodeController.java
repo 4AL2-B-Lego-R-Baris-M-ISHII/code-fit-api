@@ -32,7 +32,7 @@ public class CodeController {
             @Pattern(regexp = "^\\d+", message = "id has to be an integer")
             @Min(value = 1, message = "id has to be equal or more than 1") String userId,
             @Valid @RequestBody SaveCodeRequest request
-    ) {
+    ) throws NotFoundException {
         saveOneCode.execute(Long.parseLong(userId), request.getExerciseCaseId(), request.getCodeContent());
         return null;
     }
