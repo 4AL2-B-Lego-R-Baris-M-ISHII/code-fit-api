@@ -1,7 +1,7 @@
 package fr.esgi.pa.server.unit.code.usecase;
 
-import fr.esgi.pa.server.code.core.Compiler;
-import fr.esgi.pa.server.code.core.CompilerRepository;
+import fr.esgi.pa.server.code.core.compiler.Compiler;
+import fr.esgi.pa.server.code.core.compiler.CompilerRepository;
 import fr.esgi.pa.server.code.usecase.TestCompileCode;
 import fr.esgi.pa.server.language.core.LanguageDao;
 import org.junit.jupiter.api.BeforeEach;

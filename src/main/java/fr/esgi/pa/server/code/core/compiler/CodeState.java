@@ -1,4 +1,4 @@
-package fr.esgi.pa.server.code.core;
+package fr.esgi.pa.server.code.core.compiler;
 
 public enum CodeState {
     SUCCESS("Success"),

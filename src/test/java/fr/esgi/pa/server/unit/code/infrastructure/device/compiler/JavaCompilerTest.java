@@ -1,7 +1,7 @@
 package fr.esgi.pa.server.unit.code.infrastructure.device.compiler;
 
-import fr.esgi.pa.server.code.core.Code;
-import fr.esgi.pa.server.code.core.CodeState;
+import fr.esgi.pa.server.code.core.compiler.CodeResult;
+import fr.esgi.pa.server.code.core.compiler.CodeState;
 import fr.esgi.pa.server.code.infrastructure.device.compile_runner.CompileRunner;
 import fr.esgi.pa.server.code.infrastructure.device.compiler.JavaCompiler;
 import fr.esgi.pa.server.code.infrastructure.device.compiler.config.CompilerConfig;
@@ -93,7 +93,7 @@ class JavaCompilerTest {
 
         var result = sut.compile("content", javaLanguage);
 
-        var expectedCode = new Code()
+        var expectedCode = new CodeResult()
                 .setCodeState(CodeState.SUCCESS)
                 .setLanguage(javaLanguage)
                 .setOutput("output");

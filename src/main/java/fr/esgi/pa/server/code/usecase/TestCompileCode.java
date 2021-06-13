@@ -1,8 +1,8 @@
 package fr.esgi.pa.server.code.usecase;
 
-import fr.esgi.pa.server.code.core.Code;
-import fr.esgi.pa.server.code.core.CompilationException;
-import fr.esgi.pa.server.code.core.CompilerRepository;
+import fr.esgi.pa.server.code.core.compiler.CodeResult;
+import fr.esgi.pa.server.code.core.compiler.CompilerRepository;
+import fr.esgi.pa.server.code.core.exception.CompilationException;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.language.core.LanguageDao;
 import fr.esgi.pa.server.language.core.LanguageName;
@@ -15,7 +15,7 @@ public class TestCompileCode {
     private final CompilerRepository compilerRepository;
     private final LanguageDao languageDao;
 
-    public Code execute(String codeContent, String strLanguage) throws NotFoundException, CompilationException {
+    public CodeResult execute(String codeContent, String strLanguage) throws NotFoundException, CompilationException {
         var languageName = LanguageName.valueOf(strLanguage);
         var foundLanguage = languageDao.findByLanguageName(languageName);
         var compiler = compilerRepository.findByLanguage(foundLanguage);

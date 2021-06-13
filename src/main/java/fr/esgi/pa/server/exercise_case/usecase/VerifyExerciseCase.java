@@ -1,9 +1,9 @@
 package fr.esgi.pa.server.exercise_case.usecase;
 
-import fr.esgi.pa.server.code.core.Code;
-import fr.esgi.pa.server.code.core.CodeState;
-import fr.esgi.pa.server.code.core.Compiler;
-import fr.esgi.pa.server.code.core.CompilerRepository;
+import fr.esgi.pa.server.code.core.compiler.CodeResult;
+import fr.esgi.pa.server.code.core.compiler.CodeState;
+import fr.esgi.pa.server.code.core.compiler.Compiler;
+import fr.esgi.pa.server.code.core.compiler.CompilerRepository;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.exercise_case.core.dao.ExerciseCaseDao;
 import fr.esgi.pa.server.exercise_case.core.dao.ExerciseTestDao;
@@ -42,7 +42,7 @@ public class VerifyExerciseCase {
 
     private DtoVerifyExerciseCase compileExerciseCaseAndTests(ExerciseCase exerciseCase, Language foundLanguage, Set<ExerciseTest> setTest, Compiler compiler) {
         var result = new DtoVerifyExerciseCase();
-        var codeList = new ArrayList<Code>();
+        var codeList = new ArrayList<CodeResult>();
         result.setIsExerciseCaseValid(true);
         for (ExerciseTest exerciseTest : setTest) {
             var contentToCompile = exerciseCase.getSolution() + System.getProperty("line.separator") + exerciseTest.getContent();
@@ -52,7 +52,7 @@ public class VerifyExerciseCase {
             }
             codeList.add(codeList.size(), resultCode);
         }
-        result.setCodeList(codeList);
+        result.setCodeResultList(codeList);
         return result;
     }
 }

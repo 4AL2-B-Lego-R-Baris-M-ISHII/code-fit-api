@@ -1,7 +1,7 @@
 package fr.esgi.pa.server.e2e;
 
-import fr.esgi.pa.server.code.core.Code;
-import fr.esgi.pa.server.code.core.CodeState;
+import fr.esgi.pa.server.code.core.compiler.CodeResult;
+import fr.esgi.pa.server.code.core.compiler.CodeState;
 import fr.esgi.pa.server.code.infrastructure.entrypoint.TestCompileCodeRequest;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.common.core.utils.process.ProcessHelper;
@@ -102,7 +102,7 @@ public class CodeApiTest {
                     .then()
                     .statusCode(200)
                     .extract()
-                    .as(Code.class);
+                    .as(CodeResult.class);
 
             assertThat(code).isNotNull();
             assertThat(code.getLanguage()).isNotNull();
@@ -132,7 +132,7 @@ public class CodeApiTest {
                     .then()
                     .statusCode(200)
                     .extract()
-                    .as(Code.class);
+                    .as(CodeResult.class);
 
             assertThat(code).isNotNull();
             assertThat(code.getLanguage()).isNotNull();

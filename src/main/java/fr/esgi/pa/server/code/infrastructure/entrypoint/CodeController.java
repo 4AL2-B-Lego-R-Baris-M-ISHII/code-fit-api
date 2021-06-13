@@ -1,7 +1,7 @@
 package fr.esgi.pa.server.code.infrastructure.entrypoint;
 
-import fr.esgi.pa.server.code.core.Code;
-import fr.esgi.pa.server.code.core.CompilationException;
+import fr.esgi.pa.server.code.core.compiler.CodeResult;
+import fr.esgi.pa.server.code.core.exception.CompilationException;
 import fr.esgi.pa.server.code.usecase.TestCompileCode;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class CodeController {
     private final TestCompileCode testCompileCode;
 
     @PostMapping
-    public ResponseEntity<Code> testCompileCode(@Valid @RequestBody TestCompileCodeRequest testCompileCodeRequest) throws NotFoundException, CompilationException {
+    public ResponseEntity<CodeResult> testCompileCode(@Valid @RequestBody TestCompileCodeRequest testCompileCodeRequest) throws NotFoundException, CompilationException {
         return ok(testCompileCode.execute(testCompileCodeRequest.getContent(), testCompileCodeRequest.getLanguage()));
     }
 }

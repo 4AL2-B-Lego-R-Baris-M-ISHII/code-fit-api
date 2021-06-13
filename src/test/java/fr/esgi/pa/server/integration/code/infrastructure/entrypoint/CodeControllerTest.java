@@ -1,8 +1,8 @@
 package fr.esgi.pa.server.integration.code.infrastructure.entrypoint;
 
-import fr.esgi.pa.server.code.core.Code;
-import fr.esgi.pa.server.code.core.CodeState;
-import fr.esgi.pa.server.code.core.CompilationException;
+import fr.esgi.pa.server.code.core.compiler.CodeResult;
+import fr.esgi.pa.server.code.core.compiler.CodeState;
+import fr.esgi.pa.server.code.core.exception.CompilationException;
 import fr.esgi.pa.server.code.infrastructure.entrypoint.TestCompileCodeRequest;
 import fr.esgi.pa.server.code.usecase.TestCompileCode;
 import fr.esgi.pa.server.helper.JsonHelper;
@@ -95,7 +95,7 @@ class CodeControllerTest {
             var codeRequest = new TestCompileCodeRequest()
                     .setLanguage("c")
                     .setContent("content language C");
-            var expectedCode = new Code().setOutput("output").setCodeState(CodeState.SUCCESS);
+            var expectedCode = new CodeResult().setOutput("output").setCodeState(CodeState.SUCCESS);
             when(mockTestCompileCode.execute(codeRequest.getContent(), codeRequest.getLanguage())).thenReturn(expectedCode);
 
             var contentAsString = mockMvc.perform(post("/api/code")
@@ -105,7 +105,7 @@ class CodeControllerTest {
                     .andReturn()
                     .getResponse()
                     .getContentAsString();
-            var response = jsonToObject(contentAsString, Code.class);
+            var response = jsonToObject(contentAsString, CodeResult.class);
 
             assertThat(response).isEqualTo(expectedCode);
         }
