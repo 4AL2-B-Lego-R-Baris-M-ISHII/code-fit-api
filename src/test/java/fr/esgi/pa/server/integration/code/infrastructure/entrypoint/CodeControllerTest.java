@@ -4,6 +4,8 @@ import fr.esgi.pa.server.code.core.compiler.CodeResult;
 import fr.esgi.pa.server.code.core.compiler.CodeState;
 import fr.esgi.pa.server.code.core.exception.CompilationException;
 import fr.esgi.pa.server.code.infrastructure.entrypoint.TestCompileCodeRequest;
+import fr.esgi.pa.server.code.infrastructure.entrypoint.request.SaveCodeRequest;
+import fr.esgi.pa.server.code.usecase.SaveOneCode;
 import fr.esgi.pa.server.code.usecase.TestCompileCode;
 import fr.esgi.pa.server.helper.JsonHelper;
 import org.junit.jupiter.api.DisplayName;
@@ -32,10 +34,127 @@ class CodeControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
+    private SaveOneCode mockSaveOneCode;
+
+    @MockBean
     private TestCompileCode mockTestCompileCode;
 
     @Nested
-    @DisplayName("/post code")
+    @DisplayName("/post api/code")
+    class PostCode {
+        @Test
+        void when_user_not_authenticate_should_send_unauthorized_error_response() throws Exception {
+            mockMvc.perform(
+                    post("/api/code")
+            ).andExpect(status().isUnauthorized());
+        }
+
+        @WithMockUser
+        @ParameterizedTest
+        @ValueSource(strings = {"", " ", "\n", "\t", "notnumber", "-1", "4.6", "0"})
+        void when_userId_of_request_is_incorrect_should_send_bad_request_error_response(String incorrectUserId) throws Exception {
+            var saveCodeRequest = new SaveCodeRequest()
+                    .setExerciseCaseId(1L)
+                    .setCodeContent("code content");
+            mockMvc.perform(
+                    post("/api/code")
+                            .requestAttr("userId", incorrectUserId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(JsonHelper.objectToJson(saveCodeRequest))
+            ).andExpect(status().isBadRequest());
+        }
+
+        @WithMockUser
+        @Test
+        void when_exerciseCaseId_of_request_is_null_should_send_bad_request_error_response() throws Exception {
+            var saveCodeRequest = new SaveCodeRequest()
+                    .setExerciseCaseId(null)
+                    .setCodeContent("code content");
+            mockMvc.perform(
+                    post("/api/code")
+                            .requestAttr("userId", "3")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(JsonHelper.objectToJson(saveCodeRequest))
+            ).andExpect(status().isBadRequest());
+        }
+
+        @WithMockUser
+        @ParameterizedTest
+        @ValueSource(longs = {-9L, 0L})
+        void when_exerciseCaseId_of_request_is_not_correct_should_send_bad_request_error_response(Long incorrectExerciseCaseId) throws Exception {
+            var saveCodeRequest = new SaveCodeRequest()
+                    .setExerciseCaseId(incorrectExerciseCaseId)
+                    .setCodeContent("code content");
+            mockMvc.perform(
+                    post("/api/code")
+                            .requestAttr("userId", "3")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(JsonHelper.objectToJson(saveCodeRequest))
+            ).andExpect(status().isBadRequest());
+        }
+
+        @WithMockUser
+        @Test
+        void when_content_of_request_is_null_should_send_bad_request_error_response() throws Exception {
+            var saveCodeRequest = new SaveCodeRequest()
+                    .setExerciseCaseId(2L)
+                    .setCodeContent(null);
+            mockMvc.perform(
+                    post("/api/code")
+                            .requestAttr("userId", "3")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(JsonHelper.objectToJson(saveCodeRequest))
+            ).andExpect(status().isBadRequest());
+        }
+
+        @WithMockUser
+        @ParameterizedTest
+        @ValueSource(strings = {"", " ", "\t", "\n"})
+        void when_content_of_request_is_blank_should_send_bad_request_error_response(String blankContent) throws Exception {
+            var saveCodeRequest = new SaveCodeRequest()
+                    .setExerciseCaseId(2L)
+                    .setCodeContent(blankContent);
+            mockMvc.perform(
+                    post("/api/code")
+                            .requestAttr("userId", "3")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(JsonHelper.objectToJson(saveCodeRequest))
+            ).andExpect(status().isBadRequest());
+        }
+
+        @WithMockUser
+        @Test
+        void when_content_size_of_request_is_more_than_60k_should_send_bad_request_error_response() throws Exception {
+            var saveCodeRequest = new SaveCodeRequest()
+                    .setExerciseCaseId(2L)
+                    .setCodeContent("a".repeat(60001));
+            mockMvc.perform(
+                    post("/api/code")
+                            .requestAttr("userId", "3")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(JsonHelper.objectToJson(saveCodeRequest))
+            ).andExpect(status().isBadRequest());
+        }
+
+        @WithMockUser
+        @Test
+        void when_request_properties_are_correct_should_call_usecase_saveOneCode() throws Exception {
+            var saveCodeRequest = new SaveCodeRequest()
+                    .setExerciseCaseId(2L)
+                    .setCodeContent("a content");
+            mockMvc.perform(
+                    post("/api/code")
+                            .requestAttr("userId", "3")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(JsonHelper.objectToJson(saveCodeRequest))
+            );
+
+            verify(mockSaveOneCode, times(1)).execute(3L, 2L, "a content");
+        }
+    }
+
+    @Nested
+    @DisplayName("/post api/code/test")
     class TestCompileCodeRoute {
 
         @Test
@@ -43,7 +162,7 @@ class CodeControllerTest {
             var codeRequest = new TestCompileCodeRequest()
                     .setLanguage("c")
                     .setContent("correct");
-            mockMvc.perform(post("/api/code")
+            mockMvc.perform(post("/api/code/test")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(JsonHelper.objectToJson(codeRequest)))
                     .andExpect(status().isUnauthorized());
@@ -56,7 +175,7 @@ class CodeControllerTest {
             var codeRequest = new TestCompileCodeRequest()
                     .setLanguage(incorrectLanguage)
                     .setContent("correct");
-            mockMvc.perform(post("/api/code")
+            mockMvc.perform(post("/api/code/test")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(JsonHelper.objectToJson(codeRequest)))
                     .andExpect(status().isBadRequest());
@@ -69,7 +188,7 @@ class CodeControllerTest {
             var codeRequest = new TestCompileCodeRequest()
                     .setLanguage("c")
                     .setContent(incorrectContent);
-            mockMvc.perform(post("/api/code")
+            mockMvc.perform(post("/api/code/test")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(JsonHelper.objectToJson(codeRequest)))
                     .andExpect(status().isBadRequest());
@@ -81,7 +200,7 @@ class CodeControllerTest {
             var codeRequest = new TestCompileCodeRequest()
                     .setLanguage("c")
                     .setContent("content language C");
-            mockMvc.perform(post("/api/code")
+            mockMvc.perform(post("/api/code/test")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(JsonHelper.objectToJson(codeRequest)))
                     .andExpect(status().is(200));
@@ -98,7 +217,7 @@ class CodeControllerTest {
             var expectedCode = new CodeResult().setOutput("output").setCodeState(CodeState.SUCCESS);
             when(mockTestCompileCode.execute(codeRequest.getContent(), codeRequest.getLanguage())).thenReturn(expectedCode);
 
-            var contentAsString = mockMvc.perform(post("/api/code")
+            var contentAsString = mockMvc.perform(post("/api/code/test")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(JsonHelper.objectToJson(codeRequest)))
                     .andExpect(status().isOk())
@@ -110,4 +229,5 @@ class CodeControllerTest {
             assertThat(response).isEqualTo(expectedCode);
         }
     }
+
 }
