@@ -15,4 +15,6 @@ public class CodeResult {
     private String output;
 
     private Language language;
+
+    private Long testId;
 }
