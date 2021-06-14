@@ -1,8 +1,11 @@
 package fr.esgi.pa.server.unit.language.infrastructure.dataprovider;
 
 import fr.esgi.pa.server.common.core.exception.AlreadyCreatedException;
+import fr.esgi.pa.server.common.core.exception.CommonExceptionState;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.language.core.LanguageName;
+import fr.esgi.pa.server.language.core.exception.IncorrectLanguageNameException;
+import fr.esgi.pa.server.language.core.exception.LanguageExceptionState;
 import fr.esgi.pa.server.language.infrastructure.dataprovider.JpaLanguage;
 import fr.esgi.pa.server.language.infrastructure.dataprovider.JpaLanguageDao;
 import fr.esgi.pa.server.language.infrastructure.dataprovider.LanguageMapper;
@@ -18,7 +21,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class JpaLanguageDaoTest {
@@ -44,7 +47,11 @@ class JpaLanguageDaoTest {
 
             assertThatThrownBy(() -> sut.createLanguage(LanguageName.C, "c"))
                     .isExactlyInstanceOf(AlreadyCreatedException.class)
-                    .hasMessage(JpaLanguageDao.class + " : language with language name '" + LanguageName.C + "' already created");
+                    .hasMessage(
+                            "%s : language with language name '%s' already created",
+                            CommonExceptionState.ALREADY_CREATED,
+                            LanguageName.C
+                    );
         }
 
         @Test
@@ -64,14 +71,18 @@ class JpaLanguageDaoTest {
     }
 
     @Nested
-    class FindByName {
+    class FindByLanguageName {
         @Test
         void when_language_name_not_found_should_throw_NotFoundException() {
             when(mockLanguageRepository.findByName(LanguageName.C)).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> sut.findByName(LanguageName.C))
+            assertThatThrownBy(() -> sut.findByLanguageName(LanguageName.C))
                     .isExactlyInstanceOf(NotFoundException.class)
-                    .hasMessage(JpaLanguageDao.class + " : language name '" + LanguageName.C + "' not found");
+                    .hasMessage(
+                            "%s : language name '%s' not found",
+                            CommonExceptionState.NOT_FOUND,
+                            LanguageName.C
+                    );
         }
 
         @Test
@@ -80,8 +91,68 @@ class JpaLanguageDaoTest {
             var expected = languageMapper.entityToDomain(foundLanguage);
             when(mockLanguageRepository.findByName(LanguageName.C)).thenReturn(Optional.of(foundLanguage));
 
-            var result = sut.findByName(LanguageName.C);
+            var result = sut.findByLanguageName(LanguageName.C);
 
+            assertThat(result).isEqualTo(expected);
+        }
+    }
+
+    @Nested
+    class FindByStrLanguage {
+        @Test
+        void when_language_not_correspond_to_given_language_name_enum_should_throw_IncorrectLanguageNameException() {
+            var incorrectLanguage = "incorrect language";
+            assertThatThrownBy(() -> sut.findByStrLanguage(incorrectLanguage))
+                    .isExactlyInstanceOf(IncorrectLanguageNameException.class)
+                    .hasMessage(
+                            String.format(
+                                    "%s : Language '%s' is incorrect",
+                                    LanguageExceptionState.INCORRECT_LANGUAGE_NAME,
+                                    incorrectLanguage
+                            )
+                    );
+        }
+
+        @Test
+        void should_return_language_when_found() throws IncorrectLanguageNameException, NotFoundException {
+            var foundLanguage = new JpaLanguage().setId(2L).setName(LanguageName.C).setFileExtension("c");
+            var expected = languageMapper.entityToDomain(foundLanguage);
+            when(mockLanguageRepository.findByName(LanguageName.C)).thenReturn(Optional.of(foundLanguage));
+
+            var result = sut.findByStrLanguage("C");
+
+            assertThat(result).isEqualTo(expected);
+        }
+    }
+
+    @Nested
+    class FindLanguageById {
+        @Test
+        void when_return_language_by_repository_is_empty_should_throw_not_found_exception() {
+            var languageId = 28L;
+            when(mockLanguageRepository.findById(languageId)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> sut.findById(languageId))
+                    .isExactlyInstanceOf(NotFoundException.class)
+                    .hasMessage(
+                            "%s : language with id '%d' not found",
+                            CommonExceptionState.NOT_FOUND,
+                            languageId
+                    );
+        }
+
+        @Test
+        void when_found_language_by_language_repository_should_return_found_language() throws NotFoundException {
+            var languageId = 33L;
+            var java = new JpaLanguage()
+                    .setId(languageId)
+                    .setFileExtension("java")
+                    .setName(LanguageName.JAVA);
+            when(mockLanguageRepository.findById(languageId)).thenReturn(Optional.of(java));
+
+            var result = sut.findById(languageId);
+
+            var expected = languageMapper.entityToDomain(java);
             assertThat(result).isEqualTo(expected);
         }
     }

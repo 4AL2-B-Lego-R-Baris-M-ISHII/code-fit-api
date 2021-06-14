@@ -1,10 +1,13 @@
 package fr.esgi.pa.server.language.infrastructure.dataprovider;
 
 import fr.esgi.pa.server.common.core.exception.AlreadyCreatedException;
+import fr.esgi.pa.server.common.core.exception.CommonExceptionState;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.language.core.Language;
 import fr.esgi.pa.server.language.core.LanguageDao;
 import fr.esgi.pa.server.language.core.LanguageName;
+import fr.esgi.pa.server.language.core.exception.IncorrectLanguageNameException;
+import fr.esgi.pa.server.language.core.exception.LanguageExceptionState;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +24,11 @@ public class JpaLanguageDao implements LanguageDao {
     public Long createLanguage(LanguageName languageName, String fileExtension) throws AlreadyCreatedException {
         var maybeLanguage = languageRepository.findByName(languageName);
         if (maybeLanguage.isPresent()) {
-            var message = String.format("%s : language with language name '%s' already created", this.getClass(), languageName);
+            var message = String.format(
+                    "%s : language with language name '%s' already created",
+                    CommonExceptionState.ALREADY_CREATED,
+                    languageName
+            );
             throw new AlreadyCreatedException(message);
         }
 
@@ -30,13 +37,45 @@ public class JpaLanguageDao implements LanguageDao {
     }
 
     @Override
-    public Language findByName(LanguageName languageName) throws NotFoundException {
+    public Language findByLanguageName(LanguageName languageName) throws NotFoundException {
         return languageRepository.findByName(languageName)
                 .map(languageMapper::entityToDomain)
                 .orElseThrow(() -> {
-                    var message = String.format("%s : language name '%s' not found", this.getClass(), languageName);
+                    var message = String.format(
+                            "%s : language name '%s' not found",
+                            CommonExceptionState.NOT_FOUND,
+                            languageName
+                    );
                     return new NotFoundException(message);
                 });
+    }
+
+    @Override
+    public Language findByStrLanguage(String strLanguage) throws IncorrectLanguageNameException, NotFoundException {
+        try {
+            var languageName = LanguageName.valueOf(strLanguage);
+            return findByLanguageName(languageName);
+        } catch (IllegalArgumentException ignored) {
+            var message = String.format(
+                    "%s : Language '%s' is incorrect",
+                    LanguageExceptionState.INCORRECT_LANGUAGE_NAME,
+                    strLanguage
+            );
+            throw new IncorrectLanguageNameException(message);
+        }
+    }
+
+    @Override
+    public Language findById(Long languageId) throws NotFoundException {
+        var foundLanguage = languageRepository.findById(languageId).orElseThrow(() -> {
+            var message = String.format(
+                    "%s : language with id '%d' not found",
+                    CommonExceptionState.NOT_FOUND,
+                    languageId
+            );
+            return new NotFoundException(message);
+        });
+        return languageMapper.entityToDomain(foundLanguage);
     }
 
     @Override

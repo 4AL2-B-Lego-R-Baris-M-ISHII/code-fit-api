@@ -1,8 +1,8 @@
 package fr.esgi.pa.server.auth.infrastructure.security;
 
+import fr.esgi.pa.server.auth.infrastructure.security.jwt.AuthEntryPointJwt;
 import fr.esgi.pa.server.auth.infrastructure.security.jwt.AuthTokenFilter;
 import fr.esgi.pa.server.auth.infrastructure.security.service.UserDetailsServiceImpl;
-import fr.esgi.pa.server.auth.infrastructure.security.jwt.AuthEntryPointJwt;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -53,6 +53,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests().antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/api/media/**").permitAll()
+                .antMatchers("/swagger-ui/**").permitAll()
+                .antMatchers("/swagger-resources/**").permitAll()
+                .antMatchers("/v2/api-docs").permitAll()
                 .anyRequest().authenticated();
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

@@ -9,13 +9,13 @@ import java.io.IOException;
 @Component
 public class ProcessHelperImpl implements ProcessHelper {
     @Override
-    public Process createCommandProcess(String[] command) throws IOException {
+    public Process launchCommandAndGetProcess(String[] command) throws IOException {
         return new ProcessBuilder(command).start();
     }
 
     @Override
     public ProcessResult launchCommandProcess(String[] command) throws IOException, InterruptedException {
-        var process = createCommandProcess(command);
+        var process = launchCommandAndGetProcess(command);
         var status = process.waitFor();
         var processStream = status == 0
                 ? process.getInputStream()

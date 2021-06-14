@@ -1,14 +1,15 @@
 package fr.esgi.pa.server.unit.user.infrastructure.dataprovider;
 
-import fr.esgi.pa.server.user.core.UserDao;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.role.core.Role;
 import fr.esgi.pa.server.role.core.RoleName;
-import fr.esgi.pa.server.user.infrastructure.dataprovider.JpaUserDao;
 import fr.esgi.pa.server.role.infrastructure.dataprovider.JpaRole;
-import fr.esgi.pa.server.user.infrastructure.dataprovider.JpaUser;
 import fr.esgi.pa.server.role.infrastructure.dataprovider.RoleMapper;
 import fr.esgi.pa.server.role.infrastructure.dataprovider.RoleRepository;
+import fr.esgi.pa.server.user.core.UserDao;
+import fr.esgi.pa.server.user.infrastructure.dataprovider.JpaUser;
+import fr.esgi.pa.server.user.infrastructure.dataprovider.JpaUserDao;
+import fr.esgi.pa.server.user.infrastructure.dataprovider.UserMapper;
 import fr.esgi.pa.server.user.infrastructure.dataprovider.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -19,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -38,6 +40,8 @@ class JpaUserDaoTest {
 
     private final RoleMapper roleMapper = new RoleMapper();
 
+    private final UserMapper userMapper = new UserMapper(roleMapper);
+
     private JpaUserDao sut;
     private final String username = "user name";
     private final String email = "user@gmail.com";
@@ -45,7 +49,7 @@ class JpaUserDaoTest {
 
     @BeforeEach
     void setup() {
-        sut = new JpaUserDao(mockUserRepository, mockRoleRepository, roleMapper, mockEncoder);
+        sut = new JpaUserDao(mockUserRepository, mockRoleRepository, roleMapper, userMapper, mockEncoder);
     }
 
     @Nested
@@ -126,6 +130,33 @@ class JpaUserDaoTest {
             var result = sut.existsByEmail(email);
 
             assertThat(result).isTrue();
+        }
+    }
+
+    @Nested
+    class FindById {
+        @Test
+        void when_user_not_found_should_throw_NotFoundException() {
+            when(mockUserRepository.findById(1L)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> sut.findById(1L))
+                    .isExactlyInstanceOf(NotFoundException.class)
+                    .hasMessage(String.format("%s : User with user id '%d' not found", sut.getClass(), 1L));
+        }
+
+        @Test
+        void when_user_found_should_return_founded_user() throws NotFoundException {
+            var foundUser = new JpaUser().setId(1L)
+                    .setEmail("user@gmail.com")
+                    .setUsername("username")
+                    .setPassword("password")
+                    .setRoles(Set.of(new JpaRole()));
+            var expectedUser = userMapper.entityToDomain(foundUser);
+            when(mockUserRepository.findById(1L)).thenReturn(Optional.of(foundUser));
+
+            var result = sut.findById(1L);
+
+            assertThat(result).isEqualTo(expectedUser);
         }
     }
 }
