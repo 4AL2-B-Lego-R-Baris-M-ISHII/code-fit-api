@@ -21,7 +21,10 @@ public class JpaCodeDao implements CodeDao {
         checkIfUserIdIsNull(code);
         checkIfExerciseCaseIdIsNull(code);
 
-        var codeToSave = codeMapper.domainToEntity(code);
+        var codeToSave = codeRepository
+                .findByUserIdAndExerciseCaseId(code.getUserId(), code.getExerciseCaseId())
+                .orElse(codeMapper.domainToEntity(code));
+        codeToSave.setContent(code.getContent());
         var savedCode = codeRepository.save(codeToSave);
         return codeMapper.entityToDomain(savedCode);
     }

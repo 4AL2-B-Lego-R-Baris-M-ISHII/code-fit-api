@@ -69,12 +69,47 @@ class JpaCodeDaoTest {
         }
 
         @Test
-        void when_code_saved_should_return_saved_code() throws ForbiddenException {
+        void when_found_code_by_userId_and_exerciseCaseId_and_code_saved_should_return_saved_code() throws ForbiddenException {
+            var codeToSave = new Code()
+                    .setUserId(userId)
+                    .setContent(content)
+                    .setExerciseCaseId(exerciseCaseId);
+            var foundCode = new JpaCode()
+                    .setId(9L)
+                    .setContent("old content")
+                    .setUserId(userId)
+                    .setExerciseCaseId(exerciseCaseId)
+                    .setIsResolved(false);
+            when(mockCodeRepository.findByUserIdAndExerciseCaseId(userId, exerciseCaseId)).thenReturn(Optional.of(foundCode));
+            var jpaCodeToSave = new JpaCode()
+                    .setId(9L)
+                    .setContent(content)
+                    .setUserId(userId)
+                    .setExerciseCaseId(exerciseCaseId)
+                    .setIsResolved(false);
+            var savedCode = new JpaCode()
+                    .setId(9L)
+                    .setContent(content)
+                    .setUserId(userId)
+                    .setExerciseCaseId(exerciseCaseId)
+                    .setIsResolved(false);
+            when(mockCodeRepository.save(jpaCodeToSave)).thenReturn(savedCode);
+
+            var result = sut.save(codeToSave);
+
+            var expectedSavedCode = codeMapper.entityToDomain(savedCode);
+
+            assertThat(result).isEqualTo(expectedSavedCode);
+        }
+
+        @Test
+        void when_not_found_code_by_userId_and_exerciseCaseId_and_code_saved_should_return_saved_code() throws ForbiddenException {
             var codeToSave = new Code()
                     .setUserId(userId)
                     .setContent(content)
                     .setExerciseCaseId(exerciseCaseId);
             var jpaCodeToSave = codeMapper.domainToEntity(codeToSave);
+            when(mockCodeRepository.findByUserIdAndExerciseCaseId(userId, exerciseCaseId)).thenReturn(Optional.empty());
             var savedCode = new JpaCode()
                     .setId(9L)
                     .setContent(content)
