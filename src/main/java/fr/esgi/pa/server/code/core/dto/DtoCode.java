@@ -1,4 +1,4 @@
-package fr.esgi.pa.server.exercise_case.core.dto;
+package fr.esgi.pa.server.code.core.dto;
 
 import fr.esgi.pa.server.code.core.compiler.CodeResult;
 import lombok.Data;
@@ -8,7 +8,8 @@ import java.util.List;
 
 @Data
 @Accessors(chain = true)
-public class DtoVerifyExerciseCase {
-    List<CodeResult> codeResultList;
-    Boolean isExerciseCaseValid;
+public class DtoCode {
+    private Long codeId;
+    private Boolean isResolved;
+    private List<CodeResult> listCodeResult;
 }

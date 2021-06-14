@@ -1,7 +1,7 @@
 package fr.esgi.pa.server.unit.code.infrastructure.device.compiler;
 
-import fr.esgi.pa.server.code.core.Code;
-import fr.esgi.pa.server.code.core.CodeState;
+import fr.esgi.pa.server.code.core.compiler.CodeResult;
+import fr.esgi.pa.server.code.core.compiler.CodeState;
 import fr.esgi.pa.server.code.infrastructure.device.compile_runner.CompileRunner;
 import fr.esgi.pa.server.code.infrastructure.device.compiler.CCompiler;
 import fr.esgi.pa.server.code.infrastructure.device.compiler.config.CompilerConfig;
@@ -84,7 +84,7 @@ class CCompilerTest {
 
         var result = sut.compile(content, cLanguage);
 
-        var expectedCode = new Code().setLanguage(cLanguage).setCodeState(CodeState.SUCCESS).setOutput("output");
+        var expectedCode = new CodeResult().setLanguage(cLanguage).setCodeState(CodeState.SUCCESS).setOutput("output");
 
         assertThat(result).isEqualTo(expectedCode);
     }

@@ -1,8 +1,8 @@
 package fr.esgi.pa.server.e2e;
 
-import fr.esgi.pa.server.code.core.Code;
-import fr.esgi.pa.server.code.core.CodeState;
-import fr.esgi.pa.server.code.infrastructure.entrypoint.CodeRequest;
+import fr.esgi.pa.server.code.core.compiler.CodeResult;
+import fr.esgi.pa.server.code.core.compiler.CodeState;
+import fr.esgi.pa.server.code.infrastructure.entrypoint.TestCompileCodeRequest;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.common.core.utils.process.ProcessHelper;
 import fr.esgi.pa.server.helper.AuthDataHelper;
@@ -81,7 +81,7 @@ public class CodeApiTest {
 
     @DisplayName("METHOD POST /api/code")
     @Nested
-    class PostCompileCode {
+    class PostTestCompileCode {
         @Test
         void should_send_result_compiled_c_code() {
             var content = "#include <stdio.h>\n" +
@@ -90,7 +90,7 @@ public class CodeApiTest {
                     "   printf(\"Hello World\");\n" +
                     "   return 0;\n" +
                     "}";
-            var codeRequest = new CodeRequest()
+            var codeRequest = new TestCompileCodeRequest()
                     .setLanguage("C")
                     .setContent(content);
             var code = given()
@@ -98,11 +98,11 @@ public class CodeApiTest {
                     .contentType(ContentType.JSON)
                     .body(codeRequest)
                     .when()
-                    .post("/api/code")
+                    .post("/api/code/test")
                     .then()
                     .statusCode(200)
                     .extract()
-                    .as(Code.class);
+                    .as(CodeResult.class);
 
             assertThat(code).isNotNull();
             assertThat(code.getLanguage()).isNotNull();
@@ -120,7 +120,7 @@ public class CodeApiTest {
                     "        System.out.println(\"Hello World\");\n" +
                     "    }\n" +
                     "}";
-            var codeRequest = new CodeRequest()
+            var codeRequest = new TestCompileCodeRequest()
                     .setLanguage("JAVA")
                     .setContent(content);
             var code = given()
@@ -128,11 +128,11 @@ public class CodeApiTest {
                     .contentType(ContentType.JSON)
                     .body(codeRequest)
                     .when()
-                    .post("/api/code")
+                    .post("/api/code/test")
                     .then()
                     .statusCode(200)
                     .extract()
-                    .as(Code.class);
+                    .as(CodeResult.class);
 
             assertThat(code).isNotNull();
             assertThat(code.getLanguage()).isNotNull();

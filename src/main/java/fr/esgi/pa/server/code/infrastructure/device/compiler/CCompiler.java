@@ -1,8 +1,8 @@
 package fr.esgi.pa.server.code.infrastructure.device.compiler;
 
-import fr.esgi.pa.server.code.core.Code;
-import fr.esgi.pa.server.code.core.CodeState;
-import fr.esgi.pa.server.code.core.Compiler;
+import fr.esgi.pa.server.code.core.compiler.CodeResult;
+import fr.esgi.pa.server.code.core.compiler.CodeState;
+import fr.esgi.pa.server.code.core.compiler.Compiler;
 import fr.esgi.pa.server.code.infrastructure.device.compile_runner.CompileRunner;
 import fr.esgi.pa.server.code.infrastructure.device.helper.CodeStateHelper;
 import fr.esgi.pa.server.code.infrastructure.device.repository.CompilerConfigRepository;
@@ -20,13 +20,13 @@ public class CCompiler implements Compiler {
     private final CompilerConfigRepository compilerConfigRepository;
 
     @Override
-    public Code compile(String content, Language language) {
+    public CodeResult compile(String content, Language language) {
         var compilerConfig = compilerConfigRepository.findByLanguageName(language.getLanguageName());
         var processResult = compileRunner.start(compilerConfig, content, language);
         CodeState codeState = codeStateHelper.getCodeState(processResult.getStatus());
         var folderTmpPath = compilerConfig.getFolderTmpPath();
         fileDeleter.removeAllFiles(folderTmpPath);
-        return new Code()
+        return new CodeResult()
                 .setLanguage(language)
                 .setCodeState(codeState)
                 .setOutput(processResult.getOut());

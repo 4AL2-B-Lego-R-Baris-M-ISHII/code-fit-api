@@ -1,9 +1,9 @@
 package fr.esgi.pa.server.unit.exercise_case.usecase;
 
-import fr.esgi.pa.server.code.core.Code;
-import fr.esgi.pa.server.code.core.CodeState;
-import fr.esgi.pa.server.code.core.Compiler;
-import fr.esgi.pa.server.code.core.CompilerRepository;
+import fr.esgi.pa.server.code.core.compiler.CodeResult;
+import fr.esgi.pa.server.code.core.compiler.CodeState;
+import fr.esgi.pa.server.code.core.compiler.Compiler;
+import fr.esgi.pa.server.code.core.compiler.CompilerRepository;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.exercise_case.core.dao.ExerciseCaseDao;
 import fr.esgi.pa.server.exercise_case.core.dao.ExerciseTestDao;
@@ -117,11 +117,11 @@ class VerifyExerciseCaseTest {
         var setTest = Set.of(test1, test2);
         when(mockExerciseTestDao.findAllByExerciseCaseId(exerciseCaseId)).thenReturn(setTest);
         when(mockCompilerRepository.findByLanguage(foundLanguage)).thenReturn(mockCompiler);
-        var code1 = new Code()
+        var code1 = new CodeResult()
                 .setLanguage(foundLanguage)
                 .setCodeState(CodeState.SUCCESS)
                 .setOutput("output code 1");
-        var code2 = new Code()
+        var code2 = new CodeResult()
                 .setLanguage(foundLanguage)
                 .setCodeState(CodeState.COMPILATION_ERROR)
                 .setOutput("output code 2");
@@ -134,9 +134,9 @@ class VerifyExerciseCaseTest {
 
         var expectedCodeList = List.of(code1, code2);
         assertThat(result.getIsExerciseCaseValid()).isFalse();
-        assertThat(result.getCodeList()).isNotNull();
-        assertThat(result.getCodeList().size()).isEqualTo(expectedCodeList.size());
-        assertThat(result.getCodeList().containsAll(expectedCodeList)).isTrue();
+        assertThat(result.getCodeResultList()).isNotNull();
+        assertThat(result.getCodeResultList().size()).isEqualTo(expectedCodeList.size());
+        assertThat(result.getCodeResultList().containsAll(expectedCodeList)).isTrue();
     }
 
     @Test
@@ -165,11 +165,11 @@ class VerifyExerciseCaseTest {
         var setTest = Set.of(test1, test2);
         when(mockExerciseTestDao.findAllByExerciseCaseId(exerciseCaseId)).thenReturn(setTest);
         when(mockCompilerRepository.findByLanguage(foundLanguage)).thenReturn(mockCompiler);
-        var code1 = new Code()
+        var code1 = new CodeResult()
                 .setLanguage(foundLanguage)
                 .setCodeState(CodeState.SUCCESS)
                 .setOutput("output code 1");
-        var code2 = new Code()
+        var code2 = new CodeResult()
                 .setLanguage(foundLanguage)
                 .setCodeState(CodeState.COMPILATION_ERROR)
                 .setOutput("output code 2");
@@ -216,11 +216,11 @@ class VerifyExerciseCaseTest {
         var setTest = Set.of(test1, test2);
         when(mockExerciseTestDao.findAllByExerciseCaseId(exerciseCaseId)).thenReturn(setTest);
         when(mockCompilerRepository.findByLanguage(foundLanguage)).thenReturn(mockCompiler);
-        var code1 = new Code()
+        var code1 = new CodeResult()
                 .setLanguage(foundLanguage)
                 .setCodeState(CodeState.SUCCESS)
                 .setOutput("output code 1");
-        var code2 = new Code()
+        var code2 = new CodeResult()
                 .setLanguage(foundLanguage)
                 .setCodeState(CodeState.SUCCESS)
                 .setOutput("output code 2");
@@ -241,8 +241,8 @@ class VerifyExerciseCaseTest {
 
         var expectedCodeList = List.of(code1, code2);
         assertThat(result.getIsExerciseCaseValid()).isTrue();
-        assertThat(result.getCodeList()).isNotNull();
-        assertThat(result.getCodeList().size()).isEqualTo(expectedCodeList.size());
-        assertThat(result.getCodeList().containsAll(expectedCodeList)).isTrue();
+        assertThat(result.getCodeResultList()).isNotNull();
+        assertThat(result.getCodeResultList().size()).isEqualTo(expectedCodeList.size());
+        assertThat(result.getCodeResultList().containsAll(expectedCodeList)).isTrue();
     }
 }

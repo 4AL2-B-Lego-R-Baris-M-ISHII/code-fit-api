@@ -1,4 +1,4 @@
-package fr.esgi.pa.server.code.core;
+package fr.esgi.pa.server.code.core.exception;
 
 public class CompilationException extends Throwable {
     public CompilationException(String message) {

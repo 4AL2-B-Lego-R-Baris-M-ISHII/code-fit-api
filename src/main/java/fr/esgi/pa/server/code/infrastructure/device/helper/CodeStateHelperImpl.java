@@ -1,6 +1,6 @@
 package fr.esgi.pa.server.code.infrastructure.device.helper;
 
-import fr.esgi.pa.server.code.core.CodeState;
+import fr.esgi.pa.server.code.core.compiler.CodeState;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
