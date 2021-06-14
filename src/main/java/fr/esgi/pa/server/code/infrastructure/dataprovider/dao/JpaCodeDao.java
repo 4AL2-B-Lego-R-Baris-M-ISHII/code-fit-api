@@ -5,6 +5,7 @@ import fr.esgi.pa.server.code.core.entity.Code;
 import fr.esgi.pa.server.code.infrastructure.dataprovider.mapper.CodeMapper;
 import fr.esgi.pa.server.code.infrastructure.dataprovider.repository.CodeRepository;
 import fr.esgi.pa.server.common.core.exception.CommonExceptionState;
+import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.exercise.core.exception.ForbiddenException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -43,5 +44,18 @@ public class JpaCodeDao implements CodeDao {
             );
             throw new ForbiddenException(message);
         }
+    }
+
+    @Override
+    public Code findById(Long codeId) throws NotFoundException {
+        var foundCode = codeRepository.findById(codeId).orElseThrow(() -> {
+            var message = String.format(
+                    "%s : Code with id '%d' not found",
+                    CommonExceptionState.NOT_FOUND,
+                    codeId
+            );
+            return new NotFoundException(message);
+        });
+        return codeMapper.entityToDomain(foundCode);
     }
 }
