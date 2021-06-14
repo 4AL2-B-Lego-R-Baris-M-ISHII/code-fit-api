@@ -10,5 +10,5 @@ public class Code {
     private String content;
     private Long userId;
     private Long exerciseCaseId;
-    private Boolean isResolved;
+    private Boolean isResolved = false;
 }

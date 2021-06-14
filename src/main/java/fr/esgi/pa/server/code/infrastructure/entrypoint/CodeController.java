@@ -47,8 +47,8 @@ public class CodeController {
         if (!request.getToCompile()) {
             return created(getUri(codeId)).build();
         }
-        compileCodeById.execute(codeId);
-        return null;
+        var dtoCode = compileCodeById.execute(codeId);
+        return ok(dtoCode);
     }
 
     private URI getUri(Long codeId) {

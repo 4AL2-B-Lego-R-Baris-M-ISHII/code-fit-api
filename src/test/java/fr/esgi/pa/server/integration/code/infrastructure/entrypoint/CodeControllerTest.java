@@ -2,6 +2,7 @@ package fr.esgi.pa.server.integration.code.infrastructure.entrypoint;
 
 import fr.esgi.pa.server.code.core.compiler.CodeResult;
 import fr.esgi.pa.server.code.core.compiler.CodeState;
+import fr.esgi.pa.server.code.core.dto.DtoCode;
 import fr.esgi.pa.server.code.core.exception.CompilationException;
 import fr.esgi.pa.server.code.infrastructure.entrypoint.TestCompileCodeRequest;
 import fr.esgi.pa.server.code.infrastructure.entrypoint.request.SaveCodeRequest;
@@ -23,6 +24,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.util.ArrayList;
 
 import static fr.esgi.pa.server.helper.JsonHelper.jsonToObject;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -245,6 +248,33 @@ class CodeControllerTest {
             verify(mockCompileCodeById, times(1)).execute(codeId);
         }
 
+        @WithMockUser
+        @Test
+        void when_request_toCompile_property_is_true_and_usecase_compileCodeById_return_dtoCode_should_send_ok_response_with_dtoCode() throws Exception {
+            var saveCodeRequest = new SaveCodeRequest()
+                    .setExerciseCaseId(exerciseCaseId)
+                    .setCodeContent(codeContent)
+                    .setToCompile(true);
+            when(mockSaveOneCode.execute(userId, exerciseCaseId, codeContent)).thenReturn(codeId);
+            var dtoCode = new DtoCode()
+                    .setCodeId(12L)
+                    .setIsResolved(true)
+                    .setListCodeResult(new ArrayList<>());
+            when(mockCompileCodeById.execute(codeId)).thenReturn(dtoCode);
+            var contentAsString = mockMvc.perform(
+                    post("/api/code")
+                            .requestAttr("userId", "3")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(JsonHelper.objectToJson(saveCodeRequest))
+            ).andExpect(status().isOk())
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
+            assertThat(contentAsString).isNotNull();
+            assertThat(contentAsString).isNotBlank();
+            var response = JsonHelper.jsonToObject(contentAsString, DtoCode.class);
+            assertThat(response).isEqualTo(dtoCode);
+        }
     }
 
     @Nested
