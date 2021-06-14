@@ -3,18 +3,23 @@ package fr.esgi.pa.server.code.infrastructure.entrypoint;
 import fr.esgi.pa.server.code.core.compiler.CodeResult;
 import fr.esgi.pa.server.code.core.exception.CompilationException;
 import fr.esgi.pa.server.code.infrastructure.entrypoint.request.SaveCodeRequest;
+import fr.esgi.pa.server.code.usecase.CompileCodeById;
 import fr.esgi.pa.server.code.usecase.SaveOneCode;
 import fr.esgi.pa.server.code.usecase.TestCompileCode;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
+import fr.esgi.pa.server.exercise.core.exception.ForbiddenException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
+import java.net.URI;
 
+import static org.springframework.http.ResponseEntity.created;
 import static org.springframework.http.ResponseEntity.ok;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -25,6 +30,7 @@ import static org.springframework.http.ResponseEntity.ok;
 public class CodeController {
     private final TestCompileCode testCompileCode;
     private final SaveOneCode saveOneCode;
+    private final CompileCodeById compileCodeById;
 
     @PostMapping
     public ResponseEntity<?> saveCode(
@@ -32,9 +38,24 @@ public class CodeController {
             @Pattern(regexp = "^\\d+", message = "id has to be an integer")
             @Min(value = 1, message = "id has to be equal or more than 1") String userId,
             @Valid @RequestBody SaveCodeRequest request
-    ) throws NotFoundException {
-        saveOneCode.execute(Long.parseLong(userId), request.getExerciseCaseId(), request.getCodeContent());
+    ) throws NotFoundException, ForbiddenException {
+        var codeId = saveOneCode.execute(
+                Long.parseLong(userId),
+                request.getExerciseCaseId(),
+                request.getCodeContent()
+        );
+        if (!request.getToCompile()) {
+            return created(getUri(codeId)).build();
+        }
+        compileCodeById.execute(codeId);
         return null;
+    }
+
+    private URI getUri(Long codeId) {
+        return ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(codeId)
+                .toUri();
     }
 
     @PostMapping("test")

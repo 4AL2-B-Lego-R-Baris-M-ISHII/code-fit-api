@@ -5,6 +5,7 @@ import fr.esgi.pa.server.code.core.entity.Code;
 import fr.esgi.pa.server.code.usecase.SaveOneCode;
 import fr.esgi.pa.server.common.core.exception.CommonExceptionState;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
+import fr.esgi.pa.server.exercise.core.exception.ForbiddenException;
 import fr.esgi.pa.server.exercise_case.core.dao.ExerciseCaseDao;
 import fr.esgi.pa.server.user.core.UserDao;
 import org.junit.jupiter.api.BeforeEach;
@@ -66,7 +67,7 @@ class SaveOneCodeTest {
     }
 
     @Test
-    void when_code_saved_should_return_saved_code_id() throws NotFoundException {
+    void when_code_saved_should_return_saved_code_id() throws NotFoundException, ForbiddenException {
         when(mockUserDao.existsById(userId)).thenReturn(true);
         when(mockExerciseCaseDao.existsById(exerciseCaseId)).thenReturn(true);
         var expectedCodeToSave = new Code()

@@ -5,8 +5,10 @@ import fr.esgi.pa.server.code.core.compiler.CodeState;
 import fr.esgi.pa.server.code.core.exception.CompilationException;
 import fr.esgi.pa.server.code.infrastructure.entrypoint.TestCompileCodeRequest;
 import fr.esgi.pa.server.code.infrastructure.entrypoint.request.SaveCodeRequest;
+import fr.esgi.pa.server.code.usecase.CompileCodeById;
 import fr.esgi.pa.server.code.usecase.SaveOneCode;
 import fr.esgi.pa.server.code.usecase.TestCompileCode;
+import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.helper.JsonHelper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -20,6 +22,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import static fr.esgi.pa.server.helper.JsonHelper.jsonToObject;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,11 +40,20 @@ class CodeControllerTest {
     private SaveOneCode mockSaveOneCode;
 
     @MockBean
+    private CompileCodeById mockCompileCodeById;
+
+    @MockBean
     private TestCompileCode mockTestCompileCode;
 
     @Nested
     @DisplayName("/post api/code")
     class PostCode {
+
+        private final long exerciseCaseId = 2L;
+        private final String codeContent = "code content";
+        private final long userId = 3L;
+        private final long codeId = 7L;
+
         @Test
         void when_user_not_authenticate_should_send_unauthorized_error_response() throws Exception {
             mockMvc.perform(
@@ -54,8 +66,8 @@ class CodeControllerTest {
         @ValueSource(strings = {"", " ", "\n", "\t", "notnumber", "-1", "4.6", "0"})
         void when_userId_of_request_is_incorrect_should_send_bad_request_error_response(String incorrectUserId) throws Exception {
             var saveCodeRequest = new SaveCodeRequest()
-                    .setExerciseCaseId(1L)
-                    .setCodeContent("code content");
+                    .setExerciseCaseId(exerciseCaseId)
+                    .setCodeContent(codeContent);
             mockMvc.perform(
                     post("/api/code")
                             .requestAttr("userId", incorrectUserId)
@@ -69,7 +81,7 @@ class CodeControllerTest {
         void when_exerciseCaseId_of_request_is_null_should_send_bad_request_error_response() throws Exception {
             var saveCodeRequest = new SaveCodeRequest()
                     .setExerciseCaseId(null)
-                    .setCodeContent("code content");
+                    .setCodeContent(codeContent);
             mockMvc.perform(
                     post("/api/code")
                             .requestAttr("userId", "3")
@@ -84,7 +96,7 @@ class CodeControllerTest {
         void when_exerciseCaseId_of_request_is_not_correct_should_send_bad_request_error_response(Long incorrectExerciseCaseId) throws Exception {
             var saveCodeRequest = new SaveCodeRequest()
                     .setExerciseCaseId(incorrectExerciseCaseId)
-                    .setCodeContent("code content");
+                    .setCodeContent(codeContent);
             mockMvc.perform(
                     post("/api/code")
                             .requestAttr("userId", "3")
@@ -97,7 +109,7 @@ class CodeControllerTest {
         @Test
         void when_content_of_request_is_null_should_send_bad_request_error_response() throws Exception {
             var saveCodeRequest = new SaveCodeRequest()
-                    .setExerciseCaseId(2L)
+                    .setExerciseCaseId(exerciseCaseId)
                     .setCodeContent(null);
             mockMvc.perform(
                     post("/api/code")
@@ -112,7 +124,7 @@ class CodeControllerTest {
         @ValueSource(strings = {"", " ", "\t", "\n"})
         void when_content_of_request_is_blank_should_send_bad_request_error_response(String blankContent) throws Exception {
             var saveCodeRequest = new SaveCodeRequest()
-                    .setExerciseCaseId(2L)
+                    .setExerciseCaseId(exerciseCaseId)
                     .setCodeContent(blankContent);
             mockMvc.perform(
                     post("/api/code")
@@ -126,7 +138,7 @@ class CodeControllerTest {
         @Test
         void when_content_size_of_request_is_more_than_60k_should_send_bad_request_error_response() throws Exception {
             var saveCodeRequest = new SaveCodeRequest()
-                    .setExerciseCaseId(2L)
+                    .setExerciseCaseId(exerciseCaseId)
                     .setCodeContent("a".repeat(60001));
             mockMvc.perform(
                     post("/api/code")
@@ -140,8 +152,8 @@ class CodeControllerTest {
         @Test
         void when_request_properties_are_correct_should_call_usecase_saveOneCode() throws Exception {
             var saveCodeRequest = new SaveCodeRequest()
-                    .setExerciseCaseId(2L)
-                    .setCodeContent("a content");
+                    .setExerciseCaseId(exerciseCaseId)
+                    .setCodeContent(codeContent);
             mockMvc.perform(
                     post("/api/code")
                             .requestAttr("userId", "3")
@@ -149,8 +161,90 @@ class CodeControllerTest {
                             .content(JsonHelper.objectToJson(saveCodeRequest))
             );
 
-            verify(mockSaveOneCode, times(1)).execute(3L, 2L, "a content");
+            verify(mockSaveOneCode, times(1))
+                    .execute(userId, exerciseCaseId, codeContent);
         }
+
+        @WithMockUser
+        @Test
+        void when_usecase_throw_NotFoundException_should_send_not_found_error_response() throws Exception {
+            var saveCodeRequest = new SaveCodeRequest()
+                    .setExerciseCaseId(exerciseCaseId)
+                    .setCodeContent(codeContent);
+            when(mockSaveOneCode.execute(userId, exerciseCaseId, codeContent)).thenThrow(new NotFoundException("not found"));
+
+            mockMvc.perform(
+                    post("/api/code")
+                            .requestAttr("userId", "3")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(JsonHelper.objectToJson(saveCodeRequest))
+            );
+        }
+
+        @WithMockUser
+        @Test
+        void when_request_toCompile_property_is_false_should_not_call_usecase_compile_code_by_id() throws Exception {
+            var saveCodeRequest = new SaveCodeRequest()
+                    .setExerciseCaseId(exerciseCaseId)
+                    .setCodeContent(codeContent)
+                    .setToCompile(false);
+            when(mockSaveOneCode.execute(userId, exerciseCaseId, codeContent)).thenReturn(codeId);
+
+            mockMvc.perform(
+                    post("/api/code")
+                            .requestAttr("userId", "3")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(JsonHelper.objectToJson(saveCodeRequest))
+            );
+
+            verify(mockCompileCodeById, never()).execute(anyLong());
+        }
+
+        @WithMockUser
+        @Test
+        void when_request_toCompile_property_is_false_and_usecase_return_id_should_send_created_response_with_uri() throws Exception {
+            var saveCodeRequest = new SaveCodeRequest()
+                    .setExerciseCaseId(exerciseCaseId)
+                    .setCodeContent(codeContent)
+                    .setToCompile(false);
+            when(mockSaveOneCode.execute(userId, exerciseCaseId, codeContent)).thenReturn(codeId);
+
+            var location = mockMvc.perform(
+                    post("/api/code")
+                            .requestAttr("userId", "3")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(JsonHelper.objectToJson(saveCodeRequest)))
+                    .andExpect(status().isCreated())
+                    .andReturn()
+                    .getResponse()
+                    .getHeader("Location");
+
+            var expectedURI = ServletUriComponentsBuilder.fromCurrentRequest()
+                    .path("/api/code/{id}")
+                    .buildAndExpand(codeId)
+                    .toUri();
+            assertThat(location).isEqualTo(expectedURI.toString());
+        }
+
+        @WithMockUser
+        @Test
+        void when_request_toCompile_property_is_true_should_call_usecase_compile_code_by_id() throws Exception {
+            var saveCodeRequest = new SaveCodeRequest()
+                    .setExerciseCaseId(exerciseCaseId)
+                    .setCodeContent(codeContent)
+                    .setToCompile(true);
+            when(mockSaveOneCode.execute(userId, exerciseCaseId, codeContent)).thenReturn(codeId);
+
+            mockMvc.perform(
+                    post("/api/code")
+                            .requestAttr("userId", "3")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(JsonHelper.objectToJson(saveCodeRequest))
+            );
+
+            verify(mockCompileCodeById, times(1)).execute(codeId);
+        }
+
     }
 
     @Nested

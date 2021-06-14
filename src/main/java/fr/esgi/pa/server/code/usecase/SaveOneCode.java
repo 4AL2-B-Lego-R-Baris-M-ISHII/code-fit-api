@@ -4,6 +4,7 @@ import fr.esgi.pa.server.code.core.dao.CodeDao;
 import fr.esgi.pa.server.code.core.entity.Code;
 import fr.esgi.pa.server.common.core.exception.CommonExceptionState;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
+import fr.esgi.pa.server.exercise.core.exception.ForbiddenException;
 import fr.esgi.pa.server.exercise_case.core.dao.ExerciseCaseDao;
 import fr.esgi.pa.server.user.core.UserDao;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ public class SaveOneCode {
     private final ExerciseCaseDao exerciseCaseDao;
     private final CodeDao codeDao;
 
-    public Long execute(Long userId, Long exerciseCaseId, String codeContent) throws NotFoundException {
+    public Long execute(Long userId, Long exerciseCaseId, String codeContent) throws NotFoundException, ForbiddenException {
         checkIfUserExists(userId);
         checkIfExerciseCaseExists(exerciseCaseId);
 
@@ -45,7 +46,7 @@ public class SaveOneCode {
         }
     }
 
-    private Long savedCode(Long userId, Long exerciseCaseId, String codeContent) {
+    private Long savedCode(Long userId, Long exerciseCaseId, String codeContent) throws ForbiddenException {
         var code = new Code()
                 .setUserId(userId)
                 .setExerciseCaseId(exerciseCaseId)
