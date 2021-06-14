@@ -15,6 +15,7 @@ import fr.esgi.pa.server.exercise_case.core.entity.ExerciseTest;
 import fr.esgi.pa.server.language.core.Language;
 import fr.esgi.pa.server.language.core.LanguageDao;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ public class CompileCodeById {
         return buildDtoCode(foundCode, listCodeResult, isResolved);
     }
 
-    private Language getLanguage(Code foundCode) throws NotFoundException {
+    private Language getLanguage(@NotNull Code foundCode) throws NotFoundException {
         var foundExerciseCase = exerciseCaseDao.findById(foundCode.getExerciseCaseId());
         return languageDao.findById(foundExerciseCase.getLanguageId());
     }
