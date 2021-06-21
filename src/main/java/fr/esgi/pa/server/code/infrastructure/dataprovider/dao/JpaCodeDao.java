@@ -21,12 +21,7 @@ public class JpaCodeDao implements CodeDao {
         checkIfUserIdIsNull(code);
         checkIfExerciseCaseIdIsNull(code);
 
-        var codeToSave = codeRepository
-                .findByUserIdAndExerciseCaseId(code.getUserId(), code.getExerciseCaseId())
-                .orElse(codeMapper.domainToEntity(code));
-        codeToSave.setContent(code.getContent());
-        var savedCode = codeRepository.save(codeToSave);
-        return codeMapper.entityToDomain(savedCode);
+        return saveAndReturnDomainCode(code);
     }
 
     private void checkIfUserIdIsNull(Code code) throws ForbiddenException {
@@ -47,6 +42,15 @@ public class JpaCodeDao implements CodeDao {
             );
             throw new ForbiddenException(message);
         }
+    }
+
+    private Code saveAndReturnDomainCode(Code code) {
+        var codeToSave = codeRepository
+                .findByUserIdAndExerciseCaseId(code.getUserId(), code.getExerciseCaseId())
+                .orElse(codeMapper.domainToEntity(code));
+        codeToSave.setContent(code.getContent());
+        var savedCode = codeRepository.save(codeToSave);
+        return codeMapper.entityToDomain(savedCode);
     }
 
     @Override
