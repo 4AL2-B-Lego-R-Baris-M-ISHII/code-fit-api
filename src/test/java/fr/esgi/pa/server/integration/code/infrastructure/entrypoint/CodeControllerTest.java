@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import static fr.esgi.pa.server.helper.JsonHelper.jsonToObject;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -50,7 +51,7 @@ class CodeControllerTest {
     private TestCompileCode mockTestCompileCode;
 
     @Nested
-    @DisplayName("/post api/code")
+    @DisplayName("POST api/code")
     class PostCode {
 
         private final long exerciseCaseId = 2L;
@@ -279,7 +280,7 @@ class CodeControllerTest {
     }
 
     @Nested
-    @DisplayName("/post api/code/test")
+    @DisplayName("POST api/code/test")
     class TestCompileCodeRoute {
 
         @Test
@@ -354,4 +355,33 @@ class CodeControllerTest {
             assertThat(response).isEqualTo(expectedCode);
         }
     }
+
+    @Nested
+    @DisplayName("GET api/code/{id}/quality")
+    class GetCodeByIdQualityTest {
+        @Test
+        void when_user_not_authenticate_should_send_unauthorized_response() throws Exception {
+            mockMvc.perform(get("/api/code/1/quality"))
+                    .andExpect(status().isUnauthorized());
+        }
+
+        @WithMockUser
+        @ParameterizedTest
+        @ValueSource(strings = {"notnumber", "0", "-1", "2.3"})
+        void when_code_id_is_not_correct_should_send_bad_request_error_response(String incorrectCodeId) throws Exception {
+            mockMvc.perform(get(String.format("/api/code/%s/code-quality", incorrectCodeId)))
+                    .andExpect(status().isBadRequest());
+        }
+
+        @WithMockUser
+        @ParameterizedTest
+        @ValueSource(strings = {"", " ", "\n", "\t", "notnumber", "0"})
+        void when_userId_attribute_is_not_correct_should_return_bad_request_error_response(String incorrectUserId) throws Exception {
+            mockMvc.perform(get("/api/code/1/code-quality")
+                    .requestAttr("userId", incorrectUserId))
+                    .andExpect(status().isBadRequest());
+        }
+        
+    }
+
 }

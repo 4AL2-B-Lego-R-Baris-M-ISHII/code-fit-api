@@ -63,4 +63,15 @@ public class CodeController {
     public ResponseEntity<CodeResult> testCompileCode(@Valid @RequestBody TestCompileCodeRequest testCompileCodeRequest) throws NotFoundException, CompilationException {
         return ok(testCompileCode.execute(testCompileCodeRequest.getContent(), testCompileCodeRequest.getLanguage()));
     }
+
+    @GetMapping("{id}/code-quality")
+    public ResponseEntity<?> getQualityCode(
+            @RequestAttribute("userId")
+            @Pattern(regexp = "^\\d+", message = "id has to be an integer")
+            @Min(value = 1, message = "id has to be equal or more than 1") String userId,
+            @PathVariable("id")
+            @Min(value = 1, message = "id has to be equal or more than 1") Long codeId
+    ) {
+        return null;
+    }
 }
