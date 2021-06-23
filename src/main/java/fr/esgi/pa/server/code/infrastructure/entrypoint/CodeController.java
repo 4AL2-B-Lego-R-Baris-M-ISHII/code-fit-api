@@ -62,4 +62,11 @@ public class CodeController {
     public ResponseEntity<CodeResult> testCompileCode(@Valid @RequestBody TestCompileCodeRequest testCompileCodeRequest) throws NotFoundException, CompilationException {
         return ok(testCompileCode.execute(testCompileCodeRequest.getContent(), testCompileCodeRequest.getLanguage()));
     }
+
+//    @PostMapping("{id}/quality")
+//    public ResponseEntity<?> getQualityCode(
+//            @PathVariable("id") Long codeId
+//    ) {
+//        return null;
+//    }
 }
