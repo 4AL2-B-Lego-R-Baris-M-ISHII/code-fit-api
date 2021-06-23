@@ -1,7 +1,8 @@
-package fr.esgi.pa.server.code.infrastructure.entrypoint;
+package fr.esgi.pa.server.code.infrastructure.entrypoint.controller;
 
 import fr.esgi.pa.server.code.core.compiler.CodeResult;
 import fr.esgi.pa.server.code.core.exception.CompilationException;
+import fr.esgi.pa.server.code.infrastructure.entrypoint.TestCompileCodeRequest;
 import fr.esgi.pa.server.code.infrastructure.entrypoint.request.SaveCodeRequest;
 import fr.esgi.pa.server.code.usecase.CompileCodeById;
 import fr.esgi.pa.server.code.usecase.SaveOneCode;
@@ -62,11 +63,4 @@ public class CodeController {
     public ResponseEntity<CodeResult> testCompileCode(@Valid @RequestBody TestCompileCodeRequest testCompileCodeRequest) throws NotFoundException, CompilationException {
         return ok(testCompileCode.execute(testCompileCodeRequest.getContent(), testCompileCodeRequest.getLanguage()));
     }
-
-//    @PostMapping("{id}/quality")
-//    public ResponseEntity<?> getQualityCode(
-//            @PathVariable("id") Long codeId
-//    ) {
-//        return null;
-//    }
 }
