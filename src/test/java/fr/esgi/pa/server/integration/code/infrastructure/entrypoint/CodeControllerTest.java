@@ -2,11 +2,13 @@ package fr.esgi.pa.server.integration.code.infrastructure.entrypoint;
 
 import fr.esgi.pa.server.code.core.compiler.CodeResult;
 import fr.esgi.pa.server.code.core.compiler.CodeState;
+import fr.esgi.pa.server.code.core.dto.CodeQualityType;
 import fr.esgi.pa.server.code.core.dto.DtoCode;
 import fr.esgi.pa.server.code.core.exception.CompilationException;
 import fr.esgi.pa.server.code.infrastructure.entrypoint.TestCompileCodeRequest;
 import fr.esgi.pa.server.code.infrastructure.entrypoint.request.SaveCodeRequest;
 import fr.esgi.pa.server.code.usecase.CompileCodeById;
+import fr.esgi.pa.server.code.usecase.GetQualityCode;
 import fr.esgi.pa.server.code.usecase.SaveOneCode;
 import fr.esgi.pa.server.code.usecase.TestCompileCode;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
@@ -26,6 +28,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 import static fr.esgi.pa.server.helper.JsonHelper.jsonToObject;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,6 +51,9 @@ class CodeControllerTest {
 
     @MockBean
     private TestCompileCode mockTestCompileCode;
+
+    @MockBean
+    private GetQualityCode mockGetQualityCode;
 
 
     @Nested
@@ -384,10 +390,20 @@ class CodeControllerTest {
 
         @WithMockUser
         @Test
-        void when_codeId_path_and_userId_attribute_correct_should_call_usecase_FindCodeById() throws Exception {
-            mockMvc.perform(get("/api/code/1/code-quality")
-                    .requestAttr("userId", "2"));
+        void when_set_code_quality_contain_not_correct_values_should_send_bad_request() throws Exception {
+            mockMvc.perform(get("/api/code/1/code-quality?type=NOT_CORRECT_TYPE")
+                    .requestAttr("userId", "2"))
+                    .andExpect(status().isBadRequest());
+        }
 
+        @WithMockUser
+        @Test
+        void when_userId_codeId_and_set_code_quality_type_are_correct_should_call_usecase_GetQualityCode() throws Exception {
+            mockMvc.perform(get("/api/code/1/code-quality?type=LINES_CODE")
+                    .requestAttr("userId", "2"));
+            Stack<CodeQualityType> stackType = new Stack<>();
+            stackType.push(CodeQualityType.LINES_CODE);
+            verify(mockGetQualityCode, times(1)).execute(2L, 1L, stackType);
         }
     }
 
