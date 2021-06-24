@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -49,6 +48,7 @@ class CodeControllerTest {
 
     @MockBean
     private TestCompileCode mockTestCompileCode;
+
 
     @Nested
     @DisplayName("POST api/code")
@@ -381,7 +381,14 @@ class CodeControllerTest {
                     .requestAttr("userId", incorrectUserId))
                     .andExpect(status().isBadRequest());
         }
-        
+
+        @WithMockUser
+        @Test
+        void when_codeId_path_and_userId_attribute_correct_should_call_usecase_FindCodeById() throws Exception {
+            mockMvc.perform(get("/api/code/1/code-quality")
+                    .requestAttr("userId", "2"));
+
+        }
     }
 
 }

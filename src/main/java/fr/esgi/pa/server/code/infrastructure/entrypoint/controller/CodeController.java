@@ -71,7 +71,7 @@ public class CodeController {
             @Min(value = 1, message = "id has to be equal or more than 1") String userId,
             @PathVariable("id")
             @Min(value = 1, message = "id has to be equal or more than 1") Long codeId
-    ) {
+    ) throws NotFoundException {
         return null;
     }
 }
