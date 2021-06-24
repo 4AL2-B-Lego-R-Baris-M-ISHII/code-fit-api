@@ -14,7 +14,7 @@ import fr.esgi.pa.server.user.core.UserDao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Stack;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +25,7 @@ public class GetQualityCode {
     private final LanguageDao languageDao;
     private final ProcessQualityCode processQualityCode;
 
-    public DtoQualityCode execute(Long userId, Long codeId, Stack<CodeQualityType> codeQualityTypeSet) throws NotFoundException, ForbiddenException {
+    public DtoQualityCode execute(Long userId, Long codeId, Set<CodeQualityType> codeQualityTypeSet) throws NotFoundException, ForbiddenException {
         var foundCode = codeDao.findById(codeId);
 
         checkIfUserExistsElseThrow(userId);

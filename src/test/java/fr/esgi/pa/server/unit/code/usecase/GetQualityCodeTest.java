@@ -20,7 +20,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Stack;
+import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -33,7 +33,7 @@ class GetQualityCodeTest {
     private final long languageId = 613L;
     private final long exerciseId = 641L;
     private GetQualityCode sut;
-    private Stack<CodeQualityType> stackType;
+    private Set<CodeQualityType> qualityTypeSet;
 
     @Mock
     private UserDao mockUserDao;
@@ -55,8 +55,7 @@ class GetQualityCodeTest {
 
     @BeforeEach
     void setup() {
-        stackType = new Stack<>();
-        stackType.push(CodeQualityType.LINES_CODE);
+        qualityTypeSet = Set.of(CodeQualityType.LINES_CODE);
 
         sut = new GetQualityCode(
                 mockUserDao,
@@ -71,7 +70,7 @@ class GetQualityCodeTest {
     void when_user_not_exists_should_throw_not_found_exception() {
         when(mockUserDao.existsById(userId)).thenReturn(false);
 
-        assertThatThrownBy(() -> sut.execute(userId, codeId, stackType))
+        assertThatThrownBy(() -> sut.execute(userId, codeId, qualityTypeSet))
                 .isExactlyInstanceOf(NotFoundException.class)
                 .hasMessage(
                         "%s : User with id '%d' not found",
@@ -93,7 +92,7 @@ class GetQualityCodeTest {
         when(mockCodeDao.findById(codeId)).thenReturn(foundCode);
         assertThat(userId).isNotEqualTo(otherUserId);
 
-        assertThatThrownBy(() -> sut.execute(userId, codeId, stackType))
+        assertThatThrownBy(() -> sut.execute(userId, codeId, qualityTypeSet))
                 .isExactlyInstanceOf(ForbiddenException.class)
                 .hasMessage(
                         "%s : Current user can't get quality code of other user's code",
@@ -111,7 +110,7 @@ class GetQualityCodeTest {
                 .setUserId(userId)
                 .setExerciseCaseId(exerciseCaseId);
         when(mockCodeDao.findById(codeId)).thenReturn(foundCode);
-        assertThatThrownBy(() -> sut.execute(userId, codeId, stackType))
+        assertThatThrownBy(() -> sut.execute(userId, codeId, qualityTypeSet))
                 .isExactlyInstanceOf(ForbiddenException.class)
                 .hasMessage(
                         "%s : Code has to be resolved to get it quality",
@@ -138,7 +137,7 @@ class GetQualityCodeTest {
                 .setExerciseId(exerciseId);
         when(mockExerciseCaseDao.findById(exerciseCaseId)).thenReturn(foundExerciseCase);
 
-        sut.execute(userId, codeId, stackType);
+        sut.execute(userId, codeId, qualityTypeSet);
 
         verify(mockLanguageDao, times(1)).findById(languageId);
     }
@@ -167,12 +166,12 @@ class GetQualityCodeTest {
                 .setFileExtension("c");
         when(mockLanguageDao.findById(languageId)).thenReturn(cLanguage);
 
-        sut.execute(userId, codeId, stackType);
+        sut.execute(userId, codeId, qualityTypeSet);
 
         verify(mockProcessQualityCode, times(1)).process(
                 foundCode.getContent(),
                 cLanguage,
-                stackType
+                qualityTypeSet
         );
     }
 }

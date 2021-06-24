@@ -28,7 +28,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.ArrayList;
-import java.util.Stack;
+import java.util.Set;
 
 import static fr.esgi.pa.server.helper.JsonHelper.jsonToObject;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -401,9 +401,8 @@ class CodeControllerTest {
         void when_userId_codeId_and_set_code_quality_type_are_correct_should_call_usecase_GetQualityCode() throws Exception {
             mockMvc.perform(get("/api/code/1/code-quality?type=LINES_CODE")
                     .requestAttr("userId", "2"));
-            Stack<CodeQualityType> stackType = new Stack<>();
-            stackType.push(CodeQualityType.LINES_CODE);
-            verify(mockGetQualityCode, times(1)).execute(2L, 1L, stackType);
+            Set<CodeQualityType> codeQualityTypeSet = Set.of(CodeQualityType.LINES_CODE);
+            verify(mockGetQualityCode, times(1)).execute(2L, 1L, codeQualityTypeSet);
         }
     }
 
