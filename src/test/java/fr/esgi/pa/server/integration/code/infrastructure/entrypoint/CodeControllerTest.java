@@ -4,7 +4,9 @@ import fr.esgi.pa.server.code.core.compiler.CodeResult;
 import fr.esgi.pa.server.code.core.compiler.CodeState;
 import fr.esgi.pa.server.code.core.dto.CodeQualityType;
 import fr.esgi.pa.server.code.core.dto.DtoCode;
+import fr.esgi.pa.server.code.core.dto.DtoQualityCode;
 import fr.esgi.pa.server.code.core.exception.CompilationException;
+import fr.esgi.pa.server.code.core.quality.QualityCode;
 import fr.esgi.pa.server.code.infrastructure.entrypoint.TestCompileCodeRequest;
 import fr.esgi.pa.server.code.infrastructure.entrypoint.request.SaveCodeRequest;
 import fr.esgi.pa.server.code.usecase.CompileCodeById;
@@ -13,6 +15,8 @@ import fr.esgi.pa.server.code.usecase.SaveOneCode;
 import fr.esgi.pa.server.code.usecase.TestCompileCode;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.helper.JsonHelper;
+import fr.esgi.pa.server.language.core.Language;
+import fr.esgi.pa.server.language.core.LanguageName;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -403,6 +407,31 @@ class CodeControllerTest {
                     .requestAttr("userId", "2"));
             Set<CodeQualityType> codeQualityTypeSet = Set.of(CodeQualityType.LINES_CODE);
             verify(mockGetQualityCode, times(1)).execute(2L, 1L, codeQualityTypeSet);
+        }
+
+        @WithMockUser
+        @Test
+        void when_getQualityCode_called_and_return_dto_quality_code_should_return_dto() throws Exception {
+            Set<CodeQualityType> codeQualityTypeSet = Set.of(CodeQualityType.LINES_CODE);
+            var qualityCode = new QualityCode()
+                    .setLinesCode(5L)
+                    .setLanguage(new Language().setId(7L).setFileExtension("c").setLanguageName(LanguageName.C));
+            var dtoQualityCode = new DtoQualityCode()
+                    .setCodeId(1L)
+                    .setExerciseCaseId(64L)
+                    .setQualityCode(qualityCode);
+            when(mockGetQualityCode.execute(2L, 1L, codeQualityTypeSet)).thenReturn(dtoQualityCode);
+
+            var contentAsString = mockMvc.perform(get("/api/code/1/code-quality?type=LINES_CODE")
+                    .requestAttr("userId", "2"))
+                    .andExpect(status().isOk())
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
+            assertThat(contentAsString).isNotNull();
+            assertThat(contentAsString).isNotBlank();
+            var result = jsonToObject(contentAsString, DtoQualityCode.class);
+            assertThat(result).isEqualTo(dtoQualityCode);
         }
     }
 
