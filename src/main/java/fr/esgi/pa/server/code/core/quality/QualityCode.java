@@ -9,5 +9,5 @@ import lombok.experimental.Accessors;
 public class QualityCode {
     private String codeContent;
     private Language language;
-    private Long lineCode;
+    private Long linesCode;
 }
