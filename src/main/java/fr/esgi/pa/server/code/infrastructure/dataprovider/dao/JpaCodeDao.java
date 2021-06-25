@@ -49,6 +49,7 @@ public class JpaCodeDao implements CodeDao {
                 .findByUserIdAndExerciseCaseId(code.getUserId(), code.getExerciseCaseId())
                 .orElse(codeMapper.domainToEntity(code));
         codeToSave.setContent(code.getContent());
+        codeToSave.setIsResolved(code.getIsResolved());
         var savedCode = codeRepository.save(codeToSave);
         return codeMapper.entityToDomain(savedCode);
     }
