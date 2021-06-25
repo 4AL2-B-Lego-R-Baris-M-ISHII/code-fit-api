@@ -34,13 +34,15 @@ public class GetQualityCode {
 
         var foundExerciseCase = exerciseCaseDao.findById(foundCode.getExerciseCaseId());
         var foundLanguage = languageDao.findById(foundExerciseCase.getLanguageId());
-
-        processQualityCode.process(
+        var qualityCode = processQualityCode.process(
                 foundCode.getContent(),
                 foundLanguage,
                 codeQualityTypeSet
         );
-        return null;
+        return new DtoQualityCode()
+                .setCodeId(codeId)
+                .setExerciseCaseId(foundExerciseCase.getId())
+                .setQualityCode(qualityCode);
     }
 
     private void checkIfCodeCorrespondToCurrentUserElseThrow(Long userId, Code foundCode) throws ForbiddenException {

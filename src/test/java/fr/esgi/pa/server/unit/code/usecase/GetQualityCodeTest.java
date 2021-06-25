@@ -2,8 +2,10 @@ package fr.esgi.pa.server.unit.code.usecase;
 
 import fr.esgi.pa.server.code.core.dao.CodeDao;
 import fr.esgi.pa.server.code.core.dto.CodeQualityType;
+import fr.esgi.pa.server.code.core.dto.DtoQualityCode;
 import fr.esgi.pa.server.code.core.entity.Code;
 import fr.esgi.pa.server.code.core.quality.ProcessQualityCode;
+import fr.esgi.pa.server.code.core.quality.QualityCode;
 import fr.esgi.pa.server.code.usecase.GetQualityCode;
 import fr.esgi.pa.server.common.core.exception.CommonExceptionState;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
@@ -173,5 +175,47 @@ class GetQualityCodeTest {
                 cLanguage,
                 qualityTypeSet
         );
+    }
+
+    @Test
+    void when_code_process_and_get_quality_code_should_return_dto_with_quality_code_information() throws NotFoundException, ForbiddenException {
+        var foundCode = new Code()
+                .setId(codeId)
+                .setContent("code content")
+                .setIsResolved(true)
+                .setUserId(userId)
+                .setExerciseCaseId(exerciseCaseId);
+        when(mockCodeDao.findById(codeId)).thenReturn(foundCode);
+        when(mockUserDao.existsById(userId)).thenReturn(true);
+        var foundExerciseCase = new ExerciseCase()
+                .setId(exerciseCaseId)
+                .setStartContent("start content")
+                .setSolution("solution")
+                .setLanguageId(languageId)
+                .setIsValid(true)
+                .setExerciseId(exerciseId);
+        when(mockExerciseCaseDao.findById(exerciseCaseId)).thenReturn(foundExerciseCase);
+        var cLanguage = new Language()
+                .setId(languageId)
+                .setLanguageName(LanguageName.C)
+                .setFileExtension("c");
+        when(mockLanguageDao.findById(languageId)).thenReturn(cLanguage);
+        var qualityCode = new QualityCode()
+                .setCodeContent(foundCode.getContent())
+                .setLanguage(cLanguage)
+                .setLinesCode(1L);
+        when(mockProcessQualityCode.process(
+                foundCode.getContent(),
+                cLanguage,
+                qualityTypeSet
+        )).thenReturn(qualityCode);
+
+        var result = sut.execute(userId, codeId, qualityTypeSet);
+
+        var expectedDtoQualityCode = new DtoQualityCode()
+                .setCodeId(codeId)
+                .setExerciseCaseId(exerciseCaseId)
+                .setQualityCode(qualityCode);
+        assertThat(result).isEqualTo(expectedDtoQualityCode);
     }
 }
