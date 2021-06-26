@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class ActionsByLanguageFactory {
     private final ApplicationContext applicationContext;
     public ActionsByLanguage getActionsByLanguage(Language language) {
-        if (language.getLanguageName().equals(LanguageName.JAVA)) {
+        if (language.getLanguageName().equals(LanguageName.JAVA8)) {
             return applicationContext.getBean(ActionsByJava.class);
         }
         return applicationContext.getBean(ActionsByC.class);

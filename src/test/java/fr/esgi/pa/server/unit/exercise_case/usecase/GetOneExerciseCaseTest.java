@@ -161,7 +161,7 @@ class GetOneExerciseCaseTest {
         var foundLanguage = new Language()
                 .setId(languageId)
                 .setFileExtension("java")
-                .setLanguageName(LanguageName.JAVA);
+                .setLanguageName(LanguageName.JAVA8);
         when(mockLanguageDao.findById(languageId)).thenReturn(foundLanguage);
         var setTest = Set.of(
                 new ExerciseTest()

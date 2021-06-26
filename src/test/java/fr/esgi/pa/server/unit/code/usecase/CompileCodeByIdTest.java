@@ -112,7 +112,7 @@ class CompileCodeByIdTest {
         when(mockExerciseCaseDao.findById(exerciseCaseId)).thenReturn(foundExerciseCase);
         var foundLanguage = new Language()
                 .setId(languageId)
-                .setLanguageName(LanguageName.JAVA)
+                .setLanguageName(LanguageName.JAVA8)
                 .setFileExtension("java");
         when(mockLanguageDao.findById(languageId)).thenReturn(foundLanguage);
 
@@ -140,7 +140,7 @@ class CompileCodeByIdTest {
         when(mockExerciseCaseDao.findById(exerciseCaseId)).thenReturn(foundExerciseCase);
         var foundLanguage = new Language()
                 .setId(languageId)
-                .setLanguageName(LanguageName.JAVA)
+                .setLanguageName(LanguageName.JAVA8)
                 .setFileExtension("java");
         when(mockLanguageDao.findById(languageId)).thenReturn(foundLanguage);
         when(mockCompilerRepository.findByLanguage(foundLanguage)).thenReturn(mockCompiler);
@@ -169,7 +169,7 @@ class CompileCodeByIdTest {
         when(mockExerciseCaseDao.findById(exerciseCaseId)).thenReturn(foundExerciseCase);
         var foundLanguage = new Language()
                 .setId(languageId)
-                .setLanguageName(LanguageName.JAVA)
+                .setLanguageName(LanguageName.JAVA8)
                 .setFileExtension("java");
         when(mockLanguageDao.findById(languageId)).thenReturn(foundLanguage);
         when(mockCompilerRepository.findByLanguage(foundLanguage)).thenReturn(mockCompiler);
@@ -226,7 +226,7 @@ class CompileCodeByIdTest {
         when(mockExerciseCaseDao.findById(exerciseCaseId)).thenReturn(foundExerciseCase);
         var foundLanguage = new Language()
                 .setId(languageId)
-                .setLanguageName(LanguageName.JAVA)
+                .setLanguageName(LanguageName.JAVA8)
                 .setFileExtension("java");
         when(mockLanguageDao.findById(languageId)).thenReturn(foundLanguage);
         when(mockCompilerRepository.findByLanguage(foundLanguage)).thenReturn(mockCompiler);
@@ -292,7 +292,7 @@ class CompileCodeByIdTest {
         when(mockExerciseCaseDao.findById(exerciseCaseId)).thenReturn(foundExerciseCase);
         var foundLanguage = new Language()
                 .setId(languageId)
-                .setLanguageName(LanguageName.JAVA)
+                .setLanguageName(LanguageName.JAVA8)
                 .setFileExtension("java");
         when(mockLanguageDao.findById(languageId)).thenReturn(foundLanguage);
         when(mockCompilerRepository.findByLanguage(foundLanguage)).thenReturn(mockCompiler);

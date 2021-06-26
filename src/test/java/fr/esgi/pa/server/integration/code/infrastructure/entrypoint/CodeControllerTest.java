@@ -415,7 +415,7 @@ class CodeControllerTest {
             Set<CodeQualityType> codeQualityTypeSet = Set.of(CodeQualityType.LINES_CODE);
             var qualityCode = new QualityCode()
                     .setLinesCode(5L)
-                    .setLanguage(new Language().setId(7L).setFileExtension("c").setLanguageName(LanguageName.C));
+                    .setLanguage(new Language().setId(7L).setFileExtension("c").setLanguageName(LanguageName.C11));
             var dtoQualityCode = new DtoQualityCode()
                     .setCodeId(1L)
                     .setExerciseCaseId(64L)

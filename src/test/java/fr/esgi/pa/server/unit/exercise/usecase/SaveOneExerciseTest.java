@@ -64,7 +64,7 @@ class SaveOneExerciseTest {
         when(mockUserDao.existsById(userId)).thenReturn(true);
         var language = new Language()
                 .setId(1L)
-                .setLanguageName(LanguageName.C)
+                .setLanguageName(LanguageName.C11)
                 .setFileExtension("c");
         when(mockLanguageDao.findByStrLanguage(languageStr)).thenReturn(language);
 
@@ -78,7 +78,7 @@ class SaveOneExerciseTest {
         when(mockUserDao.existsById(userId)).thenReturn(true);
         var language = new Language()
                 .setId(1L)
-                .setLanguageName(LanguageName.C)
+                .setLanguageName(LanguageName.C11)
                 .setFileExtension("c");
         when(mockLanguageDao.findByStrLanguage(languageStr)).thenReturn(language);
         var exerciseId = 5L;

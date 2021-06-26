@@ -52,13 +52,13 @@ class JavaCompilerTest {
 
         javaLanguage = new Language()
                 .setId(2L)
-                .setLanguageName(LanguageName.JAVA)
+                .setLanguageName(LanguageName.JAVA8)
                 .setFileExtension("java");
     }
 
     @Test
     void when_get_process_result_of_compilation_should_get_code_state() {
-        when(mockCompilerConfigRepository.findByLanguageName(LanguageName.JAVA)).thenReturn(mockCompilerConfig);
+        when(mockCompilerConfigRepository.findByLanguageName(LanguageName.JAVA8)).thenReturn(mockCompilerConfig);
         var processResult = new ProcessResult().setOut("output").setStatus(0);
         when(mockDockerCompiler.start(mockCompilerConfig, "content", javaLanguage)).thenReturn(processResult);
 
@@ -69,7 +69,7 @@ class JavaCompilerTest {
 
     @Test
     void when_get_process_result_and_code_state_should_remove_files_of_concerned_tmp_folder() {
-        when(mockCompilerConfigRepository.findByLanguageName(LanguageName.JAVA)).thenReturn(mockCompilerConfig);
+        when(mockCompilerConfigRepository.findByLanguageName(LanguageName.JAVA8)).thenReturn(mockCompilerConfig);
         var processResult = new ProcessResult().setOut("output").setStatus(0);
         when(mockDockerCompiler.start(mockCompilerConfig, "content", javaLanguage)).thenReturn(processResult);
         when(mockCodeStateHelper.getCodeState(0)).thenReturn(CodeState.SUCCESS);
@@ -83,7 +83,7 @@ class JavaCompilerTest {
 
     @Test
     void when_get_process_result_and_concerned_files_deleted_should_return_code_result() {
-        when(mockCompilerConfigRepository.findByLanguageName(LanguageName.JAVA)).thenReturn(mockCompilerConfig);
+        when(mockCompilerConfigRepository.findByLanguageName(LanguageName.JAVA8)).thenReturn(mockCompilerConfig);
         var processResult = new ProcessResult().setOut("output").setStatus(0);
         when(mockDockerCompiler.start(mockCompilerConfig, "content", javaLanguage)).thenReturn(processResult);
         when(mockCodeStateHelper.getCodeState(0)).thenReturn(CodeState.SUCCESS);

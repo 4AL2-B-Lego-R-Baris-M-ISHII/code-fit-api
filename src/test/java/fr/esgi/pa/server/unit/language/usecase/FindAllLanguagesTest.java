@@ -39,8 +39,8 @@ class FindAllLanguagesTest {
     @Test
     void should_return_set_of_languages() {
         var languages = List.of(
-                new Language().setId(1L).setLanguageName(LanguageName.C).setFileExtension("c"),
-                new Language().setId(2L).setLanguageName(LanguageName.JAVA).setFileExtension("java")
+                new Language().setId(1L).setLanguageName(LanguageName.C11).setFileExtension("c"),
+                new Language().setId(2L).setLanguageName(LanguageName.JAVA8).setFileExtension("java")
         );
         when(mockLanguageDao.findAll()).thenReturn(languages);
 

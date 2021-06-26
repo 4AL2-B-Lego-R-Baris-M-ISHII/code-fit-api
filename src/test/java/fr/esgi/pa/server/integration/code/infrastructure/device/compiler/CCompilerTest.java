@@ -47,7 +47,7 @@ class CCompilerTest {
                 "   printf(\"Hello World!\");\n" +
                 "   return 0;\n" +
                 "}";
-        var language = new Language().setId(1L).setLanguageName(LanguageName.C).setFileExtension("c");
+        var language = new Language().setId(1L).setLanguageName(LanguageName.C11).setFileExtension("c");
         var result = sut.compile(helloWorldContent, language);
 
         assertThat(result).isNotNull();
@@ -63,7 +63,7 @@ class CCompilerTest {
                 "   printf(\"Hello World!\")\n" +
                 "   return 0;\n" +
                 "}";
-        var language = new Language().setId(1L).setLanguageName(LanguageName.C).setFileExtension("c");
+        var language = new Language().setId(1L).setLanguageName(LanguageName.C11).setFileExtension("c");
         var result = sut.compile(helloWorldContent, language);
 
         assertThat(result).isNotNull();
@@ -79,7 +79,7 @@ class CCompilerTest {
                 "   while(1){}\n" +
                 "   return 0;\n" +
                 "}";
-        var language = new Language().setId(1L).setLanguageName(LanguageName.C).setFileExtension("c");
+        var language = new Language().setId(1L).setLanguageName(LanguageName.C11).setFileExtension("c");
         var result = sut.compile(helloWorldContent, language);
 
         assertThat(result).isNotNull();
@@ -93,7 +93,7 @@ class CCompilerTest {
                 "   // printf() displays the string inside quotation\n" +
                 "   return 1;\n" +
                 "}";
-        var language = new Language().setId(1L).setLanguageName(LanguageName.C).setFileExtension("c");
+        var language = new Language().setId(1L).setLanguageName(LanguageName.C11).setFileExtension("c");
         var result = sut.compile(helloWorldContent, language);
 
         assertThat(result).isNotNull();
@@ -108,7 +108,7 @@ class CCompilerTest {
                 "   printf(\"Error: No such container\");\n" +
                 "   return 0;\n" +
                 "}";
-        var language = new Language().setId(1L).setLanguageName(LanguageName.C).setFileExtension("c");
+        var language = new Language().setId(1L).setLanguageName(LanguageName.C11).setFileExtension("c");
         var result = sut.compile(helloWorldContent, language);
 
         assertThat(result).isNotNull();

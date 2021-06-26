@@ -42,29 +42,29 @@ class JpaLanguageDaoTest {
 
         @Test
         void when_language_with_language_name_already_created_should_throw_AlreadyCreatedException() {
-            var foundLanguage = new JpaLanguage().setId(1L).setName(LanguageName.C).setFileExtension("c");
-            when(mockLanguageRepository.findByName(LanguageName.C)).thenReturn(Optional.ofNullable(foundLanguage));
+            var foundLanguage = new JpaLanguage().setId(1L).setName(LanguageName.C11).setFileExtension("c");
+            when(mockLanguageRepository.findByName(LanguageName.C11)).thenReturn(Optional.ofNullable(foundLanguage));
 
-            assertThatThrownBy(() -> sut.createLanguage(LanguageName.C, "c"))
+            assertThatThrownBy(() -> sut.createLanguage(LanguageName.C11, "c"))
                     .isExactlyInstanceOf(AlreadyCreatedException.class)
                     .hasMessage(
                             "%s : language with language name '%s' already created",
                             CommonExceptionState.ALREADY_CREATED,
-                            LanguageName.C
+                            LanguageName.C11
                     );
         }
 
         @Test
         void when_language_saved_should_return_id_of_new_language() throws AlreadyCreatedException {
-            var languageToSave = new JpaLanguage().setName(LanguageName.C).setFileExtension("c");
+            var languageToSave = new JpaLanguage().setName(LanguageName.C11).setFileExtension("c");
             var savedLanguage = new JpaLanguage()
                     .setId(1L)
                     .setName(languageToSave.getName())
                     .setFileExtension(languageToSave.getFileExtension());
-            when(mockLanguageRepository.findByName(LanguageName.C)).thenReturn(Optional.empty());
+            when(mockLanguageRepository.findByName(LanguageName.C11)).thenReturn(Optional.empty());
             when(mockLanguageRepository.save(languageToSave)).thenReturn(savedLanguage);
 
-            var result = sut.createLanguage(LanguageName.C, "c");
+            var result = sut.createLanguage(LanguageName.C11, "c");
 
             assertThat(result).isEqualTo(1L);
         }
@@ -74,24 +74,24 @@ class JpaLanguageDaoTest {
     class FindByLanguageName {
         @Test
         void when_language_name_not_found_should_throw_NotFoundException() {
-            when(mockLanguageRepository.findByName(LanguageName.C)).thenReturn(Optional.empty());
+            when(mockLanguageRepository.findByName(LanguageName.C11)).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> sut.findByLanguageName(LanguageName.C))
+            assertThatThrownBy(() -> sut.findByLanguageName(LanguageName.C11))
                     .isExactlyInstanceOf(NotFoundException.class)
                     .hasMessage(
                             "%s : language name '%s' not found",
                             CommonExceptionState.NOT_FOUND,
-                            LanguageName.C
+                            LanguageName.C11
                     );
         }
 
         @Test
         void when_language_found_should_return_language() throws NotFoundException {
-            var foundLanguage = new JpaLanguage().setId(2L).setName(LanguageName.C).setFileExtension("c");
+            var foundLanguage = new JpaLanguage().setId(2L).setName(LanguageName.C11).setFileExtension("c");
             var expected = languageMapper.entityToDomain(foundLanguage);
-            when(mockLanguageRepository.findByName(LanguageName.C)).thenReturn(Optional.of(foundLanguage));
+            when(mockLanguageRepository.findByName(LanguageName.C11)).thenReturn(Optional.of(foundLanguage));
 
-            var result = sut.findByLanguageName(LanguageName.C);
+            var result = sut.findByLanguageName(LanguageName.C11);
 
             assertThat(result).isEqualTo(expected);
         }
@@ -115,11 +115,11 @@ class JpaLanguageDaoTest {
 
         @Test
         void should_return_language_when_found() throws IncorrectLanguageNameException, NotFoundException {
-            var foundLanguage = new JpaLanguage().setId(2L).setName(LanguageName.C).setFileExtension("c");
+            var foundLanguage = new JpaLanguage().setId(2L).setName(LanguageName.C11).setFileExtension("c");
             var expected = languageMapper.entityToDomain(foundLanguage);
-            when(mockLanguageRepository.findByName(LanguageName.C)).thenReturn(Optional.of(foundLanguage));
+            when(mockLanguageRepository.findByName(LanguageName.C11)).thenReturn(Optional.of(foundLanguage));
 
-            var result = sut.findByStrLanguage("C");
+            var result = sut.findByStrLanguage("C11");
 
             assertThat(result).isEqualTo(expected);
         }
@@ -147,7 +147,7 @@ class JpaLanguageDaoTest {
             var java = new JpaLanguage()
                     .setId(languageId)
                     .setFileExtension("java")
-                    .setName(LanguageName.JAVA);
+                    .setName(LanguageName.JAVA8);
             when(mockLanguageRepository.findById(languageId)).thenReturn(Optional.of(java));
 
             var result = sut.findById(languageId);
