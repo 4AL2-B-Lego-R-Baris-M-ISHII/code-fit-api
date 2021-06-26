@@ -1,8 +1,8 @@
-package fr.esgi.pa.server.unit.code.infrastructure.quality;
+package fr.esgi.pa.server.unit.code.infrastructure.quality.factory;
 
 import fr.esgi.pa.server.code.core.dto.CodeQualityType;
-import fr.esgi.pa.server.code.infrastructure.quality.QualityCodeActionFactory;
-import fr.esgi.pa.server.code.infrastructure.quality.action.GetLinesCode;
+import fr.esgi.pa.server.code.infrastructure.quality.action.GetNbLinesCode;
+import fr.esgi.pa.server.code.infrastructure.quality.factory.QualityCodeActionFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,6 +21,6 @@ class QualityCodeActionFactoryTest {
         var result = sut.getAction(CodeQualityType.LINES_CODE);
 
         assertThat(result).isNotNull();
-        assertThat(result).isExactlyInstanceOf(GetLinesCode.class);
+        assertThat(result).isExactlyInstanceOf(GetNbLinesCode.class);
     }
 }
