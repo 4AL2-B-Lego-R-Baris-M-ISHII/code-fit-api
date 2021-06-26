@@ -91,7 +91,7 @@ public class CodeApiTest {
                     "   return 0;\n" +
                     "}";
             var codeRequest = new TestCompileCodeRequest()
-                    .setLanguage("C")
+                    .setLanguage("C11")
                     .setContent(content);
             var code = given()
                     .header("Authorization", "Bearer " + authData.getToken())
@@ -108,7 +108,7 @@ public class CodeApiTest {
             assertThat(code.getLanguage()).isNotNull();
             assertThat(code.getCodeState()).isEqualTo(CodeState.SUCCESS);
             assertThat(code.getOutput()).isEqualTo("Hello World");
-            assertThat(code.getLanguage().getLanguageName()).isEqualTo(LanguageName.C);
+            assertThat(code.getLanguage().getLanguageName()).isEqualTo(LanguageName.C11);
             assertThat(code.getCodeState()).isEqualTo(CodeState.SUCCESS);
         }
 
@@ -138,7 +138,7 @@ public class CodeApiTest {
             assertThat(code.getLanguage()).isNotNull();
             assertThat(code.getCodeState()).isEqualTo(CodeState.SUCCESS);
             assertThat(code.getOutput()).isEqualTo("Hello World\n");
-            assertThat(code.getLanguage().getLanguageName()).isEqualTo(LanguageName.JAVA);
+            assertThat(code.getLanguage().getLanguageName()).isEqualTo(LanguageName.JAVA8);
             assertThat(code.getCodeState()).isEqualTo(CodeState.SUCCESS);
         }
     }

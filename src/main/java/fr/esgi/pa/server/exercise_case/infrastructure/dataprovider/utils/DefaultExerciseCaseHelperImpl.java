@@ -10,7 +10,7 @@ public class DefaultExerciseCaseHelperImpl implements DefaultExerciseCaseHelper 
 
     @Override
     public DefaultExerciseCaseValues getValuesByLanguage(Language language) {
-        if (language.getLanguageName() == LanguageName.JAVA) {
+        if (language.getLanguageName() == LanguageName.JAVA8) {
             return getJavaDefaultExerciseValues();
         }
         return getCDefaultExerciseValues();

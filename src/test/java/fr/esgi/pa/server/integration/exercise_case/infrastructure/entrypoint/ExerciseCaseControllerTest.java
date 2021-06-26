@@ -281,7 +281,7 @@ class ExerciseCaseControllerTest {
         void when_getOneExerciseCase_return_dto_exercise_case_should_send_success_response_and_returned_dto() throws Exception {
             var expectedDto = new DtoExerciseCase()
                     .setId(123L)
-                    .setLanguage(new Language().setId(3L).setLanguageName(LanguageName.JAVA).setFileExtension("java"))
+                    .setLanguage(new Language().setId(3L).setLanguageName(LanguageName.JAVA8).setFileExtension("java"))
                     .setTests(Set.of(
                             new DtoExerciseTest().setId(2L).setContent("test content")
                     ))

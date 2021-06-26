@@ -196,7 +196,7 @@ class FindOneExerciseTest {
                         .setContent("test content 5")
         );
         when(mockExerciseTestDao.findAllByExerciseCaseId(123L)).thenReturn(setExerciseTEstOfExercise123);
-        var java = new Language().setId(3L).setLanguageName(LanguageName.JAVA).setFileExtension("java");
+        var java = new Language().setId(3L).setLanguageName(LanguageName.JAVA8).setFileExtension("java");
         when(mockLanguageDao.findById(2L)).thenReturn(java);
 
         var result = sut.execute(exerciseId, userId);

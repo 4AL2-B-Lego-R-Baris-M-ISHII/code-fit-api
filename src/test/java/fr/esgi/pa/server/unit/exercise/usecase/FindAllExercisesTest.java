@@ -101,7 +101,7 @@ class FindAllExercisesTest {
                 .setStartContent("start content");
         var cases = Set.of(exerciseCase);
         when(mockExerciseCaseDao.findAllByExerciseId(3L)).thenReturn(cases);
-        var language = new Language().setId(2L).setLanguageName(LanguageName.JAVA).setFileExtension("java");
+        var language = new Language().setId(2L).setLanguageName(LanguageName.JAVA8).setFileExtension("java");
         when(mockLanguageDao.findById(2L)).thenReturn(
                 language
         );

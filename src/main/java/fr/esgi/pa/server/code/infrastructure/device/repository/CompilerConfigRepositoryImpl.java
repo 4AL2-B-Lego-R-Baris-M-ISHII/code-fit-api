@@ -15,7 +15,7 @@ public class CompilerConfigRepositoryImpl implements CompilerConfigRepository {
 
     @Override
     public CompilerConfig findByLanguageName(LanguageName languageName) {
-        return languageName == LanguageName.C
+        return languageName == LanguageName.C11
                 ? context.getBean(CCompilerConfig.class)
                 : context.getBean(JavaCompilerConfig.class);
     }

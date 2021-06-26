@@ -20,8 +20,8 @@ public class LanguageBootstrap {
     @EventListener
     public void on(ApplicationReadyEvent event) {
         var mapLanguagesValues = Map.of(
-                LanguageName.C, "c",
-                LanguageName.JAVA, "java"
+                LanguageName.C11, "c",
+                LanguageName.JAVA8, "java"
         );
         mapLanguagesValues.forEach((languageName, extFile) -> {
             try {

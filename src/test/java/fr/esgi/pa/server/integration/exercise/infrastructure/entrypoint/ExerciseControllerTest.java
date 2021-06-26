@@ -371,7 +371,7 @@ class ExerciseControllerTest {
                             .setCases(Set.of(
                                     new DtoExerciseCase()
                                             .setId(7L)
-                                            .setLanguage(new Language().setId(8L).setFileExtension("java").setLanguageName(LanguageName.JAVA))
+                                            .setLanguage(new Language().setId(8L).setFileExtension("java").setLanguageName(LanguageName.JAVA8))
                                             .setSolution("solution")
                                             .setStartContent("start content")
                                             .setIsValid(false)

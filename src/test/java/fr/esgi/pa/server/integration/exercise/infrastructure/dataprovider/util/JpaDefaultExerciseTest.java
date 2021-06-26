@@ -67,7 +67,7 @@ class JpaDefaultExerciseTest {
 
     @Test
     void should_save_java_exercise_with_default_case_and_test() throws NotFoundException {
-        var java = languageDao.findByLanguageName(LanguageName.JAVA);
+        var java = languageDao.findByLanguageName(LanguageName.JAVA8);
         var testContent = "public class Main {\n" +
                 "    public static void main(String[] args) throws Exception {\n" +
                 "        String result = Solution.exercise1(\"toto\");\n" +

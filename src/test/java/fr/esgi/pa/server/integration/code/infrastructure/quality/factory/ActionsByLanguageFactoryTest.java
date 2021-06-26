@@ -18,7 +18,7 @@ class ActionsByLanguageFactoryTest {
 
     @Test
     void when_language_is_C_should_return_instance_of_ActionsByC() {
-        var result = sut.getActionsByLanguage(new Language().setLanguageName(LanguageName.C));
+        var result = sut.getActionsByLanguage(new Language().setLanguageName(LanguageName.C11));
 
         assertThat(result).isNotNull();
         assertThat(result).isExactlyInstanceOf(ActionsByC.class);
@@ -26,7 +26,7 @@ class ActionsByLanguageFactoryTest {
 
     @Test
     void when_language_is_java_should_return_instance_of_ActionsByJava() {
-        var result = sut.getActionsByLanguage(new Language().setLanguageName(LanguageName.JAVA));
+        var result = sut.getActionsByLanguage(new Language().setLanguageName(LanguageName.JAVA8));
 
         assertThat(result).isNotNull();
         assertThat(result).isExactlyInstanceOf(ActionsByJava.class);

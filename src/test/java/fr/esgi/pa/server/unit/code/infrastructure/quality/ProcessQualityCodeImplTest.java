@@ -27,7 +27,7 @@ class ProcessQualityCodeImplTest {
     private final Language language = new Language()
             .setId(languageId)
             .setFileExtension("c")
-            .setLanguageName(LanguageName.C);
+            .setLanguageName(LanguageName.C11);
     private Set<CodeQualityType> codeQualityTypeSet;
 
     private ProcessQualityCodeImpl sut;

@@ -164,7 +164,7 @@ class GetQualityCodeTest {
         when(mockExerciseCaseDao.findById(exerciseCaseId)).thenReturn(foundExerciseCase);
         var cLanguage = new Language()
                 .setId(languageId)
-                .setLanguageName(LanguageName.C)
+                .setLanguageName(LanguageName.C11)
                 .setFileExtension("c");
         when(mockLanguageDao.findById(languageId)).thenReturn(cLanguage);
 
@@ -197,7 +197,7 @@ class GetQualityCodeTest {
         when(mockExerciseCaseDao.findById(exerciseCaseId)).thenReturn(foundExerciseCase);
         var cLanguage = new Language()
                 .setId(languageId)
-                .setLanguageName(LanguageName.C)
+                .setLanguageName(LanguageName.C11)
                 .setFileExtension("c");
         when(mockLanguageDao.findById(languageId)).thenReturn(cLanguage);
         var qualityCode = new QualityCode()

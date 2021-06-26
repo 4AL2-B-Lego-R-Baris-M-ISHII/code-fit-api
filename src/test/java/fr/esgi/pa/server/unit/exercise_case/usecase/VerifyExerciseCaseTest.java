@@ -103,7 +103,7 @@ class VerifyExerciseCaseTest {
         when(mockExerciseCaseDao.findById(exerciseCaseId)).thenReturn(foundExerciseCase);
         var foundLanguage = new Language()
                 .setId(78L)
-                .setLanguageName(LanguageName.JAVA)
+                .setLanguageName(LanguageName.JAVA8)
                 .setFileExtension("java");
         when(mockLanguageDao.findById(foundExerciseCase.getLanguageId())).thenReturn(foundLanguage);
         var test1 = new ExerciseTest()
@@ -151,7 +151,7 @@ class VerifyExerciseCaseTest {
         when(mockExerciseCaseDao.findById(exerciseCaseId)).thenReturn(foundExerciseCase);
         var foundLanguage = new Language()
                 .setId(78L)
-                .setLanguageName(LanguageName.JAVA)
+                .setLanguageName(LanguageName.JAVA8)
                 .setFileExtension("java");
         when(mockLanguageDao.findById(foundExerciseCase.getLanguageId())).thenReturn(foundLanguage);
         var test1 = new ExerciseTest()
@@ -202,7 +202,7 @@ class VerifyExerciseCaseTest {
         when(mockExerciseCaseDao.findById(exerciseCaseId)).thenReturn(foundExerciseCase);
         var foundLanguage = new Language()
                 .setId(78L)
-                .setLanguageName(LanguageName.JAVA)
+                .setLanguageName(LanguageName.JAVA8)
                 .setFileExtension("java");
         when(mockLanguageDao.findById(foundExerciseCase.getLanguageId())).thenReturn(foundLanguage);
         var test1 = new ExerciseTest()

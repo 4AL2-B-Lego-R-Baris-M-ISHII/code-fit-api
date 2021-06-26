@@ -67,7 +67,7 @@ class DockerCompileRunnerTest {
                 mockFileReader,
                 mockFileWriter,
                 mockScriptCompilerContent);
-        currentLanguage = new Language().setId(1L).setLanguageName(LanguageName.C).setFileExtension("c");
+        currentLanguage = new Language().setId(1L).setLanguageName(LanguageName.C11).setFileExtension("c");
     }
 
     @Test

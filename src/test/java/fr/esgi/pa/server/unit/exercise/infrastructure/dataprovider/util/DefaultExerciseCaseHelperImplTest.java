@@ -27,7 +27,7 @@ class DefaultExerciseCaseHelperImplTest {
     @DisplayName("When language is java")
     class WhenLanguageIsJava {
         private final Language javaLanguage = new Language().setId(2L)
-                .setLanguageName(LanguageName.JAVA)
+                .setLanguageName(LanguageName.JAVA8)
                 .setFileExtension("java");
 
         @Test
@@ -85,7 +85,7 @@ class DefaultExerciseCaseHelperImplTest {
     class WhenLanguageIsC {
         private final Language cLanguage = new Language()
                 .setId(1L)
-                .setLanguageName(LanguageName.C)
+                .setLanguageName(LanguageName.C11)
                 .setFileExtension("c");
 
         @Test

@@ -33,7 +33,7 @@ class GetNbLinesCodeTest {
     void should_call_actionsByLanguage_getNbLinesCode_of_qualityCode_content() {
         var qualityCode = new QualityCode()
                 .setCodeContent(codeContent)
-                .setLanguage(new Language().setId(languageId).setFileExtension("c").setLanguageName(LanguageName.C));
+                .setLanguage(new Language().setId(languageId).setFileExtension("c").setLanguageName(LanguageName.C11));
 
 
         sut.execute(mockActionsByLanguage, qualityCode);
@@ -43,7 +43,7 @@ class GetNbLinesCodeTest {
 
     @Test
     void when_get_result_of_actionsByLanguage_should_set_result_to_current_quality_code_and_return() {
-        var language = new Language().setId(languageId).setFileExtension("c").setLanguageName(LanguageName.C);
+        var language = new Language().setId(languageId).setFileExtension("c").setLanguageName(LanguageName.C11);
         var qualityCode = new QualityCode()
                 .setCodeContent(codeContent)
                 .setLanguage(language);
