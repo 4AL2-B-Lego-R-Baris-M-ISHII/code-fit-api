@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class ActionsByLanguageFactory {
     public ActionsByLanguage getActionsByLanguage(Language language) {
-        if (language.getLanguageName().equals(LanguageName.C)) {
-            return new ActionsByC();
+        if (language.getLanguageName().equals(LanguageName.JAVA)) {
+            return new ActionsByJava();
         }
-        return new ActionsByJava();
+        return new ActionsByC();
     }
 }
