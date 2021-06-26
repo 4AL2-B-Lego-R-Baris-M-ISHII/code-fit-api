@@ -121,7 +121,7 @@ public class CodeApiTest {
                     "    }\n" +
                     "}";
             var codeRequest = new TestCompileCodeRequest()
-                    .setLanguage("JAVA")
+                    .setLanguage("JAVA8")
                     .setContent(content);
             var code = given()
                     .header("Authorization", "Bearer " + authData.getToken())
