@@ -69,7 +69,7 @@ class DefaultExerciseCaseHelperImplTest {
             var result = sut.getValuesByLanguage(javaLanguage);
             var expectedTest = "public class Main {\n" +
                     "    public static void main(String[] args) throws Exception {\n" +
-                    "        var result = Solution.exercise1(\"toto\");\n" +
+                    "        String result = Solution.exercise1(\"toto\");\n" +
                     "        if (result == null || !result.equals(\"toto\")) {\n" +
                     "            throw new Exception(\"error expectations\");\n" +
                     "        }\n" +

@@ -70,7 +70,7 @@ class JpaDefaultExerciseTest {
         var java = languageDao.findByLanguageName(LanguageName.JAVA);
         var testContent = "public class Main {\n" +
                 "    public static void main(String[] args) throws Exception {\n" +
-                "        var result = Solution.exercise1(\"toto\");\n" +
+                "        String result = Solution.exercise1(\"toto\");\n" +
                 "        if (result == null || !result.equals(\"toto\")) {\n" +
                 "            throw new Exception(\"error expectations\");\n" +
                 "        }\n" +
