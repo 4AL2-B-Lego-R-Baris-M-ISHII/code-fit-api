@@ -5,14 +5,18 @@ import fr.esgi.pa.server.code.infrastructure.quality.action.by_language.ActionsB
 import fr.esgi.pa.server.code.infrastructure.quality.action.by_language.ActionsByLanguage;
 import fr.esgi.pa.server.language.core.Language;
 import fr.esgi.pa.server.language.core.LanguageName;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class ActionsByLanguageFactory {
+    private final ApplicationContext applicationContext;
     public ActionsByLanguage getActionsByLanguage(Language language) {
         if (language.getLanguageName().equals(LanguageName.JAVA)) {
-            return new ActionsByJava();
+            return applicationContext.getBean(ActionsByJava.class);
         }
-        return new ActionsByC();
+        return applicationContext.getBean(ActionsByC.class);
     }
 }
