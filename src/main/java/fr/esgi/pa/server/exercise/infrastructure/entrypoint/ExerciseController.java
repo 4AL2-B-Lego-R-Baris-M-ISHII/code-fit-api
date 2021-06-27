@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -39,7 +40,7 @@ public class ExerciseController {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<URI> saveOne(
-            @RequestAttribute("userId")
+            @ApiIgnore @RequestAttribute("userId")
             @Pattern(regexp = "^\\d+$", message = "id has to be an integer")
             @Min(value = 1, message = "id has to be equal or more than 1") String userId,
             @Valid @RequestBody SaveExerciseRequest request) throws NotFoundException, IncorrectLanguageNameException {
@@ -58,7 +59,7 @@ public class ExerciseController {
 
     @GetMapping("{id}")
     public ResponseEntity<DtoExercise> findOne(
-            @RequestAttribute("userId")
+            @ApiIgnore @RequestAttribute("userId")
             @Pattern(regexp = "^\\d+$", message = "id has to be an integer")
             @Min(value = 1, message = "id has to be equal or more than 1") String userId,
             @PathVariable("id")
@@ -78,7 +79,7 @@ public class ExerciseController {
     @PutMapping("{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateOne(
-            @RequestAttribute("userId")
+            @ApiIgnore @RequestAttribute("userId")
             @Pattern(regexp = "^\\d+$", message = "id has to be an integer")
             @Min(value = 1, message = "id has to be equal or more than 1") String userId,
             @PathVariable("id")
@@ -92,7 +93,7 @@ public class ExerciseController {
     @DeleteMapping("{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteOne(
-            @RequestAttribute("userId")
+            @ApiIgnore @RequestAttribute("userId")
             @Pattern(regexp = "^\\d+$", message = "id has to be an integer")
             @Min(value = 1, message = "id has to be equal or more than 1") String userId,
             @PathVariable("id")

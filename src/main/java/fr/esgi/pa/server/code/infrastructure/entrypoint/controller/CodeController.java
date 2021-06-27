@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -40,7 +41,7 @@ public class CodeController {
 
     @PostMapping
     public ResponseEntity<?> saveCode(
-            @RequestAttribute("userId")
+            @ApiIgnore @RequestAttribute("userId")
             @Pattern(regexp = "^\\d+", message = "id has to be an integer")
             @Min(value = 1, message = "id has to be equal or more than 1") String userId,
             @Valid @RequestBody SaveCodeRequest request
@@ -71,7 +72,7 @@ public class CodeController {
 
     @GetMapping("{id}/code-quality")
     public ResponseEntity<DtoQualityCode> getQualityCode(
-            @RequestAttribute("userId")
+            @ApiIgnore @RequestAttribute("userId")
             @Pattern(regexp = "^\\d+", message = "id has to be an integer")
             @Min(value = 1, message = "id has to be equal or more than 1") String userId,
             @PathVariable("id")
