@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -39,7 +40,7 @@ public class ExerciseCaseController {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<URI> createOne(
-            @RequestAttribute("userId")
+            @ApiIgnore @RequestAttribute("userId")
             @Pattern(regexp = "^\\d+$", message = "id has to be an integer")
             @Min(value = 1, message = "id has to be equal or more than 1") String userId,
             @Valid @RequestBody SaveExerciseCaseRequest request
@@ -60,7 +61,7 @@ public class ExerciseCaseController {
     @PutMapping("{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateOne(
-            @RequestAttribute("userId")
+            @ApiIgnore @RequestAttribute("userId")
             @Pattern(regexp = "^\\d+$", message = "id has to be an integer")
             @Min(value = 1, message = "id has to be equal or more than 1") String userId,
             @PathVariable("id")
@@ -88,7 +89,7 @@ public class ExerciseCaseController {
 
     @GetMapping("{id}")
     public ResponseEntity<DtoExerciseCase> getOneById(
-            @RequestAttribute("userId")
+            @ApiIgnore @RequestAttribute("userId")
             @Pattern(regexp = "^\\d+$", message = "id has to be an integer")
             @Min(value = 1, message = "id has to be equal or more than 1") String userId,
             @PathVariable("id")

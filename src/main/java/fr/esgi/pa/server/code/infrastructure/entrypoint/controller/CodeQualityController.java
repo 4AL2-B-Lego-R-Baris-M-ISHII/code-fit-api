@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
@@ -17,7 +18,7 @@ import java.net.URI;
 public class CodeQualityController {
     @PostMapping
     public ResponseEntity<URI> getQualityCode(
-            @RequestAttribute("userId")
+            @ApiIgnore @RequestAttribute("userId")
             @Pattern(regexp = "^\\d+", message = "id has to be an integer")
             @Min(value = 1, message = "id has to be equal or more than 1") String userId
     ) {
