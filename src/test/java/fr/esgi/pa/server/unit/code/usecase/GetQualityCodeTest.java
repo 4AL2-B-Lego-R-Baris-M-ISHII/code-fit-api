@@ -203,7 +203,7 @@ class GetQualityCodeTest {
         var qualityCode = new QualityCode()
                 .setCodeContent(foundCode.getContent())
                 .setLanguage(cLanguage)
-                .setLinesCode(1L);
+                .setNbLinesCode(1L);
         when(mockProcessQualityCode.process(
                 foundCode.getContent(),
                 cLanguage,

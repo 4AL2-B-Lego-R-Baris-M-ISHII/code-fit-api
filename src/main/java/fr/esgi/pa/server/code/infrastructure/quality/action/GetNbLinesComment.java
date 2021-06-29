@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 public class GetNbLinesComment implements QualityCodeAction {
     @Override
     public QualityCode execute(ActionsByLanguage actionsByLanguage, QualityCode currentQualityCode) {
-        return null;
+        var resultNbLinesComment = actionsByLanguage.getNbLinesComment(currentQualityCode.getCodeContent());
+        currentQualityCode.setNbLinesComment(resultNbLinesComment);
+        return currentQualityCode;
     }
 }

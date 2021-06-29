@@ -414,7 +414,7 @@ class CodeControllerTest {
         void when_getQualityCode_called_and_return_dto_quality_code_should_return_dto() throws Exception {
             Set<CodeQualityType> codeQualityTypeSet = Set.of(CodeQualityType.LINES_CODE);
             var qualityCode = new QualityCode()
-                    .setLinesCode(5L)
+                    .setNbLinesCode(5L)
                     .setLanguage(new Language().setId(7L).setFileExtension("c").setLanguageName(LanguageName.C11));
             var dtoQualityCode = new DtoQualityCode()
                     .setCodeId(1L)

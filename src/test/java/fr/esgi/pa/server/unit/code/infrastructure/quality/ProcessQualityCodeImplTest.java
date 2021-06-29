@@ -75,7 +75,7 @@ class ProcessQualityCodeImplTest {
         var updatedQualityCode = new QualityCode()
                 .setCodeContent(codeContent)
                 .setLanguage(language)
-                .setLinesCode(10L);
+                .setNbLinesCode(10L);
         when(mockQualityCodeAction.execute(mockActionsByLanguage, qualityCode)).thenReturn(updatedQualityCode);
 
         var result = sut.process(codeContent, language, codeQualityTypeSet);

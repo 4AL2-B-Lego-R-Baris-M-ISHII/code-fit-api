@@ -9,7 +9,7 @@ public class GetNbLinesCode implements QualityCodeAction {
     @Override
     public QualityCode execute(ActionsByLanguage actionsByLanguage, QualityCode currentQualityCode) {
         var resultNbLinesCode = actionsByLanguage.getNbLinesCode(currentQualityCode.getCodeContent());
-        currentQualityCode.setLinesCode(resultNbLinesCode);
+        currentQualityCode.setNbLinesCode(resultNbLinesCode);
         return currentQualityCode;
     }
 }
