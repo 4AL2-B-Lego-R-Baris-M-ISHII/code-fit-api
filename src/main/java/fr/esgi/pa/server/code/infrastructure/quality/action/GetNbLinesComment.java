@@ -5,11 +5,11 @@ import fr.esgi.pa.server.code.infrastructure.quality.action.by_language.ActionsB
 import org.springframework.stereotype.Component;
 
 @Component
-public class GetNbLinesCode implements QualityCodeAction {
+public class GetNbLinesComment implements QualityCodeAction {
     @Override
     public QualityCode execute(ActionsByLanguage actionsByLanguage, QualityCode currentQualityCode) {
-        var resultNbLinesCode = actionsByLanguage.getNbLinesCode(currentQualityCode.getCodeContent());
-        currentQualityCode.setNbLinesCode(resultNbLinesCode);
+        var resultNbLinesComment = actionsByLanguage.getNbLinesComment(currentQualityCode.getCodeContent());
+        currentQualityCode.setNbLinesComment(resultNbLinesComment);
         return currentQualityCode;
     }
 }

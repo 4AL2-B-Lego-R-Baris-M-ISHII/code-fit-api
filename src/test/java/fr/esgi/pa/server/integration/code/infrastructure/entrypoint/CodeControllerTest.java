@@ -402,7 +402,7 @@ class CodeControllerTest {
 
         @WithMockUser
         @Test
-        void when_userId_codeId_and_set_code_quality_type_are_correct_should_call_usecase_GetQualityCode() throws Exception {
+        void when_userId_codeId_and_set_code_quality_type_with_one_type_LINES_CODE_are_correct_should_call_usecase_GetQualityCode() throws Exception {
             mockMvc.perform(get("/api/code/1/code-quality?type=LINES_CODE")
                     .requestAttr("userId", "2"));
             Set<CodeQualityType> codeQualityTypeSet = Set.of(CodeQualityType.LINES_CODE);
@@ -414,7 +414,7 @@ class CodeControllerTest {
         void when_getQualityCode_called_and_return_dto_quality_code_should_return_dto() throws Exception {
             Set<CodeQualityType> codeQualityTypeSet = Set.of(CodeQualityType.LINES_CODE);
             var qualityCode = new QualityCode()
-                    .setLinesCode(5L)
+                    .setNbLinesCode(5L)
                     .setLanguage(new Language().setId(7L).setFileExtension("c").setLanguageName(LanguageName.C11));
             var dtoQualityCode = new DtoQualityCode()
                     .setCodeId(1L)
@@ -432,6 +432,15 @@ class CodeControllerTest {
             assertThat(contentAsString).isNotBlank();
             var result = jsonToObject(contentAsString, DtoQualityCode.class);
             assertThat(result).isEqualTo(dtoQualityCode);
+        }
+
+        @WithMockUser
+        @Test
+        void when_userId_codeId_and_set_code_quality_type_with_one_type_LINES_COMMENT_are_correct_should_call_usecase_GetQualityCode() throws Exception {
+            mockMvc.perform(get("/api/code/1/code-quality?type=LINES_COMMENT")
+                    .requestAttr("userId", "2"));
+            Set<CodeQualityType> codeQualityTypeSet = Set.of(CodeQualityType.LINES_COMMENT);
+            verify(mockGetQualityCode, times(1)).execute(2L, 1L, codeQualityTypeSet);
         }
     }
 

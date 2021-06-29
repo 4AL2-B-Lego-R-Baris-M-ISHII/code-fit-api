@@ -60,4 +60,30 @@ class ActionsByCTest {
             assertThat(result).isEqualTo(4L);
         }
     }
+
+    @Nested
+    class GetNbLinesCommentTest {
+        @Test
+        void when_content_has_one_simple_comment_line_should_return_1() {
+            var content = "// one comment line\n" +
+                    "int main() {return 0;}";
+            assertThat(sut.getNbLinesComment(content)).isEqualTo(1L);
+        }
+
+        @Test
+        void when_content_has_one_line_multiple_comment_should_return_1() {
+            var content = "/* one comment line*/\n" +
+                    "int main() {return 0;}";
+            assertThat(sut.getNbLinesComment(content)).isEqualTo(1L);
+        }
+
+        @Test
+        void when_content_has_3_lines_of_one_multiple_comment_should_return_1() {
+            var content = "/* one comment line\n" +
+                    "second\n" +
+                    "third*/\n" +
+                    "int main() {return 0;}";
+            assertThat(sut.getNbLinesComment(content)).isEqualTo(3L);
+        }
+    }
 }

@@ -43,4 +43,63 @@ class ActionsByJavaTest {
             assertThat(result).isEqualTo(5L);
         }
     }
+
+    @Nested
+    class GetNbLinesComment {
+        @Test
+        void when_no_comment_should_return_0() {
+            var noCommentContent = "class Solution {\n" +
+                    "    public static String exercise1(String test) {\n" +
+                    "        return null;\n" +
+                    "    }\n" +
+                    "}";
+
+            assertThat(sut.getNbLinesComment(noCommentContent)).isEqualTo(0L);
+        }
+
+        @Test
+        void when_1_simple_comment_should_return_1() {
+            var oneSimpleComment = "// one comment\n" +
+                    "class Solution {\n" +
+                    "    public static String exercise1(String test) {\n" +
+                    "        return null;\n" +
+                    "    }\n" +
+                    "}";
+            assertThat(sut.getNbLinesComment(oneSimpleComment)).isEqualTo(1L);
+        }
+
+        @Test
+        void when_1_line_multiple_comment_on_code_line_should_return_1() {
+            var multipleComment = "class Solution {/* one line multiple comment*/\n" +
+                    "    public static String exercise1(String test) {\n" +
+                    "        return null;\n" +
+                    "    }\n" +
+                    "}";
+            assertThat(sut.getNbLinesComment(multipleComment)).isEqualTo(1L);
+        }
+
+        @Test
+        void when_1_line_multiple_comment_should_return_1() {
+            var multipleComment = "/* one line multiple comment*/\n" +
+                    "class Solution {\n" +
+                    "    public static String exercise1(String test) {\n" +
+                    "        return null;\n" +
+                    "    }\n" +
+                    "}";
+            assertThat(sut.getNbLinesComment(multipleComment)).isEqualTo(1L);
+        }
+
+        @Test
+        void when_3_line_multiple_comment_should_return_3() {
+            var multipleComment = "/* first line\n" +
+                    "second line\n" +
+                    "third line*/\n" +
+                    "class Solution {\n" +
+                    "    public static String exercise1(String test) {\n" +
+                    "        return null;\n" +
+                    "    }\n" +
+                    "}";
+            assertThat(sut.getNbLinesComment(multipleComment)).isEqualTo(3L);
+        }
+    }
 }
