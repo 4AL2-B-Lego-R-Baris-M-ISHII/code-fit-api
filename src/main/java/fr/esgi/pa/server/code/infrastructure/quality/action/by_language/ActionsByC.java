@@ -4,7 +4,6 @@ import fr.esgi.pa.server.code.infrastructure.quality.action.by_language.cyclomat
 import fr.esgi.pa.server.code.infrastructure.quality.action.by_language.nb_lines_code.GetNbLinesCodeByLanguage;
 import fr.esgi.pa.server.code.infrastructure.quality.action.by_language.nb_lines_comment.GetNbLinesCommentByLanguage;
 import fr.esgi.pa.server.language.core.LanguageName;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Hashtable;
@@ -12,11 +11,28 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-@RequiredArgsConstructor
 public class ActionsByC implements ActionsByLanguage {
     private final GetNbLinesCodeByLanguage getNbLinesCodeByLanguage;
     private final GetNbLinesCommentByLanguage getNbLinesCommentByLanguage;
     private final GetCyclomaticComplexity getCyclomaticComplexity;
+    private final Map<String, Boolean> mapNodeCorrespondCycloComplex;
+
+    public ActionsByC(
+            GetNbLinesCodeByLanguage getNbLinesCodeByLanguage,
+            GetNbLinesCommentByLanguage getNbLinesCommentByLanguage,
+            GetCyclomaticComplexity getCyclomaticComplexity) {
+        this.getNbLinesCodeByLanguage = getNbLinesCodeByLanguage;
+        this.getNbLinesCommentByLanguage = getNbLinesCommentByLanguage;
+        this.getCyclomaticComplexity = getCyclomaticComplexity;
+
+        var listNodeTextCorrespondCycloComplex = List.of(
+                "if", "case", "for", "while"
+        );
+        mapNodeCorrespondCycloComplex = new Hashtable<>();
+        listNodeTextCorrespondCycloComplex.forEach(nodeText -> {
+            mapNodeCorrespondCycloComplex.put(nodeText, true);
+        });
+    }
 
     @Override
     public Long getNbLinesCode(String content) {
@@ -30,14 +46,10 @@ public class ActionsByC implements ActionsByLanguage {
 
     @Override
     public Long getCyclomaticComplexity(String content) {
-        var listNodeTextCorrespondCycloComplex = List.of(
-                "if", "case", "for", "while"
+        return getCyclomaticComplexity.execute(
+                LanguageName.C11,
+                mapNodeCorrespondCycloComplex,
+                content
         );
-        Map<String, Boolean> mapNodeCorrespondCycloComplex = new Hashtable<>();
-        listNodeTextCorrespondCycloComplex.forEach(nodeText -> {
-            mapNodeCorrespondCycloComplex.put(nodeText, true);
-        });
-
-        return getCyclomaticComplexity.execute(LanguageName.C11, mapNodeCorrespondCycloComplex, content);
     }
 }
