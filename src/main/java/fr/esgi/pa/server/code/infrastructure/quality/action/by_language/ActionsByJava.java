@@ -29,9 +29,7 @@ public class ActionsByJava implements ActionsByLanguage {
                 "if", "case", "for", "while", "forEach"
         );
         mapNodeCorrespondCycloComplex = new Hashtable<>();
-        listNodeTextCorrespondCycloComplex.forEach(nodeText -> {
-            mapNodeCorrespondCycloComplex.put(nodeText, true);
-        });
+        listNodeTextCorrespondCycloComplex.forEach(nodeText -> mapNodeCorrespondCycloComplex.put(nodeText, true));
     }
 
     @Override
