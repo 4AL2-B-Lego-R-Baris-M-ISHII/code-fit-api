@@ -7,6 +7,7 @@ import fr.esgi.pa.server.code.infrastructure.quality.action.by_language.nb_lines
 import lombok.RequiredArgsConstructor;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.springframework.stereotype.Component;
 
@@ -45,11 +46,10 @@ public class ActionsByC implements ActionsByLanguage {
             mapNodeCorrespondCycloComplex.put(nodeText, true);
         });
 
-
         return searchNodeCorrespondCyclomaticComplexity(tree, parser, result, mapNodeCorrespondCycloComplex);
     }
 
-    private Long searchNodeCorrespondCyclomaticComplexity(ParseTree currentTree, CParser parser, Long result, Map<String, Boolean> mapNodeCorrespondCycloComplex) {
+    private Long searchNodeCorrespondCyclomaticComplexity(ParseTree currentTree, Parser parser, Long result, Map<String, Boolean> mapNodeCorrespondCycloComplex) {
 //        System.out.printf("toStringtree : %s%n", currentTree.toStringTree(parser));
 //        System.out.printf("getText : %s%n", currentTree.getText());
 //        System.out.printf("getClass : %s%n", currentTree.getClass());
