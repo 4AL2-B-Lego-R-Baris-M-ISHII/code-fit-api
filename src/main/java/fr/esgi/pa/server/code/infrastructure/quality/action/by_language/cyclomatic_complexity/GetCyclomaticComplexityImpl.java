@@ -1,9 +1,10 @@
 package fr.esgi.pa.server.code.infrastructure.quality.action.by_language.cyclomatic_complexity;
 
-import fr.esgi.pa.server.code.infrastructure.gen.c.CLexer;
-import fr.esgi.pa.server.code.infrastructure.gen.c.CParser;
-import fr.esgi.pa.server.code.infrastructure.gen.java8.Java8Lexer;
-import fr.esgi.pa.server.code.infrastructure.gen.java8.Java8Parser;
+
+import fr.esgi.pa.server.code.infrastructure.quality.gen.c.CLexer;
+import fr.esgi.pa.server.code.infrastructure.quality.gen.c.CParser;
+import fr.esgi.pa.server.code.infrastructure.quality.gen.java8.Java8Lexer;
+import fr.esgi.pa.server.code.infrastructure.quality.gen.java8.Java8Parser;
 import fr.esgi.pa.server.language.core.LanguageName;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
