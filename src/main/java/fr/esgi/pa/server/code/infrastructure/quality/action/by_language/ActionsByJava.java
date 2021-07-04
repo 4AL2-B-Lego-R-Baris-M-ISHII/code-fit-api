@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class ActionsByJava implements ActionsByLanguage {
     private final GetNbLinesCodeByLanguage getNbLinesCodeByLanguage;
     private final GetNbLinesCommentByLanguage getNbLinesCommentByLanguage;
-    
+
     @Override
     public Long getNbLinesCode(String content) {
         return getNbLinesCodeByLanguage.execute(content);
@@ -19,5 +19,10 @@ public class ActionsByJava implements ActionsByLanguage {
     @Override
     public Long getNbLinesComment(String content) {
         return getNbLinesCommentByLanguage.execute(content);
+    }
+
+    @Override
+    public Long getCyclomaticComplexity(String content) {
+        return null;
     }
 }
