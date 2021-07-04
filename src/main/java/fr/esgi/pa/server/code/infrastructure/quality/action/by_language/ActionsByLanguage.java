@@ -4,4 +4,6 @@ public interface ActionsByLanguage {
     Long getNbLinesCode(String content);
 
     Long getNbLinesComment(String content);
+
+    Long getCyclomaticComplexity(String content);
 }

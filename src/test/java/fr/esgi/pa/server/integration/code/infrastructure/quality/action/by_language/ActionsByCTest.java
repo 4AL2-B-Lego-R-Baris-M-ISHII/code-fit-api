@@ -86,4 +86,140 @@ class ActionsByCTest {
             assertThat(sut.getNbLinesComment(content)).isEqualTo(3L);
         }
     }
+
+    @Nested
+    class GetCyclomaticComplexityTest {
+        @Test
+        void when_one_if_should_return_1() {
+            var content = "int main() {" +
+                    "if (0 == 0) return 0;" +
+                    "return 0;" +
+                    "}\n";
+
+            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(1L);
+        }
+
+        @Test
+        void when_2_if_should_return_2() {
+            var content = "int main() {" +
+                    "if (0 == 0) return 0;" +
+                    "if (1) {" +
+                    "return 1;" +
+                    "}\n" +
+                    "return 0;" +
+                    "}\n";
+
+            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(2L);
+        }
+
+        @Test
+        void when_one_if_and_one_else_should_return_1() {
+            var content = "int main() {" +
+                    "if (0 == 0) return 0;" +
+                    "else {" +
+                    "return 1;" +
+                    "}\n" +
+                    "return 0;" +
+                    "}\n";
+
+            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(1L);
+        }
+
+        @Test
+        void when_one_if_and_another_nested_should_return_2() {
+            var content = "int main() {\n" +
+                    "    int test = 0;\n" +
+                    "    if (0) {\n" +
+                    "        if (3) {\n" +
+                    "            return 3;\n" +
+                    "        }\n" +
+                    "    }\n" +
+                    "    return test;\n" +
+                    "}";
+            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(2L);
+        }
+
+        @Test
+        void when_one_switch_with_one_case_should_return_1() {
+            var content = "int main() {\n" +
+                    "    int test = 0;\n" +
+                    "    switch(1) {\n" +
+                    "        case 1:\n" +
+                    "            test = 1;\n" +
+                    "            break;            \n" +
+                    "    }\n" +
+                    "    return test;\n" +
+                    "}";
+            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(1L);
+        }
+
+        @Test
+        void when_one_switch_with_2_cases_should_return_2() {
+            var content = "int main() {\n" +
+                    "    int test = 0;\n" +
+                    "    switch(1) {\n" +
+                    "        case 1:\n" +
+                    "            test = 1;\n" +
+                    "            break;          \n" +
+                    "        case 2:\n" +
+                    "            test = 2;\n" +
+                    "            break;\n" +
+                    "    }\n" +
+                    "    return test;\n" +
+                    "}";
+            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(2L);
+        }
+
+        @Test
+        void when_one_for_should_return_1() {
+            var content = "int main() {\n" +
+                    "    int test = 0;\n" +
+                    "    for (int i = 0; i < 5; i++) {\n" +
+                    "        test++;\n" +
+                    "    }\n" +
+                    "    return test;\n" +
+                    "}";
+            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(1L);
+        }
+
+        @Test
+        void when_one_while_should_return_1() {
+            var content = "int main() {\n" +
+                    "    int test = 0;\n" +
+                    "    while(test == 0) {\n" +
+                    "        test++;\n" +
+                    "    }\n" +
+                    "    return 0;\n" +
+                    "}";
+            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(1L);
+        }
+
+        @Test
+        void when_one_do_while_should_return_1() {
+            var content = "int main() {\n" +
+                    "    int test = 0;\n" +
+                    "    do {\n" +
+                    "        test = 1;\n" +
+                    "    } while(test != 0);\n" +
+                    "    return 0;\n" +
+                    "}";
+            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(1L);
+        }
+
+        @Test
+        void when_if_one_function_not_main_should_return_1() {
+            var content = "int test() {\n" +
+                    "    if (0) {\n" +
+                    "        return 0;\n" +
+                    "    }\n" +
+                    "    return 1;\n" +
+                    "}\n" +
+                    "\n" +
+                    "int main() {\n" +
+                    "    test();\n" +
+                    "    return 0;\n" +
+                    "}";
+            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(1L);
+        }
+    }
 }

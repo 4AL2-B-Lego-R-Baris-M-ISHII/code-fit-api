@@ -442,6 +442,15 @@ class CodeControllerTest {
             Set<CodeQualityType> codeQualityTypeSet = Set.of(CodeQualityType.LINES_COMMENT);
             verify(mockGetQualityCode, times(1)).execute(2L, 1L, codeQualityTypeSet);
         }
+
+        @WithMockUser
+        @Test
+        void when_userId_codeId_and_set_code_quality_type_with_one_type_CYCLOMATIC_COMPLEXITY_are_correct_should_call_usecase_GetQualityCode() throws Exception {
+            mockMvc.perform(get("/api/code/1/code-quality?type=CYCLOMATIC_COMPLEXITY")
+                    .requestAttr("userId", "2"));
+            Set<CodeQualityType> codeQualityTypeSet = Set.of(CodeQualityType.CYCLOMATIC_COMPLEXITY);
+            verify(mockGetQualityCode, times(1)).execute(2L, 1L, codeQualityTypeSet);
+        }
     }
 
 }

@@ -45,7 +45,7 @@ class ActionsByJavaTest {
     }
 
     @Nested
-    class GetNbLinesComment {
+    class GetNbLinesCommentTest {
         @Test
         void when_no_comment_should_return_0() {
             var noCommentContent = "class Solution {\n" +
@@ -100,6 +100,97 @@ class ActionsByJavaTest {
                     "    }\n" +
                     "}";
             assertThat(sut.getNbLinesComment(multipleComment)).isEqualTo(3L);
+        }
+    }
+
+    @Nested
+    class GetCyclomaticComplexityTest {
+        @Test
+        void when_one_if_should_return_1() {
+            var content = "public class Main { \n" +
+                    "   public static void main(String[] args) { \n" +
+                    "      if (true) {\n" +
+                    "        return;\n" +
+                    "      }\n" +
+                    "   }\n" +
+                    "}";
+
+            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(1L);
+        }
+
+        @Test
+        void when_2_case_should_return_1() {
+            var content = "public class Main { \n" +
+                    "   public static void main(String[] args) {\n" +
+                    "      boolean test = false; \n" +
+                    "      switch(true) {\n" +
+                    "        case true:\n" +
+                    "            test = true;\n" +
+                    "            break;\n" +
+                    "        case false:\n" +
+                    "            test = false;\n" +
+                    "            break;\n" +
+                    "      }\n" +
+                    "   }\n" +
+                    "}";
+
+            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(2L);
+        }
+
+        @Test
+        void when_one_for_should_return_1() {
+            var content = "public class Main { \n" +
+                    "   public static void main(String[] args) {\n" +
+                    "      for (int i = 0; i < 3; i++) {\n" +
+                    "        System.out.println(\"test\");\n" +
+                    "      }\n" +
+                    "   }\n" +
+                    "}";
+            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(1L);
+        }
+
+        @Test
+        void when_one_while_should_return_1() {
+            var content = "public class Main { \n" +
+                    "   public static void main(String[] args) {\n" +
+                    "      boolean test = true;\n" +
+                    "      while(test) {\n" +
+                    "        System.out.println(\"toto\");\n" +
+                    "        test = !test;\n" +
+                    "      }\n" +
+                    "   }\n" +
+                    "}";
+            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(1L);
+        }
+
+        @Test
+        void when_one_while_and_nested_if_should_return_2() {
+            var content = "public class Main { \n" +
+                    "   public static void main(String[] args) {\n" +
+                    "      boolean test = true;\n" +
+                    "      while(test) {\n" +
+                    "        test = !test;\n" +
+                    "        if (test == false) {\n" +
+                    "            System.out.println(\"toto\");\n" +
+                    "        }\n" +
+                    "      }\n" +
+                    "   }\n" +
+                    "}";
+            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(2L);
+        }
+
+        @Test
+        void when_one_forEach_should_return_1() {
+            var content = "public class Main { \n" +
+                    "   public static void main(String[] args) {\n" +
+                    "      List<String> strList = List.of(\"toto\", \"tata\");\n" +
+                    "      \n" +
+                    "      strList.forEach(curStr -> {\n" +
+                    "        System.out.println(curStr);\n" +
+                    "      });\n" +
+                    "   }\n" +
+                    "}";
+            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(1L);
         }
     }
 }
