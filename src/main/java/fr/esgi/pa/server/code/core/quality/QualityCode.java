@@ -11,4 +11,5 @@ public class QualityCode {
     private Language language;
     private Long nbLinesCode;
     private Long nbLinesComment;
+    private Long cyclomaticComplexity;
 }

@@ -8,7 +8,9 @@ import org.springframework.stereotype.Component;
 public class GetCyclomaticComplexity implements QualityCodeAction {
     @Override
     public QualityCode execute(ActionsByLanguage actionsByLanguage, QualityCode currentQualityCode) {
-        // TODO : continue implementation code
-        return null;
+        var result = actionsByLanguage.getCyclomaticComplexity(currentQualityCode.getCodeContent());
+        currentQualityCode.setCyclomaticComplexity(result);
+
+        return currentQualityCode;
     }
 }
