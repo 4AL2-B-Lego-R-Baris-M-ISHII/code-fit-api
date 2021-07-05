@@ -277,7 +277,7 @@ class ActionsByCTest {
         }
 
         @Test
-        void when_code_contain_has_redundant_if_with_one_not_same_scope_should_return_true() {
+        void when_code_contain_has_redundant_if_with_one_not_same_scope_in_for_after_should_return_true() {
             var content = "int main() {\n" +
                     "    int test = 0;\n" +
                     "    \n" +
@@ -292,6 +292,67 @@ class ActionsByCTest {
                     "    return 0;\n" +
                     "}";
             assertThat(sut.hasRedundantCode(content)).isTrue();
+        }
+
+        @Test
+        void when_code_contain_has_redundant_if_with_one_not_same_scope_in_for_before_should_return_true() {
+            var content = "int main() {\n" +
+                    "    int test = 0;\n" +
+                    "    for (int i = 0; i < 10; i++) {\n" +
+                    "        if (test == 0) {\n" +
+                    "            test = 1;\n" +
+                    "        }\n" +
+                    "    }\n" +
+                    "        \n" +
+                    "    if (test == 0) {\n" +
+                    "        test = 1;\n" +
+                    "    }\n" +
+                    "    return 0;\n" +
+                    "}";
+            assertThat(sut.hasRedundantCode(content)).isTrue();
+        }
+
+        @Test
+        void when_code_contains_has_redundant_functions_should_return_true() {
+            var content = "#include <stdio.h>\n" +
+                    "\n" +
+                    "int test() {\n" +
+                    "    return 1;\n" +
+                    "}\n" +
+                    "\n" +
+                    "int test2() {\n" +
+                    "    return 1;\n" +
+                    "}\n" +
+                    "\n" +
+                    "int main() {\n" +
+                    "    if (1 == 1) {\n" +
+                    "        return 1;\n" +
+                    "    }\n" +
+                    "    return 0;\n" +
+                    "}";
+            assertThat(sut.hasRedundantCode(content)).isTrue();
+        }
+
+        @Test
+        void when_code_contains_functions_but_not_redundant_functions_should_return_false() {
+            var content = "#include <stdio.h>\n" +
+                    "\n" +
+                    "int test() {\n" +
+                    "    return 1;\n" +
+                    "}\n" +
+                    "\n" +
+                    "int test2() {\n" +
+                    "    int test = 1;\n" +
+                    "    return test;\n" +
+                    "}\n" +
+                    "\n" +
+                    "int main() {\n" +
+                    "    if (1 == 1) {\n" +
+                    "        return 1;\n" +
+                    "    }\n" +
+                    "    return 0;\n" +
+                    "}";
+            assertThat(sut.hasRedundantCode(content)).isFalse();
         }
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+
 @Component
 public class ActionsByC implements ActionsByLanguage {
     private final GetNbLinesCodeByLanguage getNbLinesCodeByLanguage;
@@ -59,7 +60,7 @@ public class ActionsByC implements ActionsByLanguage {
     @Override
     public Boolean hasRedundantCode(String content) {
         var parserAndTree = parserAndTreeInfoFactory.getParserAndTreeInfo(LanguageName.C11, content);
-        Set<String> treeString = new HashSet<>();
+        var treeString = new HashSet<String>();
         return treeHasRedundantCode(parserAndTree.getTree(), parserAndTree.getParser(), treeString);
     }
 
@@ -67,20 +68,38 @@ public class ActionsByC implements ActionsByLanguage {
         if (tree == null || tree.getChildCount() == 0) {
             return false;
         }
-
         if (tree.getClass().equals(CParser.BlockItemContext.class)) {
+            tree = tree.getChild(0).getChild(0);
+
+            if (tree.getClass().equals(CParser.SelectionStatementContext.class)
+                    || tree.getClass().equals(CParser.IterationStatementContext.class)
+            ) {
+                var currentTreeString = tree.toStringTree(parser);
+                if (treeString.contains(currentTreeString)) {
+                    return true;
+                }
+                treeString.add(currentTreeString);
+            }
+        } else if (tree.getClass().equals(CParser.FunctionDefinitionContext.class)) {
+            // TODO : manage when function definition contain same statements should save in another set
+            tree = ((CParser.FunctionDefinitionContext) tree).getChild(CParser.CompoundStatementContext.class, 0);
             var currentTreeString = tree.toStringTree(parser);
             if (treeString.contains(currentTreeString)) {
                 return true;
             }
             treeString.add(currentTreeString);
         }
+
+
+        var result = false;
         for (int i = 0; i < tree.getChildCount(); i++) {
             if (treeHasRedundantCode(tree.getChild(i), parser, treeString)) {
-                return true;
+                result = true;
             }
         }
 
-        return false;
+        return result;
     }
+
+
 }
