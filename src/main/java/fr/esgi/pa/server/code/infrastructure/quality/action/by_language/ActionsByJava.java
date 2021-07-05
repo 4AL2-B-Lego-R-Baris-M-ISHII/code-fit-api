@@ -50,4 +50,9 @@ public class ActionsByJava implements ActionsByLanguage {
                 content
         );
     }
+
+    @Override
+    public Boolean hasRedundantCode(String content) {
+        return null;
+    }
 }
