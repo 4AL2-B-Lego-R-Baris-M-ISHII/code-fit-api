@@ -238,8 +238,60 @@ class ActionsByCTest {
                     "    }\n" +
                     "}";
 
-            assertThat(sut.hasRedundantCode(content))
-                    .isFalse();
+            assertThat(sut.hasRedundantCode(content)).isFalse();
+        }
+
+        @Test
+        void when_code_content_has_redundant_if_conditions_should_return_false() {
+            var content = "int main() {\n" +
+                    "    int test = 1;\n" +
+                    "    \n" +
+                    "    if (test == 1) {\n" +
+                    "        test = 0;\n" +
+                    "    }\n" +
+                    "    \n" +
+                    "    if (test == 1) {\n" +
+                    "        test = 0;\n" +
+                    "    }\n" +
+                    "    \n" +
+                    "    return test;\n" +
+                    "}";
+            assertThat(sut.hasRedundantCode(content)).isTrue();
+        }
+
+        @Test
+        void when_code_contain_has_redundant_for_loops_should_return_true() {
+            var content = "int main() {\n" +
+                    "    int test = 0;\n" +
+                    "    \n" +
+                    "    for (int i = 0; i < 10; i++) {\n" +
+                    "        test = i;\n" +
+                    "    }\n" +
+                    "    \n" +
+                    "    for (int i = 0; i < 10; i++) {\n" +
+                    "        test = i;\n" +
+                    "    }\n" +
+                    "    return 0;\n" +
+                    "}";
+            assertThat(sut.hasRedundantCode(content)).isTrue();
+        }
+
+        @Test
+        void when_code_contain_has_redundant_if_with_one_not_same_scope_should_return_true() {
+            var content = "int main() {\n" +
+                    "    int test = 0;\n" +
+                    "    \n" +
+                    "    if (test == 0) {\n" +
+                    "        test = 1;\n" +
+                    "    }\n" +
+                    "    for (int i = 0; i < 10; i++) {\n" +
+                    "        if (test == 0) {\n" +
+                    "            test = 1;\n" +
+                    "        }\n" +
+                    "    }\n" +
+                    "    return 0;\n" +
+                    "}";
+            assertThat(sut.hasRedundantCode(content)).isTrue();
         }
     }
 }

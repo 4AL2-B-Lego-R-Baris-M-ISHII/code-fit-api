@@ -3,12 +3,14 @@ package fr.esgi.pa.server.code.infrastructure.quality.action.by_language;
 import fr.esgi.pa.server.code.infrastructure.quality.action.by_language.cyclomatic_complexity.GetCyclomaticComplexityByLanguage;
 import fr.esgi.pa.server.code.infrastructure.quality.action.by_language.nb_lines_code.GetNbLinesCodeByLanguage;
 import fr.esgi.pa.server.code.infrastructure.quality.action.by_language.nb_lines_comment.GetNbLinesCommentByLanguage;
+import fr.esgi.pa.server.code.infrastructure.quality.factory.ParserAndTreeInfoFactory;
+import fr.esgi.pa.server.code.infrastructure.quality.gen.c.CParser;
 import fr.esgi.pa.server.language.core.LanguageName;
+import org.antlr.v4.runtime.Parser;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.springframework.stereotype.Component;
 
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class ActionsByC implements ActionsByLanguage {
@@ -16,14 +18,17 @@ public class ActionsByC implements ActionsByLanguage {
     private final GetNbLinesCommentByLanguage getNbLinesCommentByLanguage;
     private final GetCyclomaticComplexityByLanguage getCyclomaticComplexityByLanguage;
     private final Map<String, Boolean> mapNodeCorrespondCycloComplex;
+    private final ParserAndTreeInfoFactory parserAndTreeInfoFactory;
 
     public ActionsByC(
             GetNbLinesCodeByLanguage getNbLinesCodeByLanguage,
             GetNbLinesCommentByLanguage getNbLinesCommentByLanguage,
-            GetCyclomaticComplexityByLanguage getCyclomaticComplexityByLanguage) {
+            GetCyclomaticComplexityByLanguage getCyclomaticComplexityByLanguage,
+            ParserAndTreeInfoFactory parserAndTreeInfoFactory) {
         this.getNbLinesCodeByLanguage = getNbLinesCodeByLanguage;
         this.getNbLinesCommentByLanguage = getNbLinesCommentByLanguage;
         this.getCyclomaticComplexityByLanguage = getCyclomaticComplexityByLanguage;
+        this.parserAndTreeInfoFactory = parserAndTreeInfoFactory;
 
         var listNodeTextCorrespondCycloComplex = List.of(
                 "if", "case", "for", "while"
@@ -53,6 +58,29 @@ public class ActionsByC implements ActionsByLanguage {
 
     @Override
     public Boolean hasRedundantCode(String content) {
+        var parserAndTree = parserAndTreeInfoFactory.getParserAndTreeInfo(LanguageName.C11, content);
+        Set<String> treeString = new HashSet<>();
+        return treeHasRedundantCode(parserAndTree.getTree(), parserAndTree.getParser(), treeString);
+    }
+
+    private Boolean treeHasRedundantCode(ParseTree tree, Parser parser, Set<String> treeString) {
+        if (tree == null || tree.getChildCount() == 0) {
+            return false;
+        }
+
+        if (tree.getClass().equals(CParser.BlockItemContext.class)) {
+            var currentTreeString = tree.toStringTree(parser);
+            if (treeString.contains(currentTreeString)) {
+                return true;
+            }
+            treeString.add(currentTreeString);
+        }
+        for (int i = 0; i < tree.getChildCount(); i++) {
+            if (treeHasRedundantCode(tree.getChild(i), parser, treeString)) {
+                return true;
+            }
+        }
+
         return false;
     }
 }
