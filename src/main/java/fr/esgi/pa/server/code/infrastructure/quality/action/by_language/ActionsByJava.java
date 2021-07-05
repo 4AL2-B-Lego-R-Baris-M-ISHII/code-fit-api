@@ -1,6 +1,6 @@
 package fr.esgi.pa.server.code.infrastructure.quality.action.by_language;
 
-import fr.esgi.pa.server.code.infrastructure.quality.action.by_language.cyclomatic_complexity.GetCyclomaticComplexity;
+import fr.esgi.pa.server.code.infrastructure.quality.action.by_language.cyclomatic_complexity.GetCyclomaticComplexityByLanguage;
 import fr.esgi.pa.server.code.infrastructure.quality.action.by_language.nb_lines_code.GetNbLinesCodeByLanguage;
 import fr.esgi.pa.server.code.infrastructure.quality.action.by_language.nb_lines_comment.GetNbLinesCommentByLanguage;
 import fr.esgi.pa.server.language.core.LanguageName;
@@ -14,16 +14,16 @@ import java.util.Map;
 public class ActionsByJava implements ActionsByLanguage {
     private final GetNbLinesCodeByLanguage getNbLinesCodeByLanguage;
     private final GetNbLinesCommentByLanguage getNbLinesCommentByLanguage;
-    private final GetCyclomaticComplexity getCyclomaticComplexity;
+    private final GetCyclomaticComplexityByLanguage getCyclomaticComplexityByLanguage;
     private final Map<String, Boolean> mapNodeCorrespondCycloComplex;
 
     public ActionsByJava(
             GetNbLinesCodeByLanguage getNbLinesCodeByLanguage,
             GetNbLinesCommentByLanguage getNbLinesCommentByLanguage,
-            GetCyclomaticComplexity getCyclomaticComplexity) {
+            GetCyclomaticComplexityByLanguage getCyclomaticComplexityByLanguage) {
         this.getNbLinesCodeByLanguage = getNbLinesCodeByLanguage;
         this.getNbLinesCommentByLanguage = getNbLinesCommentByLanguage;
-        this.getCyclomaticComplexity = getCyclomaticComplexity;
+        this.getCyclomaticComplexityByLanguage = getCyclomaticComplexityByLanguage;
 
         var listNodeTextCorrespondCycloComplex = List.of(
                 "if", "case", "for", "while", "forEach"
@@ -44,7 +44,7 @@ public class ActionsByJava implements ActionsByLanguage {
 
     @Override
     public Long getCyclomaticComplexity(String content) {
-        return getCyclomaticComplexity.execute(
+        return getCyclomaticComplexityByLanguage.execute(
                 LanguageName.JAVA8,
                 mapNodeCorrespondCycloComplex,
                 content

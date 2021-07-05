@@ -104,7 +104,7 @@ class ActionsByJavaTest {
     }
 
     @Nested
-    class GetCyclomaticComplexityTest {
+    class GetCyclomaticComplexityByLanguageTest {
         @Test
         void when_one_if_should_return_1() {
             var content = "public class Main { \n" +

@@ -88,7 +88,7 @@ class ActionsByCTest {
     }
 
     @Nested
-    class GetCyclomaticComplexityTest {
+    class GetCyclomaticComplexityByLanguageTest {
         @Test
         void when_one_if_should_return_1() {
             var content = "int main() {" +
@@ -220,6 +220,26 @@ class ActionsByCTest {
                     "    return 0;\n" +
                     "}";
             assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(1L);
+        }
+    }
+
+    @Nested
+    class HasRedundantCodeTest {
+        @Test
+        void when_code_content_not_has_redundant_code_should_return_false() {
+            var content = "int main() {\n" +
+                    "    int test = 0;\n" +
+                    "    \n" +
+                    "    for (i = 1; i < 5; i++) {\n" +
+                    "        test += i;\n" +
+                    "    }\n" +
+                    "    if (test == 0) {\n" +
+                    "        test = 2;\n" +
+                    "    }\n" +
+                    "}";
+
+            assertThat(sut.hasRedundantCode(content))
+                    .isFalse();
         }
     }
 }
