@@ -338,7 +338,7 @@ class ActionsByCTest {
             var content = "#include <stdio.h>\n" +
                     "\n" +
                     "int test() {\n" +
-                    "    return 1;\n" +
+                    "    return 0;\n" +
                     "}\n" +
                     "\n" +
                     "int test2() {\n" +

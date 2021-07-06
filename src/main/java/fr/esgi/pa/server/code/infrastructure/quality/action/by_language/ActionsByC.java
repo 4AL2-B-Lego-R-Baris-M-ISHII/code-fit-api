@@ -12,6 +12,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+@FunctionalInterface
+interface TriFunction<T1, T2, T3, R> {
+    R apply(T1 t1, T2 t2, T3 t3);
+}
 
 @Component
 public class ActionsByC implements ActionsByLanguage {
@@ -20,6 +24,7 @@ public class ActionsByC implements ActionsByLanguage {
     private final GetCyclomaticComplexityByLanguage getCyclomaticComplexityByLanguage;
     private final Map<String, Boolean> mapNodeCorrespondCycloComplex;
     private final ParserAndTreeInfoFactory parserAndTreeInfoFactory;
+    private final Map<Class<?>, TriFunction<ParseTree, Parser, Set<String>, Boolean>> mapRedundantCode;
 
     public ActionsByC(
             GetNbLinesCodeByLanguage getNbLinesCodeByLanguage,
@@ -36,6 +41,11 @@ public class ActionsByC implements ActionsByLanguage {
         );
         mapNodeCorrespondCycloComplex = new Hashtable<>();
         listNodeTextCorrespondCycloComplex.forEach(nodeText -> mapNodeCorrespondCycloComplex.put(nodeText, true));
+
+        mapRedundantCode = new Hashtable<>();
+        mapRedundantCode.put(CParser.SelectionStatementContext.class, this::checkIfCurTreeRedundantElseAddOnTreeString);
+        mapRedundantCode.put(CParser.IterationStatementContext.class, this::checkIfCurTreeRedundantElseAddOnTreeString);
+        mapRedundantCode.put(CParser.CompoundStatementContext.class, this::checkIfCurTreeRedundantElseAddOnTreeString);
     }
 
     @Override
@@ -65,41 +75,33 @@ public class ActionsByC implements ActionsByLanguage {
     }
 
     private Boolean treeHasRedundantCode(ParseTree tree, Parser parser, Set<String> treeString) {
+        var result = false;
         if (tree == null || tree.getChildCount() == 0) {
             return false;
         }
-        if (tree.getClass().equals(CParser.BlockItemContext.class)) {
-            tree = tree.getChild(0).getChild(0);
-
-            if (tree.getClass().equals(CParser.SelectionStatementContext.class)
-                    || tree.getClass().equals(CParser.IterationStatementContext.class)
-            ) {
-                var currentTreeString = tree.toStringTree(parser);
-                if (treeString.contains(currentTreeString)) {
-                    return true;
-                }
-                treeString.add(currentTreeString);
-            }
-        } else if (tree.getClass().equals(CParser.FunctionDefinitionContext.class)) {
-            // TODO : manage when function definition contain same statements should save in another set
-            tree = ((CParser.FunctionDefinitionContext) tree).getChild(CParser.CompoundStatementContext.class, 0);
-            var currentTreeString = tree.toStringTree(parser);
-            if (treeString.contains(currentTreeString)) {
-                return true;
-            }
-            treeString.add(currentTreeString);
+        if (isConcernedTreeClassToAddAndContainTreeString(tree, parser, treeString)) {
+            return true;
         }
 
-
-        var result = false;
-        for (int i = 0; i < tree.getChildCount(); i++) {
-            if (treeHasRedundantCode(tree.getChild(i), parser, treeString)) {
-                result = true;
-            }
+        for (int i = 0; i < tree.getChildCount() && !result; i++) {
+            result = treeHasRedundantCode(tree.getChild(i), parser, treeString);
         }
 
         return result;
     }
 
+    private boolean isConcernedTreeClassToAddAndContainTreeString(ParseTree tree, Parser parser, Set<String> treeString) {
+        return mapRedundantCode.containsKey(tree.getClass())
+                && mapRedundantCode.get(tree.getClass()).apply(tree, parser, treeString);
+    }
+
+    private boolean checkIfCurTreeRedundantElseAddOnTreeString(ParseTree tree, Parser parser, Set<String> treeString) {
+        var currentTreeString = tree.toStringTree(parser);
+        if (treeString.contains(currentTreeString)) {
+            return true;
+        }
+        treeString.add(currentTreeString);
+        return false;
+    }
 
 }
