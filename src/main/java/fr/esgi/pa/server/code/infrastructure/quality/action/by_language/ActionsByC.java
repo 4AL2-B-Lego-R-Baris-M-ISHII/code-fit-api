@@ -5,17 +5,13 @@ import fr.esgi.pa.server.code.infrastructure.quality.action.by_language.nb_lines
 import fr.esgi.pa.server.code.infrastructure.quality.action.by_language.nb_lines_comment.GetNbLinesCommentByLanguage;
 import fr.esgi.pa.server.code.infrastructure.quality.factory.ParserAndTreeInfoFactory;
 import fr.esgi.pa.server.code.infrastructure.quality.gen.c.CParser;
+import fr.esgi.pa.server.common.core.utils.functional.TriFunction;
 import fr.esgi.pa.server.language.core.LanguageName;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-
-@FunctionalInterface
-interface TriFunction<T1, T2, T3, R> {
-    R apply(T1 t1, T2 t2, T3 t3);
-}
 
 @Component
 public class ActionsByC implements ActionsByLanguage {
