@@ -345,6 +345,9 @@ class ActionsByCTest {
                     "    int test = 1;\n" +
                     "    return test;\n" +
                     "}\n" +
+                    "int test3() {\n" +
+                    "   return 1;\n" +
+                    "}\n" +
                     "\n" +
                     "int main() {\n" +
                     "    if (1 == 1) {\n" +

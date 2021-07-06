@@ -45,7 +45,7 @@ public class ActionsByC implements ActionsByLanguage {
         mapRedundantCode = new Hashtable<>();
         mapRedundantCode.put(CParser.SelectionStatementContext.class, this::checkIfCurTreeRedundantElseAddOnTreeString);
         mapRedundantCode.put(CParser.IterationStatementContext.class, this::checkIfCurTreeRedundantElseAddOnTreeString);
-        mapRedundantCode.put(CParser.CompoundStatementContext.class, this::checkIfCurTreeRedundantElseAddOnTreeString);
+        mapRedundantCode.put(CParser.FunctionDefinitionContext.class, this::checkIfCurTreeRedundantElseAddTreeFunctionString);
     }
 
     @Override
@@ -104,4 +104,13 @@ public class ActionsByC implements ActionsByLanguage {
         return false;
     }
 
+    private boolean checkIfCurTreeRedundantElseAddTreeFunctionString(ParseTree tree, Parser parser, Set<String> treeString) {
+        tree = ((CParser.FunctionDefinitionContext) tree).getChild(CParser.CompoundStatementContext.class, 0);
+        var currentTreeString = tree.toStringTree(parser);
+        if (treeString.contains(currentTreeString)) {
+            return true;
+        }
+        treeString.add(currentTreeString);
+        return false;
+    }
 }
