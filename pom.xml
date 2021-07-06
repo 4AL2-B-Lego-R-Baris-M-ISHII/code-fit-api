@@ -14,7 +14,6 @@
     <name>server</name>
     <description>Server for annual project 4AL2, developed by Baptiste LEGO, Rabi RABIS and Masataka ISHII</description>
     <properties>
-        <java.version>11</java.version>
         <restassured.version>3.3.0</restassured.version>
     </properties>
     <dependencies>
