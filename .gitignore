@@ -4,8 +4,6 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-**/resources/application.properties
-
 device/compiler/c_compiler/tmp/launch.sh
 device/compiler/c_compiler/tmp/main.c
 
