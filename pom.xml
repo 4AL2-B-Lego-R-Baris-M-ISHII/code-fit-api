@@ -15,6 +15,8 @@
     <description>Server for annual project 4AL2, developed by Baptiste LEGO, Rabi RABIS and Masataka ISHII</description>
     <properties>
         <restassured.version>3.3.0</restassured.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
     </properties>
     <dependencies>
         <dependency>
