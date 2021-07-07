@@ -17,7 +17,7 @@ public class QualityCodeActionFactory {
         mapCodeQualityTypeAndAction.put(CodeQualityType.LINES_CODE, applicationContext.getBean(GetNbLinesCode.class));
         mapCodeQualityTypeAndAction.put(CodeQualityType.CYCLOMATIC_COMPLEXITY, applicationContext.getBean(GetCyclomaticComplexity.class));
         mapCodeQualityTypeAndAction.put(CodeQualityType.LINES_COMMENT, applicationContext.getBean(GetNbLinesComment.class));
-        mapCodeQualityTypeAndAction.put(CodeQualityType.HAS_REDUNDANT_CODE, applicationContext.getBean(HasRedundantCode.class));
+        mapCodeQualityTypeAndAction.put(CodeQualityType.HAS_REDUNDANT_CODE, applicationContext.getBean(HasDuplicateCode.class));
     }
 
     public QualityCodeAction getAction(CodeQualityType codeQualityType) {

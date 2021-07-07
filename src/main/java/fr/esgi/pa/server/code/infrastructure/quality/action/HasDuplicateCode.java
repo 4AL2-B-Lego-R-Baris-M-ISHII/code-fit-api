@@ -5,11 +5,11 @@ import fr.esgi.pa.server.code.infrastructure.quality.action.by_language.ActionsB
 import org.springframework.stereotype.Component;
 
 @Component
-public class HasRedundantCode implements QualityCodeAction {
+public class HasDuplicateCode implements QualityCodeAction {
     @Override
     public QualityCode execute(ActionsByLanguage actionsByLanguage, QualityCode currentQualityCode) {
-        var hasRedundantCode = actionsByLanguage.hasRedundantCode(currentQualityCode.getCodeContent());
-        currentQualityCode.setHasRedundantCode(hasRedundantCode);
+        var hasRedundantCode = actionsByLanguage.hasDuplicateCode(currentQualityCode.getCodeContent());
+        currentQualityCode.setHasDuplicateCode(hasRedundantCode);
 
         return currentQualityCode;
     }

@@ -224,7 +224,7 @@ class ActionsByCTest {
     }
 
     @Nested
-    class HasRedundantCodeTest {
+    class HasDuplicateCodeTest {
         @Test
         void when_code_content_not_has_redundant_code_should_return_false() {
             var content = "int main() {\n" +
@@ -238,7 +238,7 @@ class ActionsByCTest {
                     "    }\n" +
                     "}";
 
-            assertThat(sut.hasRedundantCode(content)).isFalse();
+            assertThat(sut.hasDuplicateCode(content)).isFalse();
         }
 
         @Test
@@ -256,7 +256,7 @@ class ActionsByCTest {
                     "    \n" +
                     "    return test;\n" +
                     "}";
-            assertThat(sut.hasRedundantCode(content)).isTrue();
+            assertThat(sut.hasDuplicateCode(content)).isTrue();
         }
 
         @Test
@@ -273,7 +273,7 @@ class ActionsByCTest {
                     "    }\n" +
                     "    return 0;\n" +
                     "}";
-            assertThat(sut.hasRedundantCode(content)).isTrue();
+            assertThat(sut.hasDuplicateCode(content)).isTrue();
         }
 
         @Test
@@ -291,7 +291,7 @@ class ActionsByCTest {
                     "    }\n" +
                     "    return 0;\n" +
                     "}";
-            assertThat(sut.hasRedundantCode(content)).isTrue();
+            assertThat(sut.hasDuplicateCode(content)).isTrue();
         }
 
         @Test
@@ -309,7 +309,7 @@ class ActionsByCTest {
                     "    }\n" +
                     "    return 0;\n" +
                     "}";
-            assertThat(sut.hasRedundantCode(content)).isTrue();
+            assertThat(sut.hasDuplicateCode(content)).isTrue();
         }
 
         @Test
@@ -330,7 +330,7 @@ class ActionsByCTest {
                     "    }\n" +
                     "    return 0;\n" +
                     "}";
-            assertThat(sut.hasRedundantCode(content)).isTrue();
+            assertThat(sut.hasDuplicateCode(content)).isTrue();
         }
 
         @Test
@@ -355,7 +355,7 @@ class ActionsByCTest {
                     "    }\n" +
                     "    return 0;\n" +
                     "}";
-            assertThat(sut.hasRedundantCode(content)).isFalse();
+            assertThat(sut.hasDuplicateCode(content)).isFalse();
         }
     }
 }

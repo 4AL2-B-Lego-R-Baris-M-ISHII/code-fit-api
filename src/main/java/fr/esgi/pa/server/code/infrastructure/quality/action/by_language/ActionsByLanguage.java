@@ -7,5 +7,5 @@ public interface ActionsByLanguage {
 
     Long getCyclomaticComplexity(String content);
 
-    Boolean hasRedundantCode(String content);
+    Boolean hasDuplicateCode(String content);
 }

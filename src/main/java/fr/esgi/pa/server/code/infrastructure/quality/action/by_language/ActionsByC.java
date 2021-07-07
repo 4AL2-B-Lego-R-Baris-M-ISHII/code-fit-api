@@ -64,7 +64,7 @@ public class ActionsByC implements ActionsByLanguage {
     }
 
     @Override
-    public Boolean hasRedundantCode(String content) {
+    public Boolean hasDuplicateCode(String content) {
         var parserAndTree = parserAndTreeInfoFactory.getParserAndTreeInfo(LanguageName.C11, content);
         var treeString = new HashSet<String>();
         return treeHasRedundantCode(parserAndTree.getTree(), parserAndTree.getParser(), treeString);
