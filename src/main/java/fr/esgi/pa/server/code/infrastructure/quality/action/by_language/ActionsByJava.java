@@ -60,13 +60,16 @@ public class ActionsByJava implements ActionsByLanguage {
     public Boolean hasDuplicateCode(String content) {
         var parserAndTree = parserAndTreeInfoFactory.getParserAndTreeInfo(LanguageName.JAVA8, content);
         var treeString = new HashSet<String>();
-        return treeHasRedundantCode(parserAndTree.getTree(), parserAndTree.getParser(), treeString);
+        return treeHasDuplicateCode(parserAndTree.getTree(), parserAndTree.getParser(), treeString);
     }
 
-    private Boolean treeHasRedundantCode(ParseTree tree, Parser parser, Set<String> treeString) {
+    private Boolean treeHasDuplicateCode(ParseTree tree, Parser parser, Set<String> treeString) {
         if (tree.getClass().equals(Java8Parser.IfThenStatementContext.class) ||
                 tree.getClass().equals(Java8Parser.IfThenElseStatementContext.class) ||
-                tree.getClass().equals(Java8Parser.ForStatementContext.class)
+                tree.getClass().equals(Java8Parser.ForStatementContext.class) ||
+                tree.getClass().equals(Java8Parser.WhileStatementContext.class) ||
+                tree.getClass().equals(Java8Parser.DoStatementContext.class) ||
+                tree.getClass().equals(Java8Parser.LambdaExpressionContext.class)
         ) {
             var currentTreeString = tree.toStringTree(parser);
             if (treeString.contains(currentTreeString)) {
@@ -76,8 +79,9 @@ public class ActionsByJava implements ActionsByLanguage {
         }
         var result = false;
         for (int i = 0; i < tree.getChildCount() && !result; i++) {
-            result = treeHasRedundantCode(tree.getChild(i), parser, treeString);
+            result = treeHasDuplicateCode(tree.getChild(i), parser, treeString);
         }
+
         return result;
     }
 }

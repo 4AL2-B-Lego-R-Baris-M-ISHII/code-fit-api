@@ -331,5 +331,66 @@ class ActionsByJavaTest {
             assertThat(sut.hasDuplicateCode(content)).isNotNull();
             assertThat(sut.hasDuplicateCode(content)).isTrue();
         }
+
+        @Test
+        void when_while_duplicate_code_should_return_true() {
+            var content = "class Solution {\n" +
+                    "    public int test() {\n" +
+                    "        int result = 0;\n" +
+                    "        \n" +
+                    "        while(result == 0){\n" +
+                    "            result++;\n" +
+                    "        }\n" +
+                    "        while(result == 0){\n" +
+                    "            result++;\n" +
+                    "        }\n" +
+                    "        return test;\n" +
+                    "    }\n" +
+                    "}";
+            assertThat(sut.hasDuplicateCode(content)).isNotNull();
+            assertThat(sut.hasDuplicateCode(content)).isTrue();
+        }
+
+        @Test
+        void when_do_while_duplicate_code_should_return_true() {
+            var content = "class Solution {\n" +
+                    "    public int test() {\n" +
+                    "        int result = 0;\n" +
+                    "        \n" +
+                    "        do{\n" +
+                    "            result++;\n" +
+                    "        } while(result == 0);\n" +
+                    "        do{\n" +
+                    "            result++;\n" +
+                    "        } while(result == 0);\n" +
+                    "        return test;\n" +
+                    "    }\n" +
+                    "}";
+            assertThat(sut.hasDuplicateCode(content)).isNotNull();
+            assertThat(sut.hasDuplicateCode(content)).isTrue();
+        }
+
+        @Test
+        void when_forEach_duplicate_code_should_return_true() {
+            var content = "class Solution {\n" +
+                    "    public int test() {\n" +
+                    "        int result = 0;\n" +
+                    "        \n" +
+                    "        var list = List.of(0, 1, 2, 3);\n" +
+                    "\n" +
+                    "        list.forEach(num -> {\n" +
+                    "            System.out.println(num);\n" +
+                    "            result = num;\n" +
+                    "        });\n" +
+                    "        list.forEach(num -> {\n" +
+                    "            System.out.println(num);\n" +
+                    "            result = num;\n" +
+                    "        });\n" +
+                    "        return test;\n" +
+                    "    }\n" +
+                    "}";
+            assertThat(sut.hasDuplicateCode(content)).isNotNull();
+            assertThat(sut.hasDuplicateCode(content)).isTrue();
+        }
     }
 }
