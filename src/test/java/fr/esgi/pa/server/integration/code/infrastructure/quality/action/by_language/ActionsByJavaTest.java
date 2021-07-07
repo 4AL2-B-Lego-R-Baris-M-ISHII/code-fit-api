@@ -106,7 +106,17 @@ class ActionsByJavaTest {
     @Nested
     class GetCyclomaticComplexityByLanguageTest {
         @Test
-        void when_one_if_should_return_1() {
+        void when_no_statement_return_1() {
+            var content = "public class Main { \n" +
+                    "   public static void main(String[] args) { \n" +
+                    "   }\n" +
+                    "}";
+
+            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(1L);
+        }
+
+        @Test
+        void when_one_if_should_return_2() {
             var content = "public class Main { \n" +
                     "   public static void main(String[] args) { \n" +
                     "      if (true) {\n" +
@@ -115,11 +125,11 @@ class ActionsByJavaTest {
                     "   }\n" +
                     "}";
 
-            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(1L);
+            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(2L);
         }
 
         @Test
-        void when_2_case_should_return_1() {
+        void when_2_case_should_return_3() {
             var content = "public class Main { \n" +
                     "   public static void main(String[] args) {\n" +
                     "      boolean test = false; \n" +
@@ -134,11 +144,11 @@ class ActionsByJavaTest {
                     "   }\n" +
                     "}";
 
-            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(2L);
+            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(3L);
         }
 
         @Test
-        void when_one_for_should_return_1() {
+        void when_one_for_should_return_2() {
             var content = "public class Main { \n" +
                     "   public static void main(String[] args) {\n" +
                     "      for (int i = 0; i < 3; i++) {\n" +
@@ -146,11 +156,11 @@ class ActionsByJavaTest {
                     "      }\n" +
                     "   }\n" +
                     "}";
-            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(1L);
+            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(2L);
         }
 
         @Test
-        void when_one_while_should_return_1() {
+        void when_one_while_should_return_2() {
             var content = "public class Main { \n" +
                     "   public static void main(String[] args) {\n" +
                     "      boolean test = true;\n" +
@@ -160,11 +170,11 @@ class ActionsByJavaTest {
                     "      }\n" +
                     "   }\n" +
                     "}";
-            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(1L);
+            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(2L);
         }
 
         @Test
-        void when_one_while_and_nested_if_should_return_2() {
+        void when_one_while_and_nested_if_should_return_3() {
             var content = "public class Main { \n" +
                     "   public static void main(String[] args) {\n" +
                     "      boolean test = true;\n" +
@@ -176,11 +186,11 @@ class ActionsByJavaTest {
                     "      }\n" +
                     "   }\n" +
                     "}";
-            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(2L);
+            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(3L);
         }
 
         @Test
-        void when_one_forEach_should_return_1() {
+        void when_one_forEach_should_return_2() {
             var content = "public class Main { \n" +
                     "   public static void main(String[] args) {\n" +
                     "      List<String> strList = List.of(\"toto\", \"tata\");\n" +
@@ -190,7 +200,7 @@ class ActionsByJavaTest {
                     "      });\n" +
                     "   }\n" +
                     "}";
-            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(1L);
+            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(2L);
         }
     }
 
