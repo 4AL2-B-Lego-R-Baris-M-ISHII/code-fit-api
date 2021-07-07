@@ -6,4 +6,6 @@ public interface ActionsByLanguage {
     Long getNbLinesComment(String content);
 
     Long getCyclomaticComplexity(String content);
+
+    Boolean hasDuplicateCode(String content);
 }

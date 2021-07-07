@@ -1,29 +1,34 @@
 package fr.esgi.pa.server.code.infrastructure.quality.action.by_language;
 
-import fr.esgi.pa.server.code.infrastructure.quality.action.by_language.cyclomatic_complexity.GetCyclomaticComplexity;
+import fr.esgi.pa.server.code.infrastructure.quality.action.by_language.cyclomatic_complexity.GetCyclomaticComplexityByLanguage;
 import fr.esgi.pa.server.code.infrastructure.quality.action.by_language.nb_lines_code.GetNbLinesCodeByLanguage;
 import fr.esgi.pa.server.code.infrastructure.quality.action.by_language.nb_lines_comment.GetNbLinesCommentByLanguage;
+import fr.esgi.pa.server.code.infrastructure.quality.factory.ParserAndTreeInfoFactory;
+import fr.esgi.pa.server.code.infrastructure.quality.gen.java8.Java8Parser;
 import fr.esgi.pa.server.language.core.LanguageName;
+import org.antlr.v4.runtime.Parser;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.springframework.stereotype.Component;
 
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class ActionsByJava implements ActionsByLanguage {
     private final GetNbLinesCodeByLanguage getNbLinesCodeByLanguage;
     private final GetNbLinesCommentByLanguage getNbLinesCommentByLanguage;
-    private final GetCyclomaticComplexity getCyclomaticComplexity;
+    private final GetCyclomaticComplexityByLanguage getCyclomaticComplexityByLanguage;
     private final Map<String, Boolean> mapNodeCorrespondCycloComplex;
+    private final ParserAndTreeInfoFactory parserAndTreeInfoFactory;
 
     public ActionsByJava(
             GetNbLinesCodeByLanguage getNbLinesCodeByLanguage,
             GetNbLinesCommentByLanguage getNbLinesCommentByLanguage,
-            GetCyclomaticComplexity getCyclomaticComplexity) {
+            GetCyclomaticComplexityByLanguage getCyclomaticComplexityByLanguage,
+            ParserAndTreeInfoFactory parserAndTreeInfoFactory) {
         this.getNbLinesCodeByLanguage = getNbLinesCodeByLanguage;
         this.getNbLinesCommentByLanguage = getNbLinesCommentByLanguage;
-        this.getCyclomaticComplexity = getCyclomaticComplexity;
+        this.getCyclomaticComplexityByLanguage = getCyclomaticComplexityByLanguage;
+        this.parserAndTreeInfoFactory = parserAndTreeInfoFactory;
 
         var listNodeTextCorrespondCycloComplex = List.of(
                 "if", "case", "for", "while", "forEach"
@@ -44,10 +49,39 @@ public class ActionsByJava implements ActionsByLanguage {
 
     @Override
     public Long getCyclomaticComplexity(String content) {
-        return getCyclomaticComplexity.execute(
+        return getCyclomaticComplexityByLanguage.execute(
                 LanguageName.JAVA8,
                 mapNodeCorrespondCycloComplex,
                 content
         );
+    }
+
+    @Override
+    public Boolean hasDuplicateCode(String content) {
+        var parserAndTree = parserAndTreeInfoFactory.getParserAndTreeInfo(LanguageName.JAVA8, content);
+        var treeString = new HashSet<String>();
+        return treeHasDuplicateCode(parserAndTree.getTree(), parserAndTree.getParser(), treeString);
+    }
+
+    private Boolean treeHasDuplicateCode(ParseTree tree, Parser parser, Set<String> treeString) {
+        if (tree.getClass().equals(Java8Parser.IfThenStatementContext.class) ||
+                tree.getClass().equals(Java8Parser.IfThenElseStatementContext.class) ||
+                tree.getClass().equals(Java8Parser.ForStatementContext.class) ||
+                tree.getClass().equals(Java8Parser.WhileStatementContext.class) ||
+                tree.getClass().equals(Java8Parser.DoStatementContext.class) ||
+                tree.getClass().equals(Java8Parser.LambdaExpressionContext.class)
+        ) {
+            var currentTreeString = tree.toStringTree(parser);
+            if (treeString.contains(currentTreeString)) {
+                return true;
+            }
+            treeString.add(currentTreeString);
+        }
+        var result = false;
+        for (int i = 0; i < tree.getChildCount() && !result; i++) {
+            result = treeHasDuplicateCode(tree.getChild(i), parser, treeString);
+        }
+
+        return result;
     }
 }

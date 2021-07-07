@@ -12,4 +12,5 @@ public class QualityCode {
     private Long nbLinesCode;
     private Long nbLinesComment;
     private Long cyclomaticComplexity;
+    private Boolean hasDuplicateCode;
 }

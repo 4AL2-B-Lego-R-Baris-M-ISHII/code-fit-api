@@ -104,9 +104,19 @@ class ActionsByJavaTest {
     }
 
     @Nested
-    class GetCyclomaticComplexityTest {
+    class GetCyclomaticComplexityByLanguageTest {
         @Test
-        void when_one_if_should_return_1() {
+        void when_no_statement_return_1() {
+            var content = "public class Main { \n" +
+                    "   public static void main(String[] args) { \n" +
+                    "   }\n" +
+                    "}";
+
+            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(1L);
+        }
+
+        @Test
+        void when_one_if_should_return_2() {
             var content = "public class Main { \n" +
                     "   public static void main(String[] args) { \n" +
                     "      if (true) {\n" +
@@ -115,11 +125,11 @@ class ActionsByJavaTest {
                     "   }\n" +
                     "}";
 
-            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(1L);
+            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(2L);
         }
 
         @Test
-        void when_2_case_should_return_1() {
+        void when_2_case_should_return_3() {
             var content = "public class Main { \n" +
                     "   public static void main(String[] args) {\n" +
                     "      boolean test = false; \n" +
@@ -134,11 +144,11 @@ class ActionsByJavaTest {
                     "   }\n" +
                     "}";
 
-            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(2L);
+            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(3L);
         }
 
         @Test
-        void when_one_for_should_return_1() {
+        void when_one_for_should_return_2() {
             var content = "public class Main { \n" +
                     "   public static void main(String[] args) {\n" +
                     "      for (int i = 0; i < 3; i++) {\n" +
@@ -146,11 +156,11 @@ class ActionsByJavaTest {
                     "      }\n" +
                     "   }\n" +
                     "}";
-            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(1L);
+            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(2L);
         }
 
         @Test
-        void when_one_while_should_return_1() {
+        void when_one_while_should_return_2() {
             var content = "public class Main { \n" +
                     "   public static void main(String[] args) {\n" +
                     "      boolean test = true;\n" +
@@ -160,11 +170,11 @@ class ActionsByJavaTest {
                     "      }\n" +
                     "   }\n" +
                     "}";
-            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(1L);
+            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(2L);
         }
 
         @Test
-        void when_one_while_and_nested_if_should_return_2() {
+        void when_one_while_and_nested_if_should_return_3() {
             var content = "public class Main { \n" +
                     "   public static void main(String[] args) {\n" +
                     "      boolean test = true;\n" +
@@ -176,11 +186,11 @@ class ActionsByJavaTest {
                     "      }\n" +
                     "   }\n" +
                     "}";
-            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(2L);
+            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(3L);
         }
 
         @Test
-        void when_one_forEach_should_return_1() {
+        void when_one_forEach_should_return_2() {
             var content = "public class Main { \n" +
                     "   public static void main(String[] args) {\n" +
                     "      List<String> strList = List.of(\"toto\", \"tata\");\n" +
@@ -190,7 +200,197 @@ class ActionsByJavaTest {
                     "      });\n" +
                     "   }\n" +
                     "}";
-            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(1L);
+            assertThat(sut.getCyclomaticComplexity(content)).isEqualTo(2L);
+        }
+    }
+
+    @Nested
+    class HasDuplicateCodeTest {
+        @Test
+        void when_no_duplicate_code_should_return_false() {
+            var content = "class Solution {\n" +
+                    "    private int initializeTest() {\n" +
+                    "        return 0;\n" +
+                    "    }\n" +
+                    "    public int test1() {\n" +
+                    "        int test = initializeTest();\n" +
+                    "        if (test == 1) {\n" +
+                    "            test = 0;\n" +
+                    "        }\n" +
+                    "        if (test == 0) {\n" +
+                    "            test = 2;\n" +
+                    "        }\n" +
+                    "        \n" +
+                    "        for (int i = 0; i < 10; i++) {\n" +
+                    "            test++;\n" +
+                    "            if (test == 10) {\n" +
+                    "                test = 11;\n" +
+                    "            }\n" +
+                    "        }\n" +
+                    "        return test;\n" +
+                    "    }\n" +
+                    "}";
+            assertThat(sut.hasDuplicateCode(content)).isNotNull();
+            assertThat(sut.hasDuplicateCode(content)).isFalse();
+        }
+
+        @Test
+        void when_if_duplicate_code_should_return_true() {
+            var content = "class Solution {\n" +
+                    "    private int initializeTest() {\n" +
+                    "        return 0;\n" +
+                    "    }\n" +
+                    "    public int test1() {\n" +
+                    "        int test = initializeTest();\n" +
+                    "        if (test == 1) {\n" +
+                    "            test = 0;\n" +
+                    "        }\n" +
+                    "        if (test == 1) {\n" +
+                    "            test = 0;\n" +
+                    "        }\n" +
+                    "        \n" +
+                    "        return test;\n" +
+                    "    }\n" +
+                    "}";
+            assertThat(sut.hasDuplicateCode(content)).isNotNull();
+            assertThat(sut.hasDuplicateCode(content)).isTrue();
+        }
+
+        @Test
+        void when_if_else_duplicate_code_should_return_true() {
+            var content = "class Solution {\n" +
+                    "    private int initializeTest() {\n" +
+                    "        return 0;\n" +
+                    "    }\n" +
+                    "    public int test1() {\n" +
+                    "        int test = initializeTest();\n" +
+                    "        if (test == 1) {\n" +
+                    "            test = 0;\n" +
+                    "        } else {\n" +
+                    "           test = 2\n;" +
+                    "        }\n" +
+                    "        if (test == 1) {\n" +
+                    "            test = 0;\n" +
+                    "        } else {\n" +
+                    "           test = 2\n;" +
+                    "        }\n" +
+                    "        \n" +
+                    "        return test;\n" +
+                    "    }\n" +
+                    "}";
+            assertThat(sut.hasDuplicateCode(content)).isNotNull();
+            assertThat(sut.hasDuplicateCode(content)).isTrue();
+        }
+
+        @Test
+        void when_if_else_if_else_duplicate_code_should_return_true() {
+            var content = "class Solution {\n" +
+                    "    private int initializeTest() {\n" +
+                    "        return 0;\n" +
+                    "    }\n" +
+                    "    public int test1() {\n" +
+                    "        int test = initializeTest();\n" +
+                    "        if (test == 1) {\n" +
+                    "            test = 0;\n" +
+                    "        } else if (test == 2) {\n" +
+                    "            test = 3;\n" +
+                    "        } else {\n" +
+                    "            test = 5;\n" +
+                    "        }\n" +
+                    "        if (test == 1) {\n" +
+                    "            test = 0;\n" +
+                    "        } else if (test == 2) {\n" +
+                    "            test = 3;\n" +
+                    "        } else {\n" +
+                    "            test = 5;\n" +
+                    "        }\n" +
+                    "        return test;\n" +
+                    "    }\n" +
+                    "}";
+            assertThat(sut.hasDuplicateCode(content)).isNotNull();
+            assertThat(sut.hasDuplicateCode(content)).isTrue();
+        }
+
+        @Test
+        void when_for_duplicate_code_should_return_true() {
+            var content = "class Solution {\n" +
+                    "    private int initializeTest() {\n" +
+                    "        return 0;\n" +
+                    "    }\n" +
+                    "    public int test1() {\n" +
+                    "        int test = initializeTest();\n" +
+                    "        for (int i = 0; i < 5; i++) {\n" +
+                    "            test = i;\n" +
+                    "        }\n" +
+                    "        for (int i = 0; i < 5; i++) {\n" +
+                    "            test = i;\n" +
+                    "        }\n" +
+                    "        return test;\n" +
+                    "    }\n" +
+                    "}";
+            assertThat(sut.hasDuplicateCode(content)).isNotNull();
+            assertThat(sut.hasDuplicateCode(content)).isTrue();
+        }
+
+        @Test
+        void when_while_duplicate_code_should_return_true() {
+            var content = "class Solution {\n" +
+                    "    public int test() {\n" +
+                    "        int result = 0;\n" +
+                    "        \n" +
+                    "        while(result == 0){\n" +
+                    "            result++;\n" +
+                    "        }\n" +
+                    "        while(result == 0){\n" +
+                    "            result++;\n" +
+                    "        }\n" +
+                    "        return test;\n" +
+                    "    }\n" +
+                    "}";
+            assertThat(sut.hasDuplicateCode(content)).isNotNull();
+            assertThat(sut.hasDuplicateCode(content)).isTrue();
+        }
+
+        @Test
+        void when_do_while_duplicate_code_should_return_true() {
+            var content = "class Solution {\n" +
+                    "    public int test() {\n" +
+                    "        int result = 0;\n" +
+                    "        \n" +
+                    "        do{\n" +
+                    "            result++;\n" +
+                    "        } while(result == 0);\n" +
+                    "        do{\n" +
+                    "            result++;\n" +
+                    "        } while(result == 0);\n" +
+                    "        return test;\n" +
+                    "    }\n" +
+                    "}";
+            assertThat(sut.hasDuplicateCode(content)).isNotNull();
+            assertThat(sut.hasDuplicateCode(content)).isTrue();
+        }
+
+        @Test
+        void when_forEach_duplicate_code_should_return_true() {
+            var content = "class Solution {\n" +
+                    "    public int test() {\n" +
+                    "        int result = 0;\n" +
+                    "        \n" +
+                    "        var list = List.of(0, 1, 2, 3);\n" +
+                    "\n" +
+                    "        list.forEach(num -> {\n" +
+                    "            System.out.println(num);\n" +
+                    "            result = num;\n" +
+                    "        });\n" +
+                    "        list.forEach(num -> {\n" +
+                    "            System.out.println(num);\n" +
+                    "            result = num;\n" +
+                    "        });\n" +
+                    "        return test;\n" +
+                    "    }\n" +
+                    "}";
+            assertThat(sut.hasDuplicateCode(content)).isNotNull();
+            assertThat(sut.hasDuplicateCode(content)).isTrue();
         }
     }
 }

@@ -1,10 +1,7 @@
 package fr.esgi.pa.server.code.infrastructure.quality.factory;
 
 import fr.esgi.pa.server.code.core.dto.CodeQualityType;
-import fr.esgi.pa.server.code.infrastructure.quality.action.GetCyclomaticComplexity;
-import fr.esgi.pa.server.code.infrastructure.quality.action.GetNbLinesCode;
-import fr.esgi.pa.server.code.infrastructure.quality.action.GetNbLinesComment;
-import fr.esgi.pa.server.code.infrastructure.quality.action.QualityCodeAction;
+import fr.esgi.pa.server.code.infrastructure.quality.action.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +17,7 @@ public class QualityCodeActionFactory {
         mapCodeQualityTypeAndAction.put(CodeQualityType.LINES_CODE, applicationContext.getBean(GetNbLinesCode.class));
         mapCodeQualityTypeAndAction.put(CodeQualityType.CYCLOMATIC_COMPLEXITY, applicationContext.getBean(GetCyclomaticComplexity.class));
         mapCodeQualityTypeAndAction.put(CodeQualityType.LINES_COMMENT, applicationContext.getBean(GetNbLinesComment.class));
+        mapCodeQualityTypeAndAction.put(CodeQualityType.HAS_DUPLICATE_CODE, applicationContext.getBean(HasDuplicateCode.class));
     }
 
     public QualityCodeAction getAction(CodeQualityType codeQualityType) {

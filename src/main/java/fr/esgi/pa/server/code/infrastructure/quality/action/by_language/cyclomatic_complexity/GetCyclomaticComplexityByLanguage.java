@@ -4,7 +4,7 @@ import fr.esgi.pa.server.language.core.LanguageName;
 
 import java.util.Map;
 
-public interface GetCyclomaticComplexity {
+public interface GetCyclomaticComplexityByLanguage {
     /**
      * Get cyclomatic depend to code content
      *

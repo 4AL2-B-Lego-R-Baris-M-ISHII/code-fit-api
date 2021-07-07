@@ -12,12 +12,13 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-public class GetCyclomaticComplexityImpl implements GetCyclomaticComplexity {
+public class GetCyclomaticComplexityByLanguageImpl implements GetCyclomaticComplexityByLanguage {
     private final ParserAndTreeInfoFactory parserAndTreeInfoFactory;
+
     @Override
     public Long execute(LanguageName languageName, Map<String, Boolean> mapNode, String content) {
         ParserAndTreeInfo info = parserAndTreeInfoFactory.getParserAndTreeInfo(languageName, content);
-        Long result = 0L;
+        Long result = 1L;
 
         return searchNodeCorrespondCyclomaticComplexity(info.getTree(), result, mapNode);
     }
