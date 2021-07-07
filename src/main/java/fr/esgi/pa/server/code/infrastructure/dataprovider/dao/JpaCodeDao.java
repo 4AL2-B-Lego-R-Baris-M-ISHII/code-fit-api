@@ -10,6 +10,9 @@ import fr.esgi.pa.server.exercise.core.exception.ForbiddenException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class JpaCodeDao implements CodeDao {
@@ -65,5 +68,13 @@ public class JpaCodeDao implements CodeDao {
             return new NotFoundException(message);
         });
         return codeMapper.entityToDomain(foundCode);
+    }
+
+    @Override
+    public Set<Code> findAllByUserId(Long userId) {
+        return codeRepository.findAllByUserId(userId)
+                .stream()
+                .map(codeMapper::entityToDomain)
+                .collect(Collectors.toSet());
     }
 }

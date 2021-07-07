@@ -16,10 +16,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class JpaCodeDaoTest {
@@ -194,6 +196,28 @@ class JpaCodeDaoTest {
             var expectedCode = codeMapper.entityToDomain(foundCode);
 
             assertThat(result).isEqualTo(expectedCode);
+        }
+    }
+
+    @Nested
+    class FindAllByUserId {
+        @Test
+        void should_call_findAllByUserId_of_repository() {
+            sut.findAllByUserId(userId);
+
+            verify(mockCodeRepository, times(1)).findAllByUserId(userId);
+        }
+
+        @Test
+        void when_repository_return_all_codes_of_user_should_return_set_domain_code() {
+            var setJpaCode = Set.of(new JpaCode().setId(1L).setContent("content").setUserId(userId).setExerciseCaseId(exerciseCaseId).setIsResolved(true));
+
+            when(mockCodeRepository.findAllByUserId(userId)).thenReturn(setJpaCode);
+
+            var result = sut.findAllByUserId(userId);
+
+            var expectedSetCode = setJpaCode.stream().map(codeMapper::entityToDomain).collect(Collectors.toSet());
+            assertThat(result).isEqualTo(expectedSetCode);
         }
     }
 }
