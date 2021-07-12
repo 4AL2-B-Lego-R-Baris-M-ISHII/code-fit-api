@@ -1,7 +1,8 @@
-package fr.esgi.pa.server.user.core;
+package fr.esgi.pa.server.user.core.dao;
 
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.role.core.Role;
+import fr.esgi.pa.server.user.core.entity.User;
 
 import java.util.Set;
 

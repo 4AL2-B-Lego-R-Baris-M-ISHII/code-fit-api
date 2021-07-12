@@ -9,7 +9,7 @@ import fr.esgi.pa.server.exercise.infrastructure.dataprovider.entity.JpaExercise
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.mapper.ExerciseMapper;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.repository.ExerciseRepository;
 import fr.esgi.pa.server.exercise_case.core.dao.ExerciseCaseDao;
-import fr.esgi.pa.server.user.core.UserDao;
+import fr.esgi.pa.server.user.core.dao.UserDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

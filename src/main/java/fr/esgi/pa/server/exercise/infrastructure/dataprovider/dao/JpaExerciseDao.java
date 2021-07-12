@@ -9,7 +9,7 @@ import fr.esgi.pa.server.exercise.infrastructure.dataprovider.entity.JpaExercise
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.mapper.ExerciseMapper;
 import fr.esgi.pa.server.exercise.infrastructure.dataprovider.repository.ExerciseRepository;
 import fr.esgi.pa.server.exercise_case.core.dao.ExerciseCaseDao;
-import fr.esgi.pa.server.user.core.UserDao;
+import fr.esgi.pa.server.user.core.dao.UserDao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -10,7 +10,7 @@ import fr.esgi.pa.server.exercise_case.core.entity.ExerciseCase;
 import fr.esgi.pa.server.exercise_case.core.utils.DefaultExerciseCase;
 import fr.esgi.pa.server.language.core.Language;
 import fr.esgi.pa.server.language.core.LanguageDao;
-import fr.esgi.pa.server.user.core.UserDao;
+import fr.esgi.pa.server.user.core.dao.UserDao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

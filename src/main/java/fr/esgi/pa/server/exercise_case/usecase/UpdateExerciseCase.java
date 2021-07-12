@@ -8,7 +8,7 @@ import fr.esgi.pa.server.exercise_case.core.dao.ExerciseCaseDao;
 import fr.esgi.pa.server.exercise_case.core.dao.ExerciseTestDao;
 import fr.esgi.pa.server.exercise_case.core.entity.ExerciseCase;
 import fr.esgi.pa.server.exercise_case.core.entity.ExerciseTest;
-import fr.esgi.pa.server.user.core.UserDao;
+import fr.esgi.pa.server.user.core.dao.UserDao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

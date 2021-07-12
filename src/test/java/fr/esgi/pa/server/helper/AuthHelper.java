@@ -4,7 +4,7 @@ import fr.esgi.pa.server.auth.infrastructure.security.jwt.JwtUtils;
 import fr.esgi.pa.server.auth.infrastructure.security.service.UserDetailsImpl;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.role.core.Role;
-import fr.esgi.pa.server.user.core.UserDao;
+import fr.esgi.pa.server.user.core.dao.UserDao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

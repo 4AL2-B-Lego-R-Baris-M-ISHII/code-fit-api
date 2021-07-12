@@ -1,6 +1,6 @@
 package fr.esgi.pa.server.e2e;
 
-import fr.esgi.pa.server.user.core.UserDao;
+import fr.esgi.pa.server.user.core.dao.UserDao;
 import fr.esgi.pa.server.auth.infrastructure.entrypoint.LoginRequest;
 import fr.esgi.pa.server.auth.infrastructure.entrypoint.SignUpRequest;
 import fr.esgi.pa.server.auth.infrastructure.entrypoint.JwtResponse;

@@ -6,7 +6,7 @@ import fr.esgi.pa.server.role.core.RoleName;
 import fr.esgi.pa.server.role.infrastructure.dataprovider.JpaRole;
 import fr.esgi.pa.server.role.infrastructure.dataprovider.RoleMapper;
 import fr.esgi.pa.server.role.infrastructure.dataprovider.RoleRepository;
-import fr.esgi.pa.server.user.core.UserDao;
+import fr.esgi.pa.server.user.core.dao.UserDao;
 import fr.esgi.pa.server.user.infrastructure.dataprovider.JpaUser;
 import fr.esgi.pa.server.user.infrastructure.dataprovider.JpaUserDao;
 import fr.esgi.pa.server.user.infrastructure.dataprovider.UserMapper;
