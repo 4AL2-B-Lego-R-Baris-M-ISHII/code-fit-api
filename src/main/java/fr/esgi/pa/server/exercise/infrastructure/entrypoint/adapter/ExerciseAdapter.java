@@ -11,7 +11,6 @@ public class ExerciseAdapter implements MapperDomainToDto<Exercise, DtoExercise>
     public DtoExercise domainToDto(Exercise exercise) {
         return new DtoExercise()
                 .setId(exercise.getId())
-                .setUserId(exercise.getUserId())
                 .setTitle(exercise.getTitle())
                 .setDescription(exercise.getDescription());
     }
