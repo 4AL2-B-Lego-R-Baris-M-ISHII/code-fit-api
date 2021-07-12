@@ -22,6 +22,7 @@ public class UserMapper implements MapperEntityToDomain<JpaUser, User> {
                 .setId(entity.getId())
                 .setUsername(entity.getUsername())
                 .setPassword(entity.getPassword())
+                .setEmail(entity.getEmail())
                 .setRoles(roles);
     }
 }
