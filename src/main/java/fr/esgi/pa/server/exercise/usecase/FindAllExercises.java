@@ -10,6 +10,8 @@ import fr.esgi.pa.server.exercise_case.core.dto.DtoExerciseCase;
 import fr.esgi.pa.server.exercise_case.core.entity.ExerciseCase;
 import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.adapter.ExerciseCaseAdapter;
 import fr.esgi.pa.server.language.core.LanguageDao;
+import fr.esgi.pa.server.user.core.dao.UserDao;
+import fr.esgi.pa.server.user.core.dto.DtoUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,7 @@ public class FindAllExercises {
 
     private final ExerciseDao exerciseDao;
     private final ExerciseCaseDao exerciseCaseDao;
+    private final UserDao userDao;
     private final LanguageDao languageDao;
     private final ExerciseAdapter exerciseAdapter;
     private final ExerciseCaseAdapter exerciseCaseAdapter;
@@ -40,8 +43,10 @@ public class FindAllExercises {
 
     private DtoExercise getDtoExerciseWithCases(Exercise exercise) throws NotFoundException {
         var foundCases = exerciseCaseDao.findAllByExerciseId(exercise.getId());
-
+        var creator = userDao.findById(exercise.getUserId());
         var dtoExercise = exerciseAdapter.domainToDto(exercise);
+        if (creator != null)
+            dtoExercise.setUser(new DtoUser().setId(creator.getId()).setUsername(creator.getUsername()).setEmail(creator.getEmail()));
         if (!foundCases.isEmpty()) {
             var setDtoCase = getDtoExerciseCases(foundCases);
             dtoExercise.setCases(setDtoCase);

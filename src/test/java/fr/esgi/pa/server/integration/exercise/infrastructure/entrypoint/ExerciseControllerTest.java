@@ -10,6 +10,7 @@ import fr.esgi.pa.server.helper.JsonHelper;
 import fr.esgi.pa.server.language.core.Language;
 import fr.esgi.pa.server.language.core.LanguageName;
 import fr.esgi.pa.server.language.core.exception.IncorrectLanguageNameException;
+import fr.esgi.pa.server.user.core.dto.DtoUser;
 import org.assertj.core.util.Sets;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -367,7 +368,7 @@ class ExerciseControllerTest {
                             .setId(5L)
                             .setTitle("title")
                             .setDescription("description")
-                            .setUserId(5L)
+                            .setUser(new DtoUser())
                             .setCases(Set.of(
                                     new DtoExerciseCase()
                                             .setId(7L)

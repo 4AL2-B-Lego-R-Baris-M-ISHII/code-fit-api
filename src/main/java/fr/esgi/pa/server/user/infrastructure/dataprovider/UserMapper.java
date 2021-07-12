@@ -2,7 +2,7 @@ package fr.esgi.pa.server.user.infrastructure.dataprovider;
 
 import fr.esgi.pa.server.common.core.mapper.MapperEntityToDomain;
 import fr.esgi.pa.server.role.infrastructure.dataprovider.RoleMapper;
-import fr.esgi.pa.server.user.core.User;
+import fr.esgi.pa.server.user.core.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +22,7 @@ public class UserMapper implements MapperEntityToDomain<JpaUser, User> {
                 .setId(entity.getId())
                 .setUsername(entity.getUsername())
                 .setPassword(entity.getPassword())
+                .setEmail(entity.getEmail())
                 .setRoles(roles);
     }
 }

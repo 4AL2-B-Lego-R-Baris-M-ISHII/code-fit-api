@@ -10,7 +10,7 @@ import fr.esgi.pa.server.exercise_case.core.dao.ExerciseTestDao;
 import fr.esgi.pa.server.exercise_case.core.entity.ExerciseCase;
 import fr.esgi.pa.server.exercise_case.core.entity.ExerciseTest;
 import fr.esgi.pa.server.exercise_case.usecase.UpdateExerciseCase;
-import fr.esgi.pa.server.user.core.UserDao;
+import fr.esgi.pa.server.user.core.dao.UserDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

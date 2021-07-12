@@ -12,12 +12,16 @@ import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.adapter.Exercis
 import fr.esgi.pa.server.language.core.Language;
 import fr.esgi.pa.server.language.core.LanguageDao;
 import fr.esgi.pa.server.language.core.LanguageName;
+import fr.esgi.pa.server.user.core.dao.UserDao;
+import fr.esgi.pa.server.user.core.dto.DtoUser;
+import fr.esgi.pa.server.user.core.entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,6 +31,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class FindAllExercisesTest {
 
+    private final long userId = 31L;
     private FindAllExercises sut;
 
     @Mock
@@ -38,6 +43,9 @@ class FindAllExercisesTest {
     @Mock
     private LanguageDao mockLanguageDao;
 
+    @Mock
+    private UserDao mockUserDao;
+
     private final ExerciseAdapter exerciseAdapter = new ExerciseAdapter();
     private final ExerciseCaseAdapter exerciseCaseAdapter = new ExerciseCaseAdapter();
 
@@ -46,6 +54,7 @@ class FindAllExercisesTest {
         sut = new FindAllExercises(
                 mockExerciseDao,
                 mockExerciseCaseDao,
+                mockUserDao,
                 mockLanguageDao,
                 exerciseAdapter,
                 exerciseCaseAdapter
@@ -88,6 +97,7 @@ class FindAllExercisesTest {
     void when_exercises_contain_cases_should_return_all_exercises_with_cases() throws NotFoundException {
         var exercise = new Exercise()
                 .setId(3L)
+                .setUserId(userId)
                 .setTitle("title3")
                 .setDescription("description3");
         var exercises = Set.of(exercise);
@@ -101,6 +111,12 @@ class FindAllExercisesTest {
                 .setStartContent("start content");
         var cases = Set.of(exerciseCase);
         when(mockExerciseCaseDao.findAllByExerciseId(3L)).thenReturn(cases);
+        var user = new User()
+                .setId(userId)
+                .setUsername("username")
+                .setPassword("password")
+                .setRoles(new HashSet<>());
+        when(mockUserDao.findById(userId)).thenReturn(user);
         var language = new Language().setId(2L).setLanguageName(LanguageName.JAVA8).setFileExtension("java");
         when(mockLanguageDao.findById(2L)).thenReturn(
                 language
@@ -109,6 +125,7 @@ class FindAllExercisesTest {
         var result = sut.execute();
 
         var expectedDtoExercise = exerciseAdapter.domainToDto(exercise);
+        expectedDtoExercise.setUser(new DtoUser().setId(user.getId()).setEmail(user.getEmail()).setUsername(user.getUsername()));
         expectedDtoExercise.setCases(cases.stream()
                 .map(exerciseCaseAdapter::domainToDto)
                 .map(dtoExerciseCase -> dtoExerciseCase.setLanguage(language))

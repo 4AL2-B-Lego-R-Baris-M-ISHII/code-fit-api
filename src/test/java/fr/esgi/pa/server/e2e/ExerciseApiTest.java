@@ -18,6 +18,7 @@ import fr.esgi.pa.server.language.core.LanguageName;
 import fr.esgi.pa.server.language.core.exception.IncorrectLanguageNameException;
 import fr.esgi.pa.server.role.core.RoleDao;
 import fr.esgi.pa.server.role.core.RoleName;
+import fr.esgi.pa.server.user.core.dto.DtoUser;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -158,7 +159,10 @@ public class ExerciseApiTest {
         assertThat(getResponse.getId()).isNotNull();
         assertThat(getResponse.getTitle()).isEqualTo(exerciseRequest.getTitle());
         assertThat(getResponse.getDescription()).isEqualTo(exerciseRequest.getDescription());
-        assertThat(getResponse.getUserId()).isEqualTo(authData.getUser().getId());
+        var dtoUser = new DtoUser().setId(authData.getUser().getId())
+                .setUsername(authData.getUser().getUsername())
+                .setEmail(authData.getUser().getEmail());
+        assertThat(getResponse.getUser()).isEqualTo(dtoUser);
 
         var foundExerciseCases = exerciseCaseDao.findAllByExerciseId(getResponse.getId());
         var javaLanguage = languageDao.findByStrLanguage(exerciseRequest.getLanguage());

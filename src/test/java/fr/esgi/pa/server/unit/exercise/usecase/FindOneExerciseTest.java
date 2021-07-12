@@ -14,7 +14,8 @@ import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.adapter.Exercis
 import fr.esgi.pa.server.language.core.Language;
 import fr.esgi.pa.server.language.core.LanguageDao;
 import fr.esgi.pa.server.language.core.LanguageName;
-import fr.esgi.pa.server.user.core.UserDao;
+import fr.esgi.pa.server.user.core.dao.UserDao;
+import fr.esgi.pa.server.user.core.entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -143,7 +144,8 @@ class FindOneExerciseTest {
                         .setStartContent("start 123")
         );
         when(mockExerciseCaseDao.findAllByExerciseId(exerciseId)).thenReturn(setExerciseCase);
-
+        var user = new User().setId(userId).setEmail("user@gmail.com").setPassword("password").setUsername("user");
+        when(mockUserDao.findById(userId)).thenReturn(user);
         sut.execute(exerciseId, userId);
 
         verify(mockExerciseTestDao, times(1)).findAllByExerciseCaseId(789L);
