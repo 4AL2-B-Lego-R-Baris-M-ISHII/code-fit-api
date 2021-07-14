@@ -41,7 +41,7 @@ class JpaDefaultExerciseTest {
     private DefaultExerciseCaseHelper mockDefaultExerciseCaseHelper;
 
     private final Language language = new Language().setId(1L)
-            .setLanguageName(LanguageName.JAVA)
+            .setLanguageName(LanguageName.JAVA8)
             .setFileExtension("java");
 
     @BeforeEach

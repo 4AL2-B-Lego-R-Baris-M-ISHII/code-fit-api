@@ -1,7 +1,7 @@
 package fr.esgi.pa.server.auth.usecase;
 
 import fr.esgi.pa.server.role.core.RoleDao;
-import fr.esgi.pa.server.user.core.UserDao;
+import fr.esgi.pa.server.user.core.dao.UserDao;
 import fr.esgi.pa.server.common.core.exception.AlreadyCreatedException;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.role.core.Role;

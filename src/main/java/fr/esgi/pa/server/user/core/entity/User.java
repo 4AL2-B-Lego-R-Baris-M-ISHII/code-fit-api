@@ -1,4 +1,4 @@
-package fr.esgi.pa.server.user.core;
+package fr.esgi.pa.server.user.core.entity;
 
 import fr.esgi.pa.server.role.core.Role;
 import lombok.Data;

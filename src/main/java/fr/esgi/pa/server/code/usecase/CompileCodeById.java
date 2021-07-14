@@ -46,7 +46,6 @@ public class CompileCodeById {
         );
         var isResolved = isCodeResolvedExerciseCase(listCodeResult);
         foundCode.setIsResolved(isResolved);
-
         codeDao.save(foundCode);
 
         return buildDtoCode(foundCode, listCodeResult, isResolved);

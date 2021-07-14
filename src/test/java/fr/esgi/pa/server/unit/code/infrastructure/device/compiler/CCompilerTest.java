@@ -44,7 +44,7 @@ class CCompilerTest {
 
     @BeforeEach
     void setup() {
-        cLanguage = new Language().setId(1L).setLanguageName(LanguageName.C).setFileExtension("c");
+        cLanguage = new Language().setId(1L).setLanguageName(LanguageName.C11).setFileExtension("c");
 
         sut = new CCompiler(mockFileDeleter, mockDockerCompilerRunner, mockCodeStateHelper, mockCompilerConfigRepository);
     }

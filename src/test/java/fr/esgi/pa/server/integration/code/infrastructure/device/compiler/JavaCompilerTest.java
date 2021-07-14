@@ -51,7 +51,7 @@ class JavaCompilerTest {
                 "}";
         var language = new Language()
                 .setId(2L)
-                .setLanguageName(LanguageName.JAVA)
+                .setLanguageName(LanguageName.JAVA8)
                 .setFileExtension("java");
         var result = sut.compile(helloWorldContent, language);
 
@@ -70,7 +70,7 @@ class JavaCompilerTest {
                 "}";
         var language = new Language()
                 .setId(2L)
-                .setLanguageName(LanguageName.JAVA)
+                .setLanguageName(LanguageName.JAVA8)
                 .setFileExtension("java");
         var result = sut.compile(helloWorldContent, language);
         assertThat(result).isNotNull();
@@ -89,7 +89,7 @@ class JavaCompilerTest {
                 "}";
         var language = new Language()
                 .setId(2L)
-                .setLanguageName(LanguageName.JAVA)
+                .setLanguageName(LanguageName.JAVA8)
                 .setFileExtension("java");
         var result = sut.compile(helloWorldContent, language);
         assertThat(result).isNotNull();
@@ -107,7 +107,7 @@ class JavaCompilerTest {
                 "}";
         var language = new Language()
                 .setId(2L)
-                .setLanguageName(LanguageName.JAVA)
+                .setLanguageName(LanguageName.JAVA8)
                 .setFileExtension("java");
         var result = sut.compile(helloWorldContent, language);
         assertThat(result).isNotNull();

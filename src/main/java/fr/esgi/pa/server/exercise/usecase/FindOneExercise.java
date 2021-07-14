@@ -11,7 +11,8 @@ import fr.esgi.pa.server.exercise_case.core.entity.ExerciseCase;
 import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.adapter.ExerciseCaseAdapter;
 import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.adapter.ExerciseTestAdapter;
 import fr.esgi.pa.server.language.core.LanguageDao;
-import fr.esgi.pa.server.user.core.UserDao;
+import fr.esgi.pa.server.user.core.dao.UserDao;
+import fr.esgi.pa.server.user.core.dto.DtoUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +42,13 @@ public class FindOneExercise {
         var setDtoExerciseCase = getDtoExerciseCases(exercise);
 
         var dtoExercise = exerciseAdapter.domainToDto(exercise);
+        var user = userDao.findById(exercise.getUserId());
+        if (user != null) {
+            dtoExercise.setUser(
+                    new DtoUser().setId(user.getId()).setUsername(user.getUsername()).setEmail(user.getEmail())
+            );
+        }
+
         dtoExercise.setCases(setDtoExerciseCase);
         return dtoExercise;
     }

@@ -2,15 +2,21 @@ package fr.esgi.pa.server.integration.code.infrastructure.entrypoint;
 
 import fr.esgi.pa.server.code.core.compiler.CodeResult;
 import fr.esgi.pa.server.code.core.compiler.CodeState;
+import fr.esgi.pa.server.code.core.dto.CodeQualityType;
 import fr.esgi.pa.server.code.core.dto.DtoCode;
+import fr.esgi.pa.server.code.core.dto.DtoQualityCode;
 import fr.esgi.pa.server.code.core.exception.CompilationException;
+import fr.esgi.pa.server.code.core.quality.QualityCode;
 import fr.esgi.pa.server.code.infrastructure.entrypoint.TestCompileCodeRequest;
 import fr.esgi.pa.server.code.infrastructure.entrypoint.request.SaveCodeRequest;
 import fr.esgi.pa.server.code.usecase.CompileCodeById;
+import fr.esgi.pa.server.code.usecase.GetQualityCode;
 import fr.esgi.pa.server.code.usecase.SaveOneCode;
 import fr.esgi.pa.server.code.usecase.TestCompileCode;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.helper.JsonHelper;
+import fr.esgi.pa.server.language.core.Language;
+import fr.esgi.pa.server.language.core.LanguageName;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -26,10 +32,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import static fr.esgi.pa.server.helper.JsonHelper.jsonToObject;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -48,8 +56,12 @@ class CodeControllerTest {
     @MockBean
     private TestCompileCode mockTestCompileCode;
 
+    @MockBean
+    private GetQualityCode mockGetQualityCode;
+
+
     @Nested
-    @DisplayName("/post api/code")
+    @DisplayName("POST api/code")
     class PostCode {
 
         private final long exerciseCaseId = 2L;
@@ -278,7 +290,7 @@ class CodeControllerTest {
     }
 
     @Nested
-    @DisplayName("/post api/code/test")
+    @DisplayName("POST api/code/test")
     class TestCompileCodeRoute {
 
         @Test
@@ -351,6 +363,93 @@ class CodeControllerTest {
             var response = jsonToObject(contentAsString, CodeResult.class);
 
             assertThat(response).isEqualTo(expectedCode);
+        }
+    }
+
+    @Nested
+    @DisplayName("GET api/code/{id}/quality")
+    class GetCodeByIdQualityTest {
+        @Test
+        void when_user_not_authenticate_should_send_unauthorized_response() throws Exception {
+            mockMvc.perform(get("/api/code/1/quality"))
+                    .andExpect(status().isUnauthorized());
+        }
+
+        @WithMockUser
+        @ParameterizedTest
+        @ValueSource(strings = {"notnumber", "0", "-1", "2.3"})
+        void when_code_id_is_not_correct_should_send_bad_request_error_response(String incorrectCodeId) throws Exception {
+            mockMvc.perform(get(String.format("/api/code/%s/code-quality", incorrectCodeId)))
+                    .andExpect(status().isBadRequest());
+        }
+
+        @WithMockUser
+        @ParameterizedTest
+        @ValueSource(strings = {"", " ", "\n", "\t", "notnumber", "0"})
+        void when_userId_attribute_is_not_correct_should_return_bad_request_error_response(String incorrectUserId) throws Exception {
+            mockMvc.perform(get("/api/code/1/code-quality")
+                    .requestAttr("userId", incorrectUserId))
+                    .andExpect(status().isBadRequest());
+        }
+
+        @WithMockUser
+        @Test
+        void when_set_code_quality_contain_not_correct_values_should_send_bad_request() throws Exception {
+            mockMvc.perform(get("/api/code/1/code-quality?type=NOT_CORRECT_TYPE")
+                    .requestAttr("userId", "2"))
+                    .andExpect(status().isBadRequest());
+        }
+
+        @WithMockUser
+        @Test
+        void when_userId_codeId_and_set_code_quality_type_with_one_type_LINES_CODE_are_correct_should_call_usecase_GetQualityCode() throws Exception {
+            mockMvc.perform(get("/api/code/1/code-quality?type=LINES_CODE")
+                    .requestAttr("userId", "2"));
+            Set<CodeQualityType> codeQualityTypeSet = Set.of(CodeQualityType.LINES_CODE);
+            verify(mockGetQualityCode, times(1)).execute(2L, 1L, codeQualityTypeSet);
+        }
+
+        @WithMockUser
+        @Test
+        void when_getQualityCode_called_and_return_dto_quality_code_should_return_dto() throws Exception {
+            Set<CodeQualityType> codeQualityTypeSet = Set.of(CodeQualityType.LINES_CODE);
+            var qualityCode = new QualityCode()
+                    .setNbLinesCode(5L)
+                    .setLanguage(new Language().setId(7L).setFileExtension("c").setLanguageName(LanguageName.C11));
+            var dtoQualityCode = new DtoQualityCode()
+                    .setCodeId(1L)
+                    .setExerciseCaseId(64L)
+                    .setQualityCode(qualityCode);
+            when(mockGetQualityCode.execute(2L, 1L, codeQualityTypeSet)).thenReturn(dtoQualityCode);
+
+            var contentAsString = mockMvc.perform(get("/api/code/1/code-quality?type=LINES_CODE")
+                    .requestAttr("userId", "2"))
+                    .andExpect(status().isOk())
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
+            assertThat(contentAsString).isNotNull();
+            assertThat(contentAsString).isNotBlank();
+            var result = jsonToObject(contentAsString, DtoQualityCode.class);
+            assertThat(result).isEqualTo(dtoQualityCode);
+        }
+
+        @WithMockUser
+        @Test
+        void when_userId_codeId_and_set_code_quality_type_with_one_type_LINES_COMMENT_are_correct_should_call_usecase_GetQualityCode() throws Exception {
+            mockMvc.perform(get("/api/code/1/code-quality?type=LINES_COMMENT")
+                    .requestAttr("userId", "2"));
+            Set<CodeQualityType> codeQualityTypeSet = Set.of(CodeQualityType.LINES_COMMENT);
+            verify(mockGetQualityCode, times(1)).execute(2L, 1L, codeQualityTypeSet);
+        }
+
+        @WithMockUser
+        @Test
+        void when_userId_codeId_and_set_code_quality_type_with_one_type_CYCLOMATIC_COMPLEXITY_are_correct_should_call_usecase_GetQualityCode() throws Exception {
+            mockMvc.perform(get("/api/code/1/code-quality?type=CYCLOMATIC_COMPLEXITY")
+                    .requestAttr("userId", "2"));
+            Set<CodeQualityType> codeQualityTypeSet = Set.of(CodeQualityType.CYCLOMATIC_COMPLEXITY);
+            verify(mockGetQualityCode, times(1)).execute(2L, 1L, codeQualityTypeSet);
         }
     }
 

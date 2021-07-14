@@ -13,7 +13,7 @@ import fr.esgi.pa.server.exercise_case.usecase.CreateExerciseCase;
 import fr.esgi.pa.server.language.core.Language;
 import fr.esgi.pa.server.language.core.LanguageDao;
 import fr.esgi.pa.server.language.core.LanguageName;
-import fr.esgi.pa.server.user.core.UserDao;
+import fr.esgi.pa.server.user.core.dao.UserDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -117,7 +117,7 @@ class CreateExerciseCaseTest {
         var foundLanguage = new Language()
                 .setId(languageId)
                 .setFileExtension("java")
-                .setLanguageName(LanguageName.JAVA);
+                .setLanguageName(LanguageName.JAVA8);
         when(mockLanguageDao.findById(languageId)).thenReturn(foundLanguage);
 
         sut.execute(userId, exerciseId, languageId);
@@ -137,7 +137,7 @@ class CreateExerciseCaseTest {
         var foundLanguage = new Language()
                 .setId(languageId)
                 .setFileExtension("java")
-                .setLanguageName(LanguageName.JAVA);
+                .setLanguageName(LanguageName.JAVA8);
         when(mockLanguageDao.findById(languageId)).thenReturn(foundLanguage);
         var exerciseCase = new ExerciseCase()
                 .setId(23L)
@@ -169,7 +169,7 @@ class CreateExerciseCaseTest {
         var foundLanguage = new Language()
                 .setId(languageId)
                 .setFileExtension("java")
-                .setLanguageName(LanguageName.JAVA);
+                .setLanguageName(LanguageName.JAVA8);
         when(mockLanguageDao.findById(languageId)).thenReturn(foundLanguage);
         var otherLanguageId = 5L;
         var exerciseCase = new ExerciseCase()
@@ -199,7 +199,7 @@ class CreateExerciseCaseTest {
         var foundLanguage = new Language()
                 .setId(languageId)
                 .setFileExtension("java")
-                .setLanguageName(LanguageName.JAVA);
+                .setLanguageName(LanguageName.JAVA8);
         when(mockLanguageDao.findById(languageId)).thenReturn(foundLanguage);
         var otherLanguageId = 5L;
         var exerciseCase = new ExerciseCase()

@@ -35,18 +35,18 @@ class LanguageBootstrapTest {
     @Test
     void when_list_languages_are_empty_should_save_all_languages() throws AlreadyCreatedException {
         sut.on(mockApplicationReadyEvent);
-        verify(mockLanguageDao, times(1)).createLanguage(LanguageName.C, "c");
-        verify(mockLanguageDao, times(1)).createLanguage(LanguageName.JAVA, "java");
+        verify(mockLanguageDao, times(1)).createLanguage(LanguageName.C11, "c");
+        verify(mockLanguageDao, times(1)).createLanguage(LanguageName.JAVA8, "java");
     }
 
     @Test
     void when_language_already_created_should_log() throws AlreadyCreatedException {
-        when(mockLanguageDao.createLanguage(LanguageName.C, "c")).thenThrow(new AlreadyCreatedException("c already created"));
-        when(mockLanguageDao.createLanguage(LanguageName.JAVA, "java")).thenReturn(3L);
+        when(mockLanguageDao.createLanguage(LanguageName.C11, "c")).thenThrow(new AlreadyCreatedException("c already created"));
+        when(mockLanguageDao.createLanguage(LanguageName.JAVA8, "java")).thenReturn(3L);
 
         sut.on(mockApplicationReadyEvent);
 
-        var message = String.format("Language with name '%s' not save because already created", LanguageName.C);
+        var message = String.format("Language with name '%s' not save because already created", LanguageName.C11);
         verify(mockLogger, times(1)).info(LanguageBootstrap.class, message);
     }
 }

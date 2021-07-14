@@ -59,7 +59,7 @@ class JpaDefaultExerciseCaseTest {
         when(mockExerciseRepository.existsById(exerciseId)).thenReturn(false);
         var language = new Language()
                 .setId(2L)
-                .setLanguageName(LanguageName.JAVA)
+                .setLanguageName(LanguageName.JAVA8)
                 .setFileExtension("java");
         assertThatThrownBy(() -> sut.createExerciseCase(exerciseId, language))
                 .isExactlyInstanceOf(NotFoundException.class)
@@ -75,7 +75,7 @@ class JpaDefaultExerciseCaseTest {
         when(mockExerciseRepository.existsById(exerciseId)).thenReturn(true);
         var language = new Language()
                 .setId(2L)
-                .setLanguageName(LanguageName.JAVA)
+                .setLanguageName(LanguageName.JAVA8)
                 .setFileExtension("java");
         when(mockLanguageRepository.existsById(language.getId())).thenReturn(false);
 
@@ -93,7 +93,7 @@ class JpaDefaultExerciseCaseTest {
         when(mockExerciseRepository.existsById(exerciseId)).thenReturn(true);
         var language = new Language()
                 .setId(2L)
-                .setLanguageName(LanguageName.JAVA)
+                .setLanguageName(LanguageName.JAVA8)
                 .setFileExtension("java");
         when(mockLanguageRepository.existsById(language.getId())).thenReturn(true);
         var defaultValues = new DefaultExerciseCaseValues()
@@ -130,7 +130,7 @@ class JpaDefaultExerciseCaseTest {
         when(mockExerciseRepository.existsById(exerciseId)).thenReturn(true);
         var language = new Language()
                 .setId(2L)
-                .setLanguageName(LanguageName.JAVA)
+                .setLanguageName(LanguageName.JAVA8)
                 .setFileExtension("java");
         when(mockLanguageRepository.existsById(language.getId())).thenReturn(true);
         var defaultValues = new DefaultExerciseCaseValues()

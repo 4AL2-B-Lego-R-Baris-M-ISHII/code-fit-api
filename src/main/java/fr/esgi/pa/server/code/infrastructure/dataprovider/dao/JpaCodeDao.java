@@ -10,6 +10,9 @@ import fr.esgi.pa.server.exercise.core.exception.ForbiddenException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class JpaCodeDao implements CodeDao {
@@ -21,12 +24,7 @@ public class JpaCodeDao implements CodeDao {
         checkIfUserIdIsNull(code);
         checkIfExerciseCaseIdIsNull(code);
 
-        var codeToSave = codeRepository
-                .findByUserIdAndExerciseCaseId(code.getUserId(), code.getExerciseCaseId())
-                .orElse(codeMapper.domainToEntity(code));
-        codeToSave.setContent(code.getContent());
-        var savedCode = codeRepository.save(codeToSave);
-        return codeMapper.entityToDomain(savedCode);
+        return saveAndReturnDomainCode(code);
     }
 
     private void checkIfUserIdIsNull(Code code) throws ForbiddenException {
@@ -49,6 +47,16 @@ public class JpaCodeDao implements CodeDao {
         }
     }
 
+    private Code saveAndReturnDomainCode(Code code) {
+        var codeToSave = codeRepository
+                .findByUserIdAndExerciseCaseId(code.getUserId(), code.getExerciseCaseId())
+                .orElse(codeMapper.domainToEntity(code));
+        codeToSave.setContent(code.getContent());
+        codeToSave.setIsResolved(code.getIsResolved());
+        var savedCode = codeRepository.save(codeToSave);
+        return codeMapper.entityToDomain(savedCode);
+    }
+
     @Override
     public Code findById(Long codeId) throws NotFoundException {
         var foundCode = codeRepository.findById(codeId).orElseThrow(() -> {
@@ -60,5 +68,13 @@ public class JpaCodeDao implements CodeDao {
             return new NotFoundException(message);
         });
         return codeMapper.entityToDomain(foundCode);
+    }
+
+    @Override
+    public Set<Code> findAllByUserId(Long userId) {
+        return codeRepository.findAllByUserId(userId)
+                .stream()
+                .map(codeMapper::entityToDomain)
+                .collect(Collectors.toSet());
     }
 }

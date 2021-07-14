@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class ScriptCompilerContentImpl implements ScriptCompilerContent {
 
     public String getScriptByLanguage(Language language, String fileName, CompilerConfig compilerConfig) {
-        if (language.getLanguageName() == LanguageName.C) {
+        if (language.getLanguageName() == LanguageName.C11) {
             return getScriptC(fileName, compilerConfig.getMemoryLimit(), compilerConfig.getTimeLimit());
         }
         return getScriptJava(fileName, compilerConfig.getMemoryLimit(), compilerConfig.getTimeLimit());

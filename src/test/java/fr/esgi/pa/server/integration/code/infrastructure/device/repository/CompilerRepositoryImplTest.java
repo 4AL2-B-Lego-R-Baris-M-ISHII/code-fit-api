@@ -27,13 +27,13 @@ class CompilerRepositoryImplTest {
 
     @Test
     void when_language_name_is_c_should_get_CCompiler() {
-        var result = sut.findByLanguage(new Language().setLanguageName(LanguageName.C));
+        var result = sut.findByLanguage(new Language().setLanguageName(LanguageName.C11));
         assertThat(result).isInstanceOf(CCompiler.class);
     }
 
     @Test
     void when_language_name_is_java_should_get_JavaCompiler() {
-        var result = sut.findByLanguage(new Language().setLanguageName(LanguageName.JAVA));
+        var result = sut.findByLanguage(new Language().setLanguageName(LanguageName.JAVA8));
         assertThat(result).isInstanceOf(JavaCompiler.class);
     }
 }

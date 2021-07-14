@@ -9,8 +9,8 @@ import fr.esgi.pa.server.language.core.LanguageDao;
 import fr.esgi.pa.server.language.core.LanguageName;
 import fr.esgi.pa.server.role.core.RoleDao;
 import fr.esgi.pa.server.role.core.RoleName;
-import fr.esgi.pa.server.user.core.User;
-import fr.esgi.pa.server.user.core.UserDao;
+import fr.esgi.pa.server.user.core.entity.User;
+import fr.esgi.pa.server.user.core.dao.UserDao;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -67,10 +67,10 @@ class JpaDefaultExerciseTest {
 
     @Test
     void should_save_java_exercise_with_default_case_and_test() throws NotFoundException {
-        var java = languageDao.findByLanguageName(LanguageName.JAVA);
+        var java = languageDao.findByLanguageName(LanguageName.JAVA8);
         var testContent = "public class Main {\n" +
                 "    public static void main(String[] args) throws Exception {\n" +
-                "        var result = Solution.exercise1(\"toto\");\n" +
+                "        String result = Solution.exercise1(\"toto\");\n" +
                 "        if (result == null || !result.equals(\"toto\")) {\n" +
                 "            throw new Exception(\"error expectations\");\n" +
                 "        }\n" +
