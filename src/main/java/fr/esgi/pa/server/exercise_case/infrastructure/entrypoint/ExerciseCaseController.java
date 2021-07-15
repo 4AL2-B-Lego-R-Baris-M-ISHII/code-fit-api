@@ -55,7 +55,9 @@ public class ExerciseCaseController {
                 .path("/{id}")
                 .buildAndExpand(newExerciseCaseId)
                 .toUri();
-        return created(uri).build();
+        return created(uri)
+                .header("Access-Control-Expose-Headers", "Location")
+                .build();
     }
 
     @PutMapping("{id}")
