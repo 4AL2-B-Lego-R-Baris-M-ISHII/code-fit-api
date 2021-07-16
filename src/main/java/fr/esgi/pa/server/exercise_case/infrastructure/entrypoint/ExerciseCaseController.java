@@ -20,6 +20,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 import java.net.URI;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.ResponseEntity.*;
@@ -36,6 +37,7 @@ public class ExerciseCaseController {
     private final GetOneExerciseCase getOneExerciseCase;
     private final DeleteOneExerciseCase deleteOneExerciseCase;
     private final ExerciseTestAdapter exerciseTestAdapter;
+    private final GetAllExerciseCaseByUserId getAllExerciseCaseByUserId;
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -109,5 +111,15 @@ public class ExerciseCaseController {
     ) throws NotFoundException {
         deleteOneExerciseCase.execute(exerciseCaseId);
         return noContent().build();
+    }
+
+    @GetMapping("/logged-user")
+    public ResponseEntity<Set<DtoExerciseCase>> getAllByLoggedUserId(
+            @ApiIgnore @RequestAttribute("userId")
+            @Pattern(regexp = "^\\d+$", message = "id has to be an integer")
+            @Min(value = 1, message = "id has to be equal or more than 1") String userId
+    ) {
+        getAllExerciseCaseByUserId.execute(Long.parseLong(userId));
+        return null;
     }
 }

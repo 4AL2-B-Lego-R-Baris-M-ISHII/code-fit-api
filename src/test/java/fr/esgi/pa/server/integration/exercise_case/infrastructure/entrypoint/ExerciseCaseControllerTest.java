@@ -8,6 +8,7 @@ import fr.esgi.pa.server.exercise_case.core.dto.DtoExerciseTest;
 import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.request.SaveExerciseCaseRequest;
 import fr.esgi.pa.server.exercise_case.usecase.CreateExerciseCase;
 import fr.esgi.pa.server.exercise_case.usecase.DeleteOneExerciseCase;
+import fr.esgi.pa.server.exercise_case.usecase.GetAllExerciseCaseByUserId;
 import fr.esgi.pa.server.exercise_case.usecase.GetOneExerciseCase;
 import fr.esgi.pa.server.helper.JsonHelper;
 import fr.esgi.pa.server.language.core.Language;
@@ -47,6 +48,9 @@ class ExerciseCaseControllerTest {
 
     @MockBean
     private DeleteOneExerciseCase mockDeleteOneExerciseCase;
+
+    @MockBean
+    private GetAllExerciseCaseByUserId mockGetAllExerciseCaseByUserId;
 
     @DisplayName("POST /api/exercise-case")
     @Nested
@@ -339,6 +343,28 @@ class ExerciseCaseControllerTest {
             ).andExpect(status().isNoContent());
 
             verify(mockDeleteOneExerciseCase, times(1)).execute(123L);
+        }
+    }
+
+    @DisplayName("GET /api/exercise-case/logged-user")
+    @Nested
+    class GetAllByLoggedUserId {
+        @Test
+        void when_user_not_authorized_should_send_unauthorized_error_response() throws Exception {
+            mockMvc.perform(
+                    get("/api/exercise-case/logged-user")
+            ).andExpect(status().isUnauthorized());
+        }
+
+        @WithMockUser(username = "toto", password = "toto", roles = "USER")
+        @Test
+        void when_user_authorized_should_call_get_all_exercise_case_by_user_id() throws Exception {
+            mockMvc.perform(
+                    get("/api/exercise-case/logged-user")
+                            .requestAttr("userId", "798")
+            );
+
+            verify(mockGetAllExerciseCaseByUserId, times(1)).execute(798L);
         }
     }
 }
