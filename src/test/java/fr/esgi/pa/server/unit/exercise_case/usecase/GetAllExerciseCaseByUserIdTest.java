@@ -101,6 +101,33 @@ class GetAllExerciseCaseByUserIdTest {
     }
 
     @Test
+    void when_all_code_is_not_resolve_should_not_find_all_exercise_case_by_id_in_and_return_empty_set() throws NotFoundException {
+        var code7 = new Code().setId(7L)
+                .setUserId(userId)
+                .setExerciseCaseId(123L)
+                .setContent("code content7")
+                .setIsResolved(false);
+        var code8 = new Code().setId(8L)
+                .setUserId(userId)
+                .setExerciseCaseId(123L)
+                .setContent("code content8")
+                .setIsResolved(false);
+        var code9 = new Code().setId(9L)
+                .setUserId(userId)
+                .setExerciseCaseId(124L)
+                .setContent("code content9")
+                .setIsResolved(false);
+        var setCode = Set.of(code7, code8, code9);
+        when(mockCodeDao.findAllByUserId(userId)).thenReturn(setCode);
+
+        var result = sut.execute(userId);
+
+        verify(mockExerciseCaseDao, never()).findAllByIdIn(Set.of(123L, 124L));
+        assertThat(result).isNotNull();
+        assertThat(result.size()).isEqualTo(0);
+    }
+
+    @Test
     void when_find_all_exercise_cases_by_ids_should_get_language_by_id() throws NotFoundException {
         var code7 = new Code().setId(7L)
                 .setUserId(userId)

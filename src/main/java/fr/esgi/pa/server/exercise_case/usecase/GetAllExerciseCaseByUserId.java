@@ -33,7 +33,7 @@ public class GetAllExerciseCaseByUserId {
     private final CodeAdapter codeAdapter;
 
     public Set<DtoExerciseCase> execute(Long userId) throws NotFoundException {
-        var setCode = codeDao.findAllByUserId(userId);
+        var setCode = getAllResolvedCodeByUserId(userId);
         var setExerciseCaseId = getSetExerciseCaseId(setCode);
         var setExerciseCase = exerciseCaseDao.findAllByIdIn(setExerciseCaseId);
         var setDtoExerciseCase = new HashSet<DtoExerciseCase>();
@@ -42,6 +42,12 @@ public class GetAllExerciseCaseByUserId {
         }
 
         return setDtoExerciseCase;
+    }
+
+    private Set<Code> getAllResolvedCodeByUserId(Long userId) {
+        return codeDao.findAllByUserId(userId).stream()
+                .filter(Code::getIsResolved)
+                .collect(Collectors.toSet());
     }
 
     @NotNull
