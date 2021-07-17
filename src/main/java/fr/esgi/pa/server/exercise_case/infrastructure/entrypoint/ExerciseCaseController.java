@@ -118,7 +118,7 @@ public class ExerciseCaseController {
             @ApiIgnore @RequestAttribute("userId")
             @Pattern(regexp = "^\\d+$", message = "id has to be an integer")
             @Min(value = 1, message = "id has to be equal or more than 1") String userId
-    ) {
+    ) throws NotFoundException {
         getAllExerciseCaseByUserId.execute(Long.parseLong(userId));
         return null;
     }
