@@ -12,6 +12,7 @@ public class CodeAdapterImpl implements CodeAdapter {
         return new DtoCode()
                 .setCodeId(code.getId())
                 .setIsResolved(code.getIsResolved())
-                .setContent(code.getContent());
+                .setContent(code.getContent())
+                .setResolvedDate(code.getResolvedDate());
     }
 }
