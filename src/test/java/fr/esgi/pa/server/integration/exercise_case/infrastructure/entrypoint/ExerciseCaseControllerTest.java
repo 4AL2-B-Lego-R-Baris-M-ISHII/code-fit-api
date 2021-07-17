@@ -1,5 +1,6 @@
 package fr.esgi.pa.server.integration.exercise_case.infrastructure.entrypoint;
 
+import fr.esgi.pa.server.code.core.dto.DtoCode;
 import fr.esgi.pa.server.common.core.exception.AlreadyCreatedException;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.exercise.core.exception.ForbiddenException;
@@ -27,8 +28,11 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
+import static fr.esgi.pa.server.helper.JsonHelper.jsonToObject;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -365,6 +369,37 @@ class ExerciseCaseControllerTest {
             );
 
             verify(mockGetAllExerciseCaseByUserId, times(1)).execute(798L);
+        }
+
+        @WithMockUser(username = "toto", password = "toto", roles = "USER")
+        @Test
+        void when_get_all_exercise_case_by_user_id_should_return_set_dto_exercise_case() throws Exception {
+            var language = new Language().setId(7L).setLanguageName(LanguageName.C11).setFileExtension("c");
+            var setCode = Set.of(new DtoCode().setCodeId(5L).setContent("code content").setIsResolved(true));
+            var setTest = Set.of(new DtoExerciseTest().setId(8L).setContent("test content"));
+            var dtoExerciseCase = new DtoExerciseCase()
+                    .setId(4L)
+                    .setSolution("solution")
+                    .setStartContent("start content")
+                    .setIsValid(true)
+                    .setTests(setTest)
+                    .setLanguage(language)
+                    .setCodes(setCode);
+            var expectedValue = Set.of(dtoExerciseCase);
+            when(mockGetAllExerciseCaseByUserId.execute(798L)).thenReturn(expectedValue);
+
+            var contentAsString = mockMvc.perform(get("/api/exercise-case/logged-user")
+                    .requestAttr("userId", "798"))
+                    .andExpect(status().isOk())
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
+            assertThat(contentAsString).isNotNull();
+            assertThat(contentAsString).isNotBlank();
+            var arrayDtoExerciseCase = jsonToObject(contentAsString, DtoExerciseCase[].class);
+            assertThat(arrayDtoExerciseCase).isNotEmpty();
+            var result = new HashSet<>(Arrays.asList(arrayDtoExerciseCase));
+            assertThat(result).isEqualTo(expectedValue);
         }
     }
 }
