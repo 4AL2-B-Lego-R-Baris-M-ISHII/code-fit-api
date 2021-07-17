@@ -11,5 +11,6 @@ import java.util.List;
 public class DtoCode {
     private Long codeId;
     private Boolean isResolved;
+    private String content;
     private List<CodeResult> listCodeResult;
 }

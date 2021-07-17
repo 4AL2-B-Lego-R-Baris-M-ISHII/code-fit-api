@@ -17,4 +17,6 @@ public interface ExerciseCaseDao {
     ExerciseCase saveOne(ExerciseCase exerciseCaseToSave);
 
     void deleteById(Long exerciseCaseId) throws NotFoundException;
+
+    Set<ExerciseCase> findAllByIdIn(Set<Long> setId);
 }
