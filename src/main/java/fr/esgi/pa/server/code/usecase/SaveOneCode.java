@@ -19,7 +19,7 @@ public class SaveOneCode {
 
     public Long execute(Long userId, Long exerciseCaseId, String codeContent) throws NotFoundException, ForbiddenException {
         checkIfUserExists(userId);
-        checkIfExerciseCaseExists(exerciseCaseId);
+        checkIfExerciseCaseIsValid(exerciseCaseId);
 
         return savedCode(userId, exerciseCaseId, codeContent);
     }
@@ -35,14 +35,15 @@ public class SaveOneCode {
         }
     }
 
-    private void checkIfExerciseCaseExists(Long exerciseCaseId) throws NotFoundException {
-        if (!exerciseCaseDao.existsById(exerciseCaseId)) {
+    private void checkIfExerciseCaseIsValid(Long exerciseCaseId) throws NotFoundException, ForbiddenException {
+        var exerciseCase = exerciseCaseDao.findById(exerciseCaseId);
+        if (!exerciseCase.getIsValid()) {
             var message = String.format(
-                    "%s : Exercise case with id '%d' not found",
-                    CommonExceptionState.NOT_FOUND,
-                    exerciseCaseId
+                    "%s : Can't save code of not valid exercise case",
+                    CommonExceptionState.FORBIDDEN
+
             );
-            throw new NotFoundException(message);
+            throw new ForbiddenException(message);
         }
     }
 
