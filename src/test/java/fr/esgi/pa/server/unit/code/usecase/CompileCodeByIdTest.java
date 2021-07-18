@@ -1,5 +1,6 @@
 package fr.esgi.pa.server.unit.code.usecase;
 
+import fr.esgi.pa.server.code.core.adapter.CodeAdapter;
 import fr.esgi.pa.server.code.core.compiler.CodeResult;
 import fr.esgi.pa.server.code.core.compiler.CodeState;
 import fr.esgi.pa.server.code.core.compiler.Compiler;
@@ -19,9 +20,9 @@ import fr.esgi.pa.server.language.core.LanguageDao;
 import fr.esgi.pa.server.language.core.LanguageName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Comparator;
 import java.util.List;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 class CompileCodeByIdTest {
 
     private final long codeId = 61L;
@@ -59,6 +60,9 @@ class CompileCodeByIdTest {
     @Mock
     private ExerciseTestDao mockExerciseTestDao;
 
+    @Autowired
+    private CodeAdapter codeAdapter;
+
     @BeforeEach
     void setup() {
         sut = new CompileCodeById(
@@ -66,7 +70,8 @@ class CompileCodeByIdTest {
                 mockExerciseCaseDao,
                 mockLanguageDao,
                 mockCompilerRepository,
-                mockExerciseTestDao
+                mockExerciseTestDao,
+                codeAdapter
         );
     }
 
@@ -201,6 +206,7 @@ class CompileCodeByIdTest {
                 .setTestId(test2.getId());
         var expectedDtoCode = new DtoCode()
                 .setCodeId(foundCode.getId())
+                .setContent(foundCode.getContent())
                 .setIsResolved(true)
                 .setListCodeResult(List.of(expectedCodeResult1, expectedCodeResult2));
 
@@ -273,6 +279,7 @@ class CompileCodeByIdTest {
                 .setTestId(test2.getId());
         var expectedDtoCode = new DtoCode()
                 .setCodeId(foundCode.getId())
+                .setContent(foundCode.getContent())
                 .setIsResolved(false);
         var listCodeResult = List.of(expectedCodeResult1, expectedCodeResult2);
         var sortedListCodeResult = listCodeResult.stream()
