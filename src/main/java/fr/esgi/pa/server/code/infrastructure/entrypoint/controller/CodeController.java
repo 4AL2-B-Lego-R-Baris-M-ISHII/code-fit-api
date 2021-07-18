@@ -50,7 +50,9 @@ public class CodeController {
                 request.getCodeContent()
         );
         if (!request.getToCompile()) {
-            return created(getUri(codeId)).build();
+            return created(getUri(codeId))
+                    .header("Access-Control-Expose-Headers", "Location")
+                    .build();
         }
         var dtoCode = compileCodeById.execute(codeId);
         return ok(dtoCode);

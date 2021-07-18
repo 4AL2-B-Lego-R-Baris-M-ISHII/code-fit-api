@@ -7,6 +7,7 @@ import fr.esgi.pa.server.code.infrastructure.dataprovider.mapper.CodeMapper;
 import fr.esgi.pa.server.code.infrastructure.dataprovider.repository.CodeRepository;
 import fr.esgi.pa.server.common.core.exception.CommonExceptionState;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
+import fr.esgi.pa.server.common.core.utils.date.DateHelper;
 import fr.esgi.pa.server.exercise.core.exception.ForbiddenException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -35,9 +36,12 @@ class JpaCodeDaoTest {
     @Mock
     private CodeRepository mockCodeRepository;
 
+    @Mock
+    private DateHelper mockDateHelper;
+
     @BeforeEach
     void setup() {
-        sut = new JpaCodeDao(mockCodeRepository, codeMapper);
+        sut = new JpaCodeDao(mockCodeRepository, codeMapper, mockDateHelper);
     }
 
     @Nested

@@ -1,5 +1,6 @@
 package fr.esgi.pa.server.exercise_case.core.dto;
 
+import fr.esgi.pa.server.code.core.dto.DtoCode;
 import fr.esgi.pa.server.language.core.Language;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -15,4 +16,5 @@ public class DtoExerciseCase {
     private Boolean isValid;
     private Set<DtoExerciseTest> tests;
     private Language language;
+    private Set<DtoCode> codes;
 }
