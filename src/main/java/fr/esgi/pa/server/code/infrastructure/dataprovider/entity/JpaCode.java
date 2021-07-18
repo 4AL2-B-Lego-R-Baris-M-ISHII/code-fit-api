@@ -6,7 +6,6 @@ import lombok.experimental.Accessors;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.sql.Timestamp;
 
 @Entity(name = "code")
 @Data
@@ -31,7 +30,4 @@ public class JpaCode {
     @NotNull
     @Column(columnDefinition = "boolean default false")
     private Boolean isResolved;
-
-    @Column(name = "resolved_date")
-    private Timestamp resolvedDate;
 }

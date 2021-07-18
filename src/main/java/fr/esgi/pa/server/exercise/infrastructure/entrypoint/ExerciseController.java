@@ -54,9 +54,7 @@ public class ExerciseController {
                 .path("/{id}")
                 .buildAndExpand(newExerciseId)
                 .toUri();
-        return created(uri)
-                .header("Access-Control-Expose-Headers", "Location")
-                .build();
+        return created(uri).build();
     }
 
     @GetMapping("{id}")

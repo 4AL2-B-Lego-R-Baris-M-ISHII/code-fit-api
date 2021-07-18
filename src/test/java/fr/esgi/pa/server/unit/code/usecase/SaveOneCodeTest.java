@@ -7,7 +7,6 @@ import fr.esgi.pa.server.common.core.exception.CommonExceptionState;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.exercise.core.exception.ForbiddenException;
 import fr.esgi.pa.server.exercise_case.core.dao.ExerciseCaseDao;
-import fr.esgi.pa.server.exercise_case.core.entity.ExerciseCase;
 import fr.esgi.pa.server.user.core.dao.UserDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,36 +53,23 @@ class SaveOneCodeTest {
     }
 
     @Test
-    void when_exerciseCase_exists_but_not_valid_should_throw_NotFoundException() throws NotFoundException {
+    void when_exerciseCase_not_exists_with_given_exerciseCaseId_should_throw_NotFoundException() {
         when(mockUserDao.existsById(userId)).thenReturn(true);
-        var exerciseCase = new ExerciseCase()
-                .setId(exerciseCaseId)
-                .setExerciseId(65L)
-                .setSolution("solution")
-                .setStartContent("start content")
-                .setLanguageId(6L)
-                .setIsValid(false);
-        when(mockExerciseCaseDao.findById(exerciseCaseId)).thenReturn(exerciseCase);
+        when(mockExerciseCaseDao.existsById(exerciseCaseId)).thenReturn(false);
 
         assertThatThrownBy(() -> sut.execute(userId, exerciseCaseId, codeContent))
-                .isExactlyInstanceOf(ForbiddenException.class)
+                .isExactlyInstanceOf(NotFoundException.class)
                 .hasMessage(
-                        "%s : Can't save code of not valid exercise case",
-                        CommonExceptionState.FORBIDDEN
+                        "%s : Exercise case with id '%d' not found",
+                        CommonExceptionState.NOT_FOUND,
+                        exerciseCaseId
                 );
     }
 
     @Test
     void when_code_saved_should_return_saved_code_id() throws NotFoundException, ForbiddenException {
         when(mockUserDao.existsById(userId)).thenReturn(true);
-        var exerciseCase = new ExerciseCase()
-                .setId(exerciseCaseId)
-                .setExerciseId(65L)
-                .setSolution("solution")
-                .setStartContent("start content")
-                .setLanguageId(6L)
-                .setIsValid(true);
-        when(mockExerciseCaseDao.findById(exerciseCaseId)).thenReturn(exerciseCase);
+        when(mockExerciseCaseDao.existsById(exerciseCaseId)).thenReturn(true);
         var expectedCodeToSave = new Code()
                 .setUserId(userId)
                 .setExerciseCaseId(exerciseCaseId)

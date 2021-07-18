@@ -68,13 +68,4 @@ public class JpaExerciseCaseDao implements ExerciseCaseDao {
         }
         exerciseCaseRepository.deleteById(exerciseCaseId);
     }
-
-    @Override
-    public Set<ExerciseCase> findAllByIdIn(Set<Long> setId) {
-        var setExerciseCase = exerciseCaseRepository.findAllByIdIn(setId);
-
-        return setExerciseCase.stream()
-                .map(exerciseCaseMapper::entityToDomain)
-                .collect(Collectors.toSet());
-    }
 }

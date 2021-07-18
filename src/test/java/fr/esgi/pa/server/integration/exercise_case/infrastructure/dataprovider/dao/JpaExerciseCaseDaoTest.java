@@ -79,32 +79,4 @@ class JpaExerciseCaseDaoTest {
             assertThat(result).isEqualTo(expected);
         }
     }
-
-    @Nested
-    class FindAllByIdIn {
-
-        private final long exerciseId = 49L;
-
-        @Test
-        void should_get_set_of_exercise_case_by_set_exercise_case_id() {
-            var jpaExerciseCase1 = new JpaExerciseCase().setExerciseId(exerciseId).setLanguageId(7L).setSolution("solution").setStartContent("start content1").setIsValid(true);
-            var jpaExerciseCase2 = new JpaExerciseCase().setExerciseId(9L).setLanguageId(7L).setSolution("solution").setStartContent("start content2").setIsValid(false);
-            var listSavedExerciseCase = exerciseCaseRepository.saveAll(Set.of(jpaExerciseCase1, jpaExerciseCase2));
-            var setId = listSavedExerciseCase.stream()
-                    .map(JpaExerciseCase::getId)
-                    .collect(Collectors.toSet());
-            var jpaExercise3 = new JpaExerciseCase().setExerciseId(exerciseId).setLanguageId(7L).setSolution("solution").setStartContent("start content1").setIsValid(true);
-            exerciseCaseRepository.save(jpaExercise3);
-            ;
-
-            var result = sut.findAllByIdIn(setId);
-
-            var expectedResult = listSavedExerciseCase.stream()
-                    .map(exerciseCaseMapper::entityToDomain)
-                    .collect(Collectors.toSet());
-            assertThat(result).isNotNull();
-            assertThat(result.size()).isEqualTo(2);
-            assertThat(result).isEqualTo(expectedResult);
-        }
-    }
 }

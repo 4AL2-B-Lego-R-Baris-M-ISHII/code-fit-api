@@ -46,8 +46,9 @@ public class CompileCodeById {
         );
         var isResolved = isCodeResolvedExerciseCase(listCodeResult);
         foundCode.setIsResolved(isResolved);
-        var savedCode = codeDao.save(foundCode);
-        return buildDtoCode(savedCode, listCodeResult, isResolved);
+        codeDao.save(foundCode);
+
+        return buildDtoCode(foundCode, listCodeResult, isResolved);
     }
 
     private Language getLanguage(@NotNull Code foundCode) throws NotFoundException {
@@ -84,10 +85,9 @@ public class CompileCodeById {
                 .allMatch(codeResult -> codeResult.getCodeState() == CodeState.SUCCESS);
     }
 
-    private DtoCode buildDtoCode(Code savedCode, List<CodeResult> listCodeResult, boolean isResolved) {
-        return new DtoCode().setCodeId(savedCode.getId())
+    private DtoCode buildDtoCode(Code foundCode, List<CodeResult> listCodeResult, boolean isResolved) {
+        return new DtoCode().setCodeId(foundCode.getId())
                 .setListCodeResult(listCodeResult)
-                .setIsResolved(isResolved)
-                .setResolvedDate(savedCode.getResolvedDate());
+                .setIsResolved(isResolved);
     }
 }

@@ -7,6 +7,4 @@ import java.util.Set;
 
 public interface ExerciseCaseRepository extends JpaRepository<JpaExerciseCase, Long> {
     Set<JpaExerciseCase> findAllByExerciseId(Long exerciseId);
-
-    Set<JpaExerciseCase> findAllByIdIn(Set<Long> longs);
 }

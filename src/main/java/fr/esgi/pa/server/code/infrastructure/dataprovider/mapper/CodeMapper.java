@@ -17,8 +17,7 @@ public class CodeMapper implements
                 .setUserId(domain.getUserId())
                 .setContent(domain.getContent())
                 .setExerciseCaseId(domain.getExerciseCaseId())
-                .setIsResolved(domain.getIsResolved())
-                .setResolvedDate(domain.getResolvedDate());
+                .setIsResolved(domain.getIsResolved());
     }
 
     @Override
@@ -28,7 +27,6 @@ public class CodeMapper implements
                 .setUserId(entity.getUserId())
                 .setContent(entity.getContent())
                 .setExerciseCaseId(entity.getExerciseCaseId())
-                .setIsResolved(entity.getIsResolved())
-                .setResolvedDate(entity.getResolvedDate());
+                .setIsResolved(entity.getIsResolved());
     }
 }

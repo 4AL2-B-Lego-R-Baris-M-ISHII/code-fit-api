@@ -71,6 +71,86 @@ class CompileCodeByIdTest {
     }
 
     @Test
+    void when_found_exercise_case_should_find_language_by_id() throws NotFoundException, ForbiddenException {
+        var foundCode = new Code()
+                .setId(codeId)
+                .setExerciseCaseId(exerciseCaseId)
+                .setContent("content of code")
+                .setUserId(userId)
+                .setIsResolved(false);
+        when(mockCodeDao.findById(codeId)).thenReturn(foundCode);
+        var exerciseCase = new ExerciseCase()
+                .setId(exerciseCaseId)
+                .setExerciseId(exerciseId)
+                .setSolution("a solution")
+                .setIsValid(true)
+                .setLanguageId(languageId)
+                .setStartContent("start content");
+        when(mockExerciseCaseDao.findById(exerciseCaseId)).thenReturn(exerciseCase);
+
+        sut.execute(codeId);
+
+        verify(mockLanguageDao, times(1)).findById(languageId);
+    }
+
+    @Test
+    void when_language_found_should_get_compiler_by_compiler_repository() throws NotFoundException, ForbiddenException {
+        var foundCode = new Code()
+                .setId(codeId)
+                .setExerciseCaseId(exerciseCaseId)
+                .setContent("content of code")
+                .setUserId(userId)
+                .setIsResolved(false);
+        when(mockCodeDao.findById(codeId)).thenReturn(foundCode);
+        var foundExerciseCase = new ExerciseCase()
+                .setId(exerciseCaseId)
+                .setExerciseId(exerciseId)
+                .setSolution("a solution")
+                .setIsValid(true)
+                .setLanguageId(languageId)
+                .setStartContent("start content");
+        when(mockExerciseCaseDao.findById(exerciseCaseId)).thenReturn(foundExerciseCase);
+        var foundLanguage = new Language()
+                .setId(languageId)
+                .setLanguageName(LanguageName.JAVA8)
+                .setFileExtension("java");
+        when(mockLanguageDao.findById(languageId)).thenReturn(foundLanguage);
+
+        sut.execute(codeId);
+
+        verify(mockCompilerRepository, times(1)).findByLanguage(foundLanguage);
+    }
+
+    @Test
+    void when_code_found_by_id_should_find_all_tests_by_exercise_case_id() throws NotFoundException, ForbiddenException {
+        var foundCode = new Code()
+                .setId(codeId)
+                .setExerciseCaseId(exerciseCaseId)
+                .setContent("content of code")
+                .setUserId(userId)
+                .setIsResolved(false);
+        when(mockCodeDao.findById(codeId)).thenReturn(foundCode);
+        var foundExerciseCase = new ExerciseCase()
+                .setId(exerciseCaseId)
+                .setExerciseId(exerciseId)
+                .setSolution("a solution")
+                .setIsValid(true)
+                .setLanguageId(languageId)
+                .setStartContent("start content");
+        when(mockExerciseCaseDao.findById(exerciseCaseId)).thenReturn(foundExerciseCase);
+        var foundLanguage = new Language()
+                .setId(languageId)
+                .setLanguageName(LanguageName.JAVA8)
+                .setFileExtension("java");
+        when(mockLanguageDao.findById(languageId)).thenReturn(foundLanguage);
+        when(mockCompilerRepository.findByLanguage(foundLanguage)).thenReturn(mockCompiler);
+
+        sut.execute(codeId);
+
+        verify(mockExerciseTestDao, times(1)).findAllByExerciseCaseId(foundCode.getExerciseCaseId());
+    }
+
+    @Test
     void when_all_content_and_tests_are_compiled_and_are_success_should_save_code_with_isResolved_property_to_true() throws NotFoundException, ForbiddenException {
         var foundCode = new Code()
                 .setId(codeId)
@@ -115,13 +195,6 @@ class CompileCodeByIdTest {
                 .setOutput("code 2 output")
                 .setCodeState(CodeState.SUCCESS);
         when(mockCompiler.compile(contentToCompile2, foundLanguage)).thenReturn(codeResult2);
-        var savedCode = new Code()
-                .setId(foundCode.getId())
-                .setContent(foundCode.getContent())
-                .setUserId(foundCode.getUserId())
-                .setExerciseCaseId(foundCode.getExerciseCaseId())
-                .setIsResolved(true);
-        when(mockCodeDao.save(savedCode)).thenReturn(savedCode);
 
         sut.execute(codeId);
 
@@ -179,13 +252,6 @@ class CompileCodeByIdTest {
                 .setOutput("code 2 output")
                 .setCodeState(CodeState.SUCCESS);
         when(mockCompiler.compile(contentToCompile2, foundLanguage)).thenReturn(codeResult2);
-        var savedCode = new Code()
-                .setId(foundCode.getId())
-                .setContent(foundCode.getContent())
-                .setUserId(foundCode.getUserId())
-                .setExerciseCaseId(foundCode.getExerciseCaseId())
-                .setIsResolved(true);
-        when(mockCodeDao.save(savedCode)).thenReturn(savedCode);
 
         var result = sut.execute(codeId);
 
@@ -252,13 +318,7 @@ class CompileCodeByIdTest {
                 .setOutput("code 2 error")
                 .setCodeState(CodeState.RUNTIME_ERROR);
         when(mockCompiler.compile(contentToCompile2, foundLanguage)).thenReturn(codeResult2);
-        var savedCode = new Code()
-                .setId(foundCode.getId())
-                .setContent(foundCode.getContent())
-                .setUserId(foundCode.getUserId())
-                .setExerciseCaseId(foundCode.getExerciseCaseId())
-                .setIsResolved(false);
-        when(mockCodeDao.save(savedCode)).thenReturn(savedCode);
+
         var result = sut.execute(codeId);
 
         var expectedCodeResult1 = new CodeResult()
