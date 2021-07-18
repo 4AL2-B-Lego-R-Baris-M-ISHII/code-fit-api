@@ -6,6 +6,7 @@ import fr.esgi.pa.server.code.infrastructure.dataprovider.mapper.CodeMapper;
 import fr.esgi.pa.server.code.infrastructure.dataprovider.repository.CodeRepository;
 import fr.esgi.pa.server.common.core.exception.CommonExceptionState;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
+import fr.esgi.pa.server.common.core.utils.date.DateHelper;
 import fr.esgi.pa.server.exercise.core.exception.ForbiddenException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 public class JpaCodeDao implements CodeDao {
     private final CodeRepository codeRepository;
     private final CodeMapper codeMapper;
+    private final DateHelper dateHelper;
 
     @Override
     public Code save(Code code) throws ForbiddenException {
@@ -53,6 +55,8 @@ public class JpaCodeDao implements CodeDao {
                 .orElse(codeMapper.domainToEntity(code));
         codeToSave.setContent(code.getContent());
         codeToSave.setIsResolved(code.getIsResolved());
+        if (code.getIsResolved())
+            codeToSave.setResolvedDate(dateHelper.timestampNow());
         var savedCode = codeRepository.save(codeToSave);
         return codeMapper.entityToDomain(savedCode);
     }
