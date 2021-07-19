@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -229,6 +230,48 @@ class JpaExerciseDaoTest {
             sut.deleteById(exerciseId);
 
             verify(mockExerciseRepository, times(1)).deleteById(exerciseId);
+        }
+    }
+
+    @Nested
+    class FindAllExercisesByIdIn {
+        @Test
+        void should_call_exercise_repository_find_all_by_id() {
+            var setExerciseId = Set.of(651L, 98L, 35L);
+            sut.findAllByIdIn(setExerciseId);
+
+            verify(mockExerciseRepository, times(1)).findAllById(setExerciseId);
+        }
+
+        @Test
+        void when_find_all_by_id_should_return_set_of_domain_exercise() {
+            var setExerciseId = Set.of(651L, 98L, 35L);
+            var foundExercise1 = new JpaExercise()
+                    .setId(651L)
+                    .setTitle("exercise 651")
+                    .setDescription("description")
+                    .setUserId(7L);
+            var foundExercise2 = new JpaExercise()
+                    .setId(98L)
+                    .setTitle("exercise 98L")
+                    .setDescription("description")
+                    .setUserId(7L);
+            var foundExercise3 = new JpaExercise()
+                    .setId(35L)
+                    .setTitle("exercise 35L")
+                    .setDescription("description")
+                    .setUserId(8L);
+            var foundListExercise = List.of(
+                    foundExercise1, foundExercise2, foundExercise3
+            );
+            when(mockExerciseRepository.findAllById(setExerciseId)).thenReturn(foundListExercise);
+
+            var result = sut.findAllByIdIn(setExerciseId);
+
+            var expectedResult = foundListExercise.stream()
+                    .map(exerciseMapper::entityToDomain)
+                    .collect(Collectors.toSet());
+            assertThat(result).isEqualTo(expectedResult);
         }
     }
 }

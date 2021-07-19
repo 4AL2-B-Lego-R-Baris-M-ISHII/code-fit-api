@@ -18,4 +18,6 @@ public interface ExerciseDao {
     Exercise save(Exercise exercise) throws IncorrectExerciseException;
 
     void deleteById(Long exerciseId) throws NotFoundException;
+
+    Set<Exercise> findAllByIdIn(Set<Long> exerciseId);
 }

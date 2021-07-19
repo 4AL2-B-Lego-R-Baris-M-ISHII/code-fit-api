@@ -92,4 +92,12 @@ public class JpaExerciseDao implements ExerciseDao {
 
         exerciseRepository.deleteById(exerciseId);
     }
+
+    @Override
+    public Set<Exercise> findAllByIdIn(Set<Long> setExerciseId) {
+        var foundListExercise = exerciseRepository.findAllById(setExerciseId);
+        return foundListExercise.stream()
+                .map(exerciseMapper::entityToDomain)
+                .collect(Collectors.toSet());
+    }
 }

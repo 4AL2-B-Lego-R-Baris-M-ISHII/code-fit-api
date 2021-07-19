@@ -7,6 +7,7 @@ import fr.esgi.pa.server.exercise.core.exception.IncorrectExerciseException;
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.request.SaveExerciseRequest;
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.request.UpdateExerciseRequest;
 import fr.esgi.pa.server.exercise.usecase.*;
+import fr.esgi.pa.server.exercise_case.core.usecase.GetAllExerciseCaseByUserId;
 import fr.esgi.pa.server.language.core.exception.IncorrectLanguageNameException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +23,7 @@ import javax.validation.constraints.Pattern;
 import java.net.URI;
 import java.util.Set;
 
-import static org.springframework.http.ResponseEntity.created;
-import static org.springframework.http.ResponseEntity.ok;
+import static org.springframework.http.ResponseEntity.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -36,6 +36,8 @@ public class ExerciseController {
     private final FindAllExercises findAllExercises;
     private final UpdateOneExercise updateOneExercise;
     private final DeleteOneExercise deleteOneExercise;
+    private final GetAllExerciseCaseByUserId getAllExerciseCaseByUserId;
+    private final GetAllExerciseThatUserResolved getAllExerciseThatUserResolved;
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -89,7 +91,7 @@ public class ExerciseController {
             @Valid @RequestBody UpdateExerciseRequest request
     ) throws IncorrectExerciseException, NotFoundException, ForbiddenException {
         updateOneExercise.execute(Long.parseLong(userId), exerciseId, request.getTitle(), request.getDescription());
-        return ResponseEntity.noContent().build();
+        return noContent().build();
     }
 
     @DeleteMapping("{id}")
@@ -102,6 +104,17 @@ public class ExerciseController {
             @Min(value = 1, message = "id has to be equal or more than 1") Long exerciseId
     ) throws NotFoundException {
         deleteOneExercise.execute(Long.parseLong(userId), exerciseId);
-        return ResponseEntity.noContent().build();
+        return noContent().build();
+    }
+
+    @GetMapping("/logged-user")
+    public ResponseEntity<Set<DtoExercise>> getAllByCodesOfLoggedUser(
+            @ApiIgnore @RequestAttribute("userId")
+            @Pattern(regexp = "^\\d+$", message = "id has to be an integer")
+            @Min(value = 1, message = "id has to be equal or more than 1") String userId
+    ) throws NotFoundException {
+        var setDtoExerciseCaseUserResolved = getAllExerciseCaseByUserId.execute(Long.parseLong(userId));
+        var setDtoExercise = getAllExerciseThatUserResolved.execute(setDtoExerciseCaseUserResolved);
+        return ok(setDtoExercise);
     }
 }

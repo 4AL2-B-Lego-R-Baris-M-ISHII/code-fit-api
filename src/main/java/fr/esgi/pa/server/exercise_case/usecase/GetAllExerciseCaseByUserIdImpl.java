@@ -10,6 +10,7 @@ import fr.esgi.pa.server.exercise_case.core.dao.ExerciseTestDao;
 import fr.esgi.pa.server.exercise_case.core.dto.DtoExerciseCase;
 import fr.esgi.pa.server.exercise_case.core.dto.DtoExerciseTest;
 import fr.esgi.pa.server.exercise_case.core.entity.ExerciseCase;
+import fr.esgi.pa.server.exercise_case.core.usecase.GetAllExerciseCaseByUserId;
 import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.adapter.ExerciseCaseAdapter;
 import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.adapter.ExerciseTestAdapter;
 import fr.esgi.pa.server.language.core.LanguageDao;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class GetAllExerciseCaseByUserId {
+public class GetAllExerciseCaseByUserIdImpl implements GetAllExerciseCaseByUserId {
     private final CodeDao codeDao;
     private final ExerciseCaseDao exerciseCaseDao;
     private final LanguageDao languageDao;
