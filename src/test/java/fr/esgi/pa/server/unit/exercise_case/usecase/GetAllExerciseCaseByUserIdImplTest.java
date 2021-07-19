@@ -13,7 +13,7 @@ import fr.esgi.pa.server.exercise_case.core.entity.ExerciseCase;
 import fr.esgi.pa.server.exercise_case.core.entity.ExerciseTest;
 import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.adapter.ExerciseCaseAdapter;
 import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.adapter.ExerciseTestAdapter;
-import fr.esgi.pa.server.exercise_case.usecase.GetAllExerciseCaseByUserId;
+import fr.esgi.pa.server.exercise_case.usecase.GetAllExerciseCaseByUserIdImpl;
 import fr.esgi.pa.server.language.core.Language;
 import fr.esgi.pa.server.language.core.LanguageDao;
 import fr.esgi.pa.server.language.core.LanguageName;
@@ -30,9 +30,9 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-class GetAllExerciseCaseByUserIdTest {
+class GetAllExerciseCaseByUserIdImplTest {
     private final long userId = 61L;
-    private GetAllExerciseCaseByUserId sut;
+    private GetAllExerciseCaseByUserIdImpl sut;
 
     @Mock
     private CodeDao mockCodeDao;
@@ -57,7 +57,7 @@ class GetAllExerciseCaseByUserIdTest {
 
     @BeforeEach
     void setup() {
-        sut = new GetAllExerciseCaseByUserId(
+        sut = new GetAllExerciseCaseByUserIdImpl(
                 mockCodeDao,
                 mockExerciseCaseDao,
                 mockLanguageDao,

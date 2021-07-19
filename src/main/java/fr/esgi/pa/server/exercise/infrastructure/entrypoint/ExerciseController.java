@@ -104,4 +104,13 @@ public class ExerciseController {
         deleteOneExercise.execute(Long.parseLong(userId), exerciseId);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/logged-user")
+    public ResponseEntity<DtoExercise> getAllByCodesOfLoggedUser(
+            @ApiIgnore @RequestAttribute("userId")
+            @Pattern(regexp = "^\\d+$", message = "id has to be an integer")
+            @Min(value = 1, message = "id has to be equal or more than 1") String userId
+    ) {
+        return null;
+    }
 }
