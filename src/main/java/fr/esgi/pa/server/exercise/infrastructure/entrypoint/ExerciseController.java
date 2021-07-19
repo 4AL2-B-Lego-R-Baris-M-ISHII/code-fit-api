@@ -7,6 +7,7 @@ import fr.esgi.pa.server.exercise.core.exception.IncorrectExerciseException;
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.request.SaveExerciseRequest;
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.request.UpdateExerciseRequest;
 import fr.esgi.pa.server.exercise.usecase.*;
+import fr.esgi.pa.server.exercise_case.core.usecase.GetAllExerciseCaseByUserId;
 import fr.esgi.pa.server.language.core.exception.IncorrectLanguageNameException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +37,8 @@ public class ExerciseController {
     private final FindAllExercises findAllExercises;
     private final UpdateOneExercise updateOneExercise;
     private final DeleteOneExercise deleteOneExercise;
+    private final GetAllExerciseCaseByUserId getAllExerciseCaseByUserId;
+    private final GetAllExerciseThatUserResolved getAllExerciseThatUserResolved;
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -110,7 +113,9 @@ public class ExerciseController {
             @ApiIgnore @RequestAttribute("userId")
             @Pattern(regexp = "^\\d+$", message = "id has to be an integer")
             @Min(value = 1, message = "id has to be equal or more than 1") String userId
-    ) {
+    ) throws NotFoundException {
+        var setDtoExerciseCaseUserResolved = getAllExerciseCaseByUserId.execute(Long.parseLong(userId));
+        getAllExerciseThatUserResolved.execute(setDtoExerciseCaseUserResolved);
         return null;
     }
 }
