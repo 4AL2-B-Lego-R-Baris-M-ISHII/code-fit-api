@@ -23,8 +23,7 @@ import javax.validation.constraints.Pattern;
 import java.net.URI;
 import java.util.Set;
 
-import static org.springframework.http.ResponseEntity.created;
-import static org.springframework.http.ResponseEntity.ok;
+import static org.springframework.http.ResponseEntity.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -92,7 +91,7 @@ public class ExerciseController {
             @Valid @RequestBody UpdateExerciseRequest request
     ) throws IncorrectExerciseException, NotFoundException, ForbiddenException {
         updateOneExercise.execute(Long.parseLong(userId), exerciseId, request.getTitle(), request.getDescription());
-        return ResponseEntity.noContent().build();
+        return noContent().build();
     }
 
     @DeleteMapping("{id}")
@@ -105,17 +104,17 @@ public class ExerciseController {
             @Min(value = 1, message = "id has to be equal or more than 1") Long exerciseId
     ) throws NotFoundException {
         deleteOneExercise.execute(Long.parseLong(userId), exerciseId);
-        return ResponseEntity.noContent().build();
+        return noContent().build();
     }
 
     @GetMapping("/logged-user")
-    public ResponseEntity<DtoExercise> getAllByCodesOfLoggedUser(
+    public ResponseEntity<Set<DtoExercise>> getAllByCodesOfLoggedUser(
             @ApiIgnore @RequestAttribute("userId")
             @Pattern(regexp = "^\\d+$", message = "id has to be an integer")
             @Min(value = 1, message = "id has to be equal or more than 1") String userId
     ) throws NotFoundException {
         var setDtoExerciseCaseUserResolved = getAllExerciseCaseByUserId.execute(Long.parseLong(userId));
-        getAllExerciseThatUserResolved.execute(setDtoExerciseCaseUserResolved);
-        return null;
+        var setDtoExercise = getAllExerciseThatUserResolved.execute(setDtoExerciseCaseUserResolved);
+        return ok(setDtoExercise);
     }
 }
