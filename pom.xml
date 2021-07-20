@@ -127,6 +127,17 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>com.heroku.sdk</groupId>
+                <artifactId>heroku-maven-plugin</artifactId>
+                <version>3.0.3</version>
+                <configuration>
+                    <appName>code-fit-api</appName>
+                    <processTypes>
+                        <web>mvn clean package &amp;&amp; mvn spring-boot:run</web>
+                    </processTypes>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
