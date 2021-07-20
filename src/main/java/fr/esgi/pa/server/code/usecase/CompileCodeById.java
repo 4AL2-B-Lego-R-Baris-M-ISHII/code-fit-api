@@ -1,5 +1,6 @@
 package fr.esgi.pa.server.code.usecase;
 
+import fr.esgi.pa.server.code.core.adapter.CodeAdapter;
 import fr.esgi.pa.server.code.core.compiler.CodeResult;
 import fr.esgi.pa.server.code.core.compiler.CodeState;
 import fr.esgi.pa.server.code.core.compiler.Compiler;
@@ -32,6 +33,7 @@ public class CompileCodeById {
     private final LanguageDao languageDao;
     private final CompilerRepository compilerRepository;
     private final ExerciseTestDao exerciseTestDao;
+    private final CodeAdapter codeAdapter;
 
     public DtoCode execute(Long codeId) throws NotFoundException, ForbiddenException {
         var foundCode = codeDao.findById(codeId);
@@ -85,9 +87,9 @@ public class CompileCodeById {
     }
 
     private DtoCode buildDtoCode(Code savedCode, List<CodeResult> listCodeResult, boolean isResolved) {
-        return new DtoCode().setCodeId(savedCode.getId())
-                .setListCodeResult(listCodeResult)
-                .setIsResolved(isResolved)
-                .setResolvedDate(savedCode.getResolvedDate());
+        var resultDtoCode = codeAdapter.domainToDto(savedCode);
+        resultDtoCode.setListCodeResult(listCodeResult);
+        resultDtoCode.setIsResolved(isResolved);
+        return resultDtoCode;
     }
 }
