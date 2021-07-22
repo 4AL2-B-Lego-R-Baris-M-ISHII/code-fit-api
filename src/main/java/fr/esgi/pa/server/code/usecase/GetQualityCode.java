@@ -1,5 +1,6 @@
 package fr.esgi.pa.server.code.usecase;
 
+import fr.esgi.pa.server.code.core.adapter.CodeAdapter;
 import fr.esgi.pa.server.code.core.dao.CodeDao;
 import fr.esgi.pa.server.code.core.dto.CodeQualityType;
 import fr.esgi.pa.server.code.core.dto.DtoQualityCode;
@@ -24,6 +25,7 @@ public class GetQualityCode {
     private final ExerciseCaseDao exerciseCaseDao;
     private final LanguageDao languageDao;
     private final ProcessQualityCode processQualityCode;
+    private final CodeAdapter codeAdapter;
 
     public DtoQualityCode execute(Long userId, Long codeId, Set<CodeQualityType> codeQualityTypeSet) throws NotFoundException, ForbiddenException {
         var foundCode = codeDao.findById(codeId);
@@ -39,8 +41,9 @@ public class GetQualityCode {
                 foundLanguage,
                 codeQualityTypeSet
         );
+        var dtoCode = codeAdapter.domainToDto(foundCode);
         return new DtoQualityCode()
-                .setCodeId(codeId)
+                .setCode(dtoCode)
                 .setExerciseCaseId(foundExerciseCase.getId())
                 .setQualityCode(qualityCode);
     }

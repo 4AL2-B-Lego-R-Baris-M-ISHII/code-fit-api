@@ -417,7 +417,7 @@ class CodeControllerTest {
                     .setNbLinesCode(5L)
                     .setLanguage(new Language().setId(7L).setFileExtension("c").setLanguageName(LanguageName.C11));
             var dtoQualityCode = new DtoQualityCode()
-                    .setCodeId(1L)
+                    .setCode(new DtoCode().setCodeId(1L).setContent("content").setIsResolved(true).setResolvedDateTimestampSec(35135135L))
                     .setExerciseCaseId(64L)
                     .setQualityCode(qualityCode);
             when(mockGetQualityCode.execute(2L, 1L, codeQualityTypeSet)).thenReturn(dtoQualityCode);

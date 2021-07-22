@@ -7,7 +7,7 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class DtoQualityCode {
-    private Long codeId;
+    private DtoCode code;
     private Long exerciseCaseId;
     private QualityCode qualityCode;
 }
