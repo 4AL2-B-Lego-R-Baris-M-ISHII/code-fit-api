@@ -1,7 +1,9 @@
 package fr.esgi.pa.server.unit.code.usecase;
 
+import fr.esgi.pa.server.code.core.adapter.CodeAdapter;
 import fr.esgi.pa.server.code.core.dao.CodeDao;
 import fr.esgi.pa.server.code.core.dto.CodeQualityType;
+import fr.esgi.pa.server.code.core.dto.DtoCode;
 import fr.esgi.pa.server.code.core.dto.DtoQualityCode;
 import fr.esgi.pa.server.code.core.entity.Code;
 import fr.esgi.pa.server.code.core.quality.ProcessQualityCode;
@@ -18,17 +20,18 @@ import fr.esgi.pa.server.language.core.LanguageName;
 import fr.esgi.pa.server.user.core.dao.UserDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 class GetQualityCodeTest {
     private final long userId = 61L;
     private final long codeId = 32L;
@@ -52,6 +55,8 @@ class GetQualityCodeTest {
     @Mock
     private ProcessQualityCode mockProcessQualityCode;
 
+    @Autowired
+    private CodeAdapter codeAdapter;
 
     private final long exerciseCaseId = 94L;
 
@@ -64,7 +69,8 @@ class GetQualityCodeTest {
                 mockCodeDao,
                 mockExerciseCaseDao,
                 mockLanguageDao,
-                mockProcessQualityCode
+                mockProcessQualityCode,
+                codeAdapter
         );
     }
 
@@ -212,8 +218,15 @@ class GetQualityCodeTest {
 
         var result = sut.execute(userId, codeId, qualityTypeSet);
 
+        var dtoCode = new DtoCode()
+                .setCodeId(foundCode.getId())
+                .setContent(foundCode.getContent())
+                .setIsResolved(foundCode.getIsResolved())
+                .setResolvedDateTimestampSec(Optional.ofNullable(foundCode.getResolvedDate())
+                        .map(resolvedDate -> resolvedDate.getTime() / 1000)
+                        .orElse(null));
         var expectedDtoQualityCode = new DtoQualityCode()
-                .setCodeId(codeId)
+                .setCode(dtoCode)
                 .setExerciseCaseId(exerciseCaseId)
                 .setQualityCode(qualityCode);
         assertThat(result).isEqualTo(expectedDtoQualityCode);
