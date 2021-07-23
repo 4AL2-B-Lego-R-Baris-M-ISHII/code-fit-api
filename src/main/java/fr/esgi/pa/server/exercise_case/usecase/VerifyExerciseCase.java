@@ -51,6 +51,7 @@ public class VerifyExerciseCase {
                 result.setIsExerciseCaseValid(false);
             }
             resultCode.setTestId(exerciseTest.getId());
+            resultCode.setPosition(exerciseTest.getPosition());
             codeList.add(codeList.size(), resultCode);
         }
         result.setCodeResultList(codeList);
