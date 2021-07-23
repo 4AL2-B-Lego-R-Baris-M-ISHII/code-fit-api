@@ -84,7 +84,7 @@ public class ExerciseCaseController {
                 request.getStartContent(),
                 setTest
         );
-        if (!request.getVerifyCode()) {
+        if (request.getVerifyCode() == null || !request.getVerifyCode()) {
             return noContent().build();
         }
 
