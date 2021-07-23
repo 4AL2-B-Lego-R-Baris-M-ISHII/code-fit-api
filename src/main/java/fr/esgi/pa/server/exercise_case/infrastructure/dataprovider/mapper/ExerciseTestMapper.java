@@ -15,7 +15,8 @@ public class ExerciseTestMapper implements
         return new ExerciseTest()
                 .setId(entity.getId())
                 .setContent(entity.getContent())
-                .setExerciseCaseId(entity.getExerciseCaseId());
+                .setExerciseCaseId(entity.getExerciseCaseId())
+                .setPosition(entity.getPosition());
     }
 
     @Override
@@ -23,6 +24,7 @@ public class ExerciseTestMapper implements
         return new JpaExerciseTest()
                 .setId(domain.getId())
                 .setExerciseCaseId(domain.getExerciseCaseId())
-                .setContent(domain.getContent());
+                .setContent(domain.getContent())
+                .setPosition(domain.getPosition());
     }
 }

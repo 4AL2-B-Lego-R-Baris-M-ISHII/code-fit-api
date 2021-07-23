@@ -50,6 +50,7 @@ public class VerifyExerciseCase {
             if (resultCode.getCodeState() != CodeState.SUCCESS) {
                 result.setIsExerciseCaseValid(false);
             }
+            resultCode.setTestId(exerciseTest.getId());
             codeList.add(codeList.size(), resultCode);
         }
         result.setCodeResultList(codeList);
