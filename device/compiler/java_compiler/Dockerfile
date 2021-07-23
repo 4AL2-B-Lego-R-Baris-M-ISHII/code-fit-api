@@ -8,7 +8,7 @@ USER root
 
 ADD tmp .
 
-RUN chmod a+x ./main.java
+RUN chmod a+x ./Main.java
 RUN chmod a+x ./launch.sh
 
 ENTRYPOINT ["./launch.sh"]

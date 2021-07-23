@@ -66,7 +66,7 @@ public class DockerCompileRunner implements CompileRunner {
         var mainFile = language.getLanguageName().equals(LanguageName.JAVA8)
                 ? "Main"
                 : "main";
-        var mainFileWithExtension = "main." + language.getFileExtension();
+        var mainFileWithExtension = String.format("%s.%s", mainFile, language.getFileExtension());
         var filePath = getFilePath(folderTmpPath, mainFileWithExtension);
         fileWriter.writeContentToFile(content, filePath);
         return mainFileWithExtension;
