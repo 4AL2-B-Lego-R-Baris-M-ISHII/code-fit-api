@@ -13,13 +13,15 @@ public class ExerciseTestAdapter implements
     public DtoExerciseTest domainToDto(ExerciseTest exerciseTest) {
         return new DtoExerciseTest()
                 .setId(exerciseTest.getId())
-                .setContent(exerciseTest.getContent());
+                .setContent(exerciseTest.getContent())
+                .setPosition(exerciseTest.getPosition());
     }
 
     public ExerciseTest requestToDomain(ExerciseTestRequest request, Long exerciseCaseId) {
         return new ExerciseTest()
                 .setId(request.getId())
                 .setContent(request.getContent())
-                .setExerciseCaseId(exerciseCaseId);
+                .setExerciseCaseId(exerciseCaseId)
+                .setPosition(request.getPosition());
     }
 }

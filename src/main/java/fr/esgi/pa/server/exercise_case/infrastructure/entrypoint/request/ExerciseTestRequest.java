@@ -14,4 +14,6 @@ public class ExerciseTestRequest {
     @NotBlank
     @Size(max = 60000)
     private String content;
+
+    private Long position;
 }
