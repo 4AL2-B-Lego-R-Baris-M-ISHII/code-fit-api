@@ -8,4 +8,5 @@ import lombok.experimental.Accessors;
 public class DtoExerciseTest {
     private Long id;
     private String content;
+    private Long position;
 }

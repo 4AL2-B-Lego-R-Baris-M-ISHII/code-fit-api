@@ -9,4 +9,5 @@ public class ExerciseTest {
     private Long id;
     private String content;
     private Long exerciseCaseId;
+    private Long position;
 }

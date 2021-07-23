@@ -85,7 +85,8 @@ class JpaDefaultExerciseTest {
 
         var expectedExerciseTest = new JpaExerciseTest()
                 .setExerciseCaseId(savedExerciseCase.getId())
-                .setContent(defaultValues.getTestContent());
+                .setContent(defaultValues.getTestContent())
+                .setPosition(1L);
 
         verify(mockExerciseTestRepository, times(1)).save(expectedExerciseTest);
     }
@@ -123,11 +124,13 @@ class JpaDefaultExerciseTest {
         when(mockExerciseCaseRepository.save(exerciseCaseToSave)).thenReturn(savedExerciseCase);
         var exerciseTestToSave = new JpaExerciseTest()
                 .setExerciseCaseId(savedExerciseCase.getId())
-                .setContent(defaultValues.getTestContent());
+                .setContent(defaultValues.getTestContent())
+                .setPosition(1L);
         var savedExerciseTest = new JpaExerciseTest()
                 .setExerciseCaseId(exerciseTestToSave.getExerciseCaseId())
                 .setContent(exerciseTestToSave.getContent())
-                .setId(3L);
+                .setId(3L)
+                .setPosition(1L);
         when(mockExerciseTestRepository.save(exerciseTestToSave)).thenReturn(savedExerciseTest);
 
         var result = sut.createDefaultExercise(title, description, language, userId);

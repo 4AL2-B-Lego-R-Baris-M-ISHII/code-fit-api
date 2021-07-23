@@ -20,4 +20,6 @@ public class JpaExerciseTest {
 
     @Column(name = "exercise_case_id")
     private Long exerciseCaseId;
+
+    private Long position;
 }
