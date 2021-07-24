@@ -21,6 +21,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 import java.net.URI;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.springframework.http.ResponseEntity.*;
@@ -34,6 +35,7 @@ public class ExerciseController {
     private final SaveOneExercise saveOneExercise;
     private final FindOneExercise findOneExercise;
     private final FindAllExercises findAllExercises;
+    private final FilterExercisesByCreator filterExercisesByCreator;
     private final UpdateOneExercise updateOneExercise;
     private final DeleteOneExercise deleteOneExercise;
     private final GetAllExerciseCaseByUserId getAllExerciseCaseByUserId;
@@ -75,8 +77,17 @@ public class ExerciseController {
     }
 
     @GetMapping
-    public ResponseEntity<Set<DtoExercise>> findAll() throws NotFoundException {
+    public ResponseEntity<Set<DtoExercise>> findAll(
+            @ApiIgnore @RequestAttribute(name = "userId")
+            @Pattern(regexp = "^\\d+$", message = "id has to be an integer")
+            @Min(value = 1, message = "id has to be equal or more than 1") String userId,
+            @RequestParam(name = "is_creator") Optional<Boolean> isCreator
+    ) throws NotFoundException {
         var allExercise = findAllExercises.execute();
+
+        if (isCreator.isPresent()) {
+            allExercise = filterExercisesByCreator.execute(allExercise, Long.parseLong(userId));
+        }
         return ok(allExercise);
     }
 
