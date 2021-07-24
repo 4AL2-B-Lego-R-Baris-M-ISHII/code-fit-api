@@ -14,5 +14,5 @@ public interface CodeDao {
 
     Set<Code> findAllByUserId(Long userId);
 
-    Optional<Code> findByUserIdAndExerciseCaseId(Long exerciseCaseId, Long userId);
+    Optional<Code> findByUserIdAndExerciseCaseId(Long userId, Long exerciseCaseId);
 }
