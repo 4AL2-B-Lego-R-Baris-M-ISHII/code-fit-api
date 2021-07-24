@@ -129,7 +129,7 @@ class AddLoggedUserCodeAllExercisesTest {
             assertThat(curDtoExercise).isNotNull();
             curDtoExercise.getCases().forEach(curCase -> {
                 assertThat(curCase).isNotNull();
-                assertThat(curCase.getCodes().size()).isEqualTo(0);
+                assertThat(curCase.getCodes()).isNull();
             });
         });
     }

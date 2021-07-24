@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -26,13 +25,10 @@ public class AddLoggedUserCodeAllExercises {
     private @NotNull DtoExercise updateDtoExerciseWithCodeForEachCase(Long loggedUserId, DtoExercise dtoExercise) {
         var cases = dtoExercise.getCases();
         var casesWithCode = cases.stream()
-                .map(curCase -> {
+                .peek(curCase -> {
                     var maybeCode = codeDao.findByUserIdAndExerciseCaseId(loggedUserId, curCase.getId());
-                    if (maybeCode.isEmpty()) return null;
-                    curCase.setCodes(Set.of(codeAdapter.domainToDto(maybeCode.get())));
-                    return curCase;
+                    maybeCode.ifPresent(code -> curCase.setCodes(Set.of(codeAdapter.domainToDto(code))));
                 })
-                .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
         dtoExercise.setCases(casesWithCode);
         return dtoExercise;
