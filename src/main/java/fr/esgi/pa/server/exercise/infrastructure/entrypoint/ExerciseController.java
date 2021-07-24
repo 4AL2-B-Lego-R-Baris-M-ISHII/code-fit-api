@@ -36,6 +36,7 @@ public class ExerciseController {
     private final FindOneExercise findOneExercise;
     private final FindAllExercises findAllExercises;
     private final FilterExercisesByCreator filterExercisesByCreator;
+    private final AddLoggedUserCodeAllExercises addLoggedUserCodeAllExercises;
     private final UpdateOneExercise updateOneExercise;
     private final DeleteOneExercise deleteOneExercise;
     private final GetAllExerciseCaseByUserId getAllExerciseCaseByUserId;
@@ -81,12 +82,18 @@ public class ExerciseController {
             @ApiIgnore @RequestAttribute(name = "userId")
             @Pattern(regexp = "^\\d+$", message = "id has to be an integer")
             @Min(value = 1, message = "id has to be equal or more than 1") String userId,
-            @RequestParam(name = "is_creator") Optional<Boolean> isCreator
+            @RequestParam(name = "is_creator") Optional<Boolean> isCreator,
+            @RequestParam(name = "is_valid") Optional<Boolean> isValid,
+            @RequestParam(name = "with_logged_user_code") Optional<Boolean> withLoggedUserCode
     ) throws NotFoundException {
         var allExercise = findAllExercises.execute();
 
         if (isCreator.isPresent()) {
             allExercise = filterExercisesByCreator.execute(allExercise, Long.parseLong(userId));
+        }
+
+        if (withLoggedUserCode.isPresent()) {
+            allExercise = addLoggedUserCodeAllExercises.execute(allExercise, Long.parseLong(userId));
         }
         return ok(allExercise);
     }
