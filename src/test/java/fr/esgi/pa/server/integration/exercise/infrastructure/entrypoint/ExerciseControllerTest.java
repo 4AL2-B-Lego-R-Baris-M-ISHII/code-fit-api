@@ -50,6 +50,9 @@ class ExerciseControllerTest {
     private FindAllExercises mockFindAllExercises;
 
     @MockBean
+    private FilterExercisesByCreator mockFilterExercisesByCreator;
+
+    @MockBean
     private UpdateOneExercise mockUpdateOneExercise;
 
     @MockBean
@@ -348,6 +351,7 @@ class ExerciseControllerTest {
         void when_user_not_authenticate_should_send_unauthorized_error_response() throws Exception {
             mockMvc.perform(
                     get("/api/exercise")
+                            .requestAttr("userId", 9)
             ).andExpect(status().isUnauthorized());
         }
 
@@ -357,6 +361,7 @@ class ExerciseControllerTest {
             when(mockFindAllExercises.execute()).thenThrow(new NotFoundException("not found"));
             mockMvc.perform(
                     get("/api/exercise")
+                            .requestAttr("userId", 9)
             ).andExpect(status().isNotFound());
         }
 
@@ -383,6 +388,7 @@ class ExerciseControllerTest {
 
             var contentAsString = mockMvc.perform(
                     get("/api/exercise")
+                            .requestAttr("userId", 9)
             ).andExpect(status().isOk())
                     .andReturn()
                     .getResponse()
@@ -395,6 +401,99 @@ class ExerciseControllerTest {
             assertThat(arrDtoExercise).isNotNull();
             var resultSetDtoExercise = Sets.newHashSet(Arrays.asList(arrDtoExercise));
             assertThat(resultSetDtoExercise).isEqualTo(setDtoExercise);
+        }
+
+        @WithMockUser
+        @Test
+        void when_usecase_findAllExercise_has_param_is_creator_should_call_usecase_filterExercisesByCreator() throws Exception {
+            var setDtoExercise = Set.of(
+                    new DtoExercise()
+                            .setId(5L)
+                            .setTitle("title")
+                            .setDescription("description")
+                            .setUser(new DtoUser())
+                            .setCases(Set.of(
+                                    new DtoExerciseCase()
+                                            .setId(7L)
+                                            .setLanguage(new Language().setId(8L).setFileExtension("java").setLanguageName(LanguageName.JAVA8))
+                                            .setSolution("solution")
+                                            .setStartContent("start content")
+                                            .setIsValid(false)
+                            ))
+            );
+            when(mockFindAllExercises.execute()).thenReturn(setDtoExercise);
+
+            mockMvc.perform(
+                    get("/api/exercise?is_creator=true")
+                    .requestAttr("userId", 9)
+            );
+            verify(mockFilterExercisesByCreator, times(1)).execute(setDtoExercise, 9L);
+        }
+
+        @WithMockUser
+        @Test
+        void when_usecase_filterExercisesByCreator_should_return_filtered_set_dto_exercise() throws Exception {
+            var setDtoExercise = Set.of(
+                    new DtoExercise()
+                            .setId(5L)
+                            .setTitle("title")
+                            .setDescription("description")
+                            .setUser(new DtoUser())
+                            .setCases(Set.of(
+                                    new DtoExerciseCase()
+                                            .setId(7L)
+                                            .setLanguage(new Language().setId(8L).setFileExtension("java").setLanguageName(LanguageName.JAVA8))
+                                            .setSolution("solution")
+                                            .setStartContent("start content")
+                                            .setIsValid(false)
+                            )),
+                    new DtoExercise()
+                            .setId(6L)
+                            .setTitle("title")
+                            .setDescription("description")
+                            .setUser(new DtoUser().setId(9L))
+                            .setCases(Set.of(
+                                    new DtoExerciseCase()
+                                            .setId(8L)
+                                            .setLanguage(new Language().setId(8L).setFileExtension("java").setLanguageName(LanguageName.JAVA8))
+                                            .setSolution("solution")
+                                            .setStartContent("start content")
+                                            .setIsValid(false)
+                            ))
+            );
+            when(mockFindAllExercises.execute()).thenReturn(setDtoExercise);
+            var filteredSetDtoExercise = Set.of(
+                    new DtoExercise()
+                            .setId(6L)
+                            .setTitle("title")
+                            .setDescription("description")
+                            .setUser(new DtoUser().setId(9L))
+                            .setCases(Set.of(
+                                    new DtoExerciseCase()
+                                            .setId(8L)
+                                            .setLanguage(new Language().setId(8L).setFileExtension("java").setLanguageName(LanguageName.JAVA8))
+                                            .setSolution("solution")
+                                            .setStartContent("start content")
+                                            .setIsValid(false)
+                            ))
+            );
+            when(mockFilterExercisesByCreator.execute(setDtoExercise, 9L)).thenReturn(filteredSetDtoExercise);
+            var contentAsString = mockMvc.perform(
+                    get("/api/exercise?is_creator=true")
+                            .requestAttr("userId", 9)
+            ).andExpect(status().isOk())
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
+
+            assertThat(contentAsString).isNotNull();
+            assertThat(contentAsString).isNotBlank();
+
+            var arrDtoExercise = JsonHelper.jsonToObject(contentAsString, DtoExercise[].class);
+            assertThat(arrDtoExercise).isNotNull();
+            var resultSetDtoExercise = Sets.newHashSet(Arrays.asList(arrDtoExercise));
+            assertThat(resultSetDtoExercise).isEqualTo(filteredSetDtoExercise);
+
         }
     }
 
