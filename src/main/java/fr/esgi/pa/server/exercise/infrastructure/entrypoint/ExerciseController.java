@@ -23,6 +23,7 @@ import javax.validation.constraints.Pattern;
 import java.net.URI;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.ResponseEntity.*;
 
@@ -90,6 +91,18 @@ public class ExerciseController {
 
         if (isCreator.isPresent()) {
             allExercise = filterExercisesByCreator.execute(allExercise, Long.parseLong(userId));
+        }
+
+        if (isValid.isPresent()) {
+            allExercise = allExercise.stream()
+                    .peek(dtoExercise -> {
+                        var filteredCases =dtoExercise.getCases().stream()
+                                .filter(curCase -> curCase.getIsValid().equals(isValid.get()))
+                                .collect(Collectors.toSet());
+                        dtoExercise.setCases(filteredCases);
+                    })
+                    .filter(dtoExercise -> !dtoExercise.getCases().isEmpty())
+                    .collect(Collectors.toSet());;
         }
 
         if (withLoggedUserCode.isPresent()) {
