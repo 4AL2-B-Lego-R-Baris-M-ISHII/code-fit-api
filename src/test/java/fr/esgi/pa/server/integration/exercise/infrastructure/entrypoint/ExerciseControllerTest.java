@@ -1,5 +1,6 @@
 package fr.esgi.pa.server.integration.exercise.infrastructure.entrypoint;
 
+import fr.esgi.pa.server.code.core.dto.DtoCode;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.exercise.core.dto.DtoExercise;
 import fr.esgi.pa.server.exercise.infrastructure.entrypoint.request.SaveExerciseRequest;
@@ -51,6 +52,9 @@ class ExerciseControllerTest {
 
     @MockBean
     private FilterExercisesByCreator mockFilterExercisesByCreator;
+
+    @MockBean
+    private AddLoggedUserCodeAllExercises mockAddLoggedUserCodeAllExercises;
 
     @MockBean
     private UpdateOneExercise mockUpdateOneExercise;
@@ -493,7 +497,92 @@ class ExerciseControllerTest {
             assertThat(arrDtoExercise).isNotNull();
             var resultSetDtoExercise = Sets.newHashSet(Arrays.asList(arrDtoExercise));
             assertThat(resultSetDtoExercise).isEqualTo(filteredSetDtoExercise);
+        }
 
+        @WithMockUser
+        @Test
+        void when_has_request_param_logged_user_code_to_true_should_call_usecase_addLoggedUserCodeAllExercises() throws Exception {
+            var setDtoExercise = Set.of(
+                    new DtoExercise()
+                            .setId(5L)
+                            .setTitle("title")
+                            .setDescription("description")
+                            .setUser(new DtoUser())
+                            .setCases(Set.of(
+                                    new DtoExerciseCase()
+                                            .setId(7L)
+                                            .setLanguage(new Language().setId(8L).setFileExtension("java").setLanguageName(LanguageName.JAVA8))
+                                            .setSolution("solution")
+                                            .setStartContent("start content")
+                                            .setIsValid(false)
+                            ))
+            );
+            when(mockFindAllExercises.execute()).thenReturn(setDtoExercise);
+
+            mockMvc.perform(
+                    get("/api/exercise?with_logged_user_code=true")
+                            .requestAttr("userId", 9)
+            );
+
+            verify(mockAddLoggedUserCodeAllExercises, times(1)).execute(setDtoExercise, 9L);
+        }
+
+        @WithMockUser
+        @Test
+        void when_addLoggedUserCodeAllExercises_return_set_dto_exercises_should_send_returned_result() throws Exception {
+            var setDtoExercise = Set.of(
+                    new DtoExercise()
+                            .setId(5L)
+                            .setTitle("title")
+                            .setDescription("description")
+                            .setUser(new DtoUser())
+                            .setCases(Set.of(
+                                    new DtoExerciseCase()
+                                            .setId(7L)
+                                            .setLanguage(new Language().setId(8L).setFileExtension("java").setLanguageName(LanguageName.JAVA8))
+                                            .setSolution("solution")
+                                            .setStartContent("start content")
+                                            .setIsValid(false)
+                            ))
+            );
+            when(mockFindAllExercises.execute()).thenReturn(setDtoExercise);
+            var setDtoExerciseWithCodes = Set.of(
+                    new DtoExercise()
+                            .setId(5L)
+                            .setTitle("title")
+                            .setDescription("description")
+                            .setUser(new DtoUser())
+                            .setCases(Set.of(
+                                    new DtoExerciseCase()
+                                            .setId(7L)
+                                            .setLanguage(new Language().setId(8L).setFileExtension("java").setLanguageName(LanguageName.JAVA8))
+                                            .setSolution("solution")
+                                            .setStartContent("start content")
+                                            .setIsValid(false)
+                                            .setCodes(
+                                                    Set.of(
+                                                            new DtoCode().setCodeId(6L).setContent("code content").setIsResolved(true)
+                                                    )
+                                            )
+                            ))
+            );
+            when(mockAddLoggedUserCodeAllExercises.execute(setDtoExercise, 9L)).thenReturn(setDtoExerciseWithCodes);
+
+            var contentAsString = mockMvc.perform(
+                    get("/api/exercise?with_logged_user_code=true")
+                            .requestAttr("userId", 9)
+            ).andExpect(status().isOk())
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
+
+            assertThat(contentAsString).isNotNull();
+            assertThat(contentAsString).isNotBlank();
+
+            var arrDtoExercise = JsonHelper.jsonToObject(contentAsString, DtoExercise[].class);
+            assertThat(arrDtoExercise).isNotNull();
+            var resultSetDtoExercise = Sets.newHashSet(Arrays.asList(arrDtoExercise));
+            assertThat(resultSetDtoExercise).isEqualTo(setDtoExerciseWithCodes);
         }
     }
 

@@ -4,6 +4,7 @@ import fr.esgi.pa.server.code.core.entity.Code;
 import fr.esgi.pa.server.common.core.exception.NotFoundException;
 import fr.esgi.pa.server.exercise.core.exception.ForbiddenException;
 
+import java.util.Optional;
 import java.util.Set;
 
 public interface CodeDao {
@@ -12,4 +13,6 @@ public interface CodeDao {
     Code findById(Long codeId) throws NotFoundException;
 
     Set<Code> findAllByUserId(Long userId);
+
+    Optional<Code> findByUserIdAndExerciseCaseId(Long userId, Long exerciseCaseId);
 }
