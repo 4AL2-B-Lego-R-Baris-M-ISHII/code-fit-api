@@ -45,7 +45,8 @@ public class JpaDefaultExerciseCase implements DefaultExerciseCase {
         var savedExerciseCase = exerciseCaseRepository.save(exerciseCaseToSave);
         var exerciseTestToSave = new JpaExerciseTest()
                 .setExerciseCaseId(savedExerciseCase.getId())
-                .setContent(defaultValues.getTestContent());
+                .setContent(defaultValues.getTestContent())
+                .setPosition(1L);
         exerciseTestRepository.save(exerciseTestToSave);
         return savedExerciseCase;
     }

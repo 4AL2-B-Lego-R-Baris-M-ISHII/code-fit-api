@@ -17,4 +17,6 @@ public class CodeResult {
     private Language language;
 
     private Long testId;
+
+    private Long position;
 }

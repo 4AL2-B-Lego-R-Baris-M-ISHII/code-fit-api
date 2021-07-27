@@ -58,7 +58,8 @@ public class JpaDefaultExercise implements DefaultExercise {
     private void saveExerciseTest(DefaultExerciseCaseValues defaultValues, JpaExerciseCase savedCase) {
         var testToSave = new JpaExerciseTest()
                 .setExerciseCaseId(savedCase.getId())
-                .setContent(defaultValues.getTestContent());
+                .setContent(defaultValues.getTestContent())
+                .setPosition(1L);
         exerciseTestRepository.save(testToSave);
     }
 }

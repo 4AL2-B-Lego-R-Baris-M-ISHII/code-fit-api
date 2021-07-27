@@ -30,7 +30,7 @@ public class ScriptCompilerContentImpl implements ScriptCompilerContent {
 
     private String getScriptJava(String fileName, Integer memoryLimit, Integer timeLimit) {
         return "#!/usr/bin/env bash\n" +
-                "mv main.java " + fileName + "\n" +
+                "mv Main.java " + fileName + "\n" +
                 "javac " + fileName + "\n" +
                 "ret=$?\n" +
                 "if [ $ret -ne 0 ]\n" +

@@ -224,4 +224,40 @@ class JpaCodeDaoTest {
             assertThat(result).isEqualTo(expectedSetCode);
         }
     }
+
+    @Nested
+    class FindAllByExerciseIdAndUserId {
+        @Test
+        void should_call_findAllByExerciseCaseIdAndUserId_of_repository() {
+            sut.findByUserIdAndExerciseCaseId(7L, 8L);
+
+            verify(mockCodeRepository, times(1)).findByUserIdAndExerciseCaseId(7L, 8L);
+        }
+
+        @Test
+        void should_get_optional_code_when_found_one_by_repository() {
+            var foundJpaCode = new JpaCode()
+                    .setId(6L)
+                    .setContent("code content")
+                    .setExerciseCaseId(35L)
+                    .setUserId(456L)
+                    .setIsResolved(true);
+            when(mockCodeRepository.findByUserIdAndExerciseCaseId(456L, 35L)).thenReturn(Optional.of(foundJpaCode));
+
+            var result = sut.findByUserIdAndExerciseCaseId(456L, 35L);
+            var expectedCode = codeMapper.entityToDomain(foundJpaCode);
+            var expected = Optional.of(expectedCode);
+            assertThat(result).isEqualTo(expected);
+            assertThat(result.isPresent()).isTrue();
+            assertThat(result.get()).isEqualTo(expectedCode);
+        }
+
+        @Test
+        void should_get_empty_optional_code_when_not_found_by_reposity() {
+            when(mockCodeRepository.findByUserIdAndExerciseCaseId(456L, 35L)).thenReturn(Optional.empty());
+
+            var result = sut.findByUserIdAndExerciseCaseId(456L, 35L);
+            assertThat(result.isEmpty()).isTrue();
+        }
+    }
 }

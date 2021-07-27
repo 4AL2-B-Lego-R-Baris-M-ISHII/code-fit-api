@@ -8,6 +8,7 @@ import fr.esgi.pa.server.common.core.utils.io.FileWriter;
 import fr.esgi.pa.server.common.core.utils.process.ProcessHelper;
 import fr.esgi.pa.server.common.core.utils.process.ProcessResult;
 import fr.esgi.pa.server.language.core.Language;
+import fr.esgi.pa.server.language.core.LanguageName;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
@@ -62,10 +63,13 @@ public class DockerCompileRunner implements CompileRunner {
     }
 
     private String writeMainFile(String folderTmpPath, String content, Language language) throws IOException {
-        var mainFile = "main." + language.getFileExtension();
-        var filePath = getFilePath(folderTmpPath, mainFile);
+        var mainFile = language.getLanguageName().equals(LanguageName.JAVA8)
+                ? "Main"
+                : "main";
+        var mainFileWithExtension = String.format("%s.%s", mainFile, language.getFileExtension());
+        var filePath = getFilePath(folderTmpPath, mainFileWithExtension);
         fileWriter.writeContentToFile(content, filePath);
-        return mainFile;
+        return mainFileWithExtension;
     }
 
     private void writeScriptToRunCompiler(CompilerConfig compilerConfig, String folderTmpPath, Language language, String mainFile) throws IOException {

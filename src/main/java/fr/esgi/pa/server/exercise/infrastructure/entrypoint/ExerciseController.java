@@ -21,7 +21,9 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 import java.net.URI;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.ResponseEntity.*;
 
@@ -34,6 +36,8 @@ public class ExerciseController {
     private final SaveOneExercise saveOneExercise;
     private final FindOneExercise findOneExercise;
     private final FindAllExercises findAllExercises;
+    private final FilterExercisesByCreator filterExercisesByCreator;
+    private final AddLoggedUserCodeAllExercises addLoggedUserCodeAllExercises;
     private final UpdateOneExercise updateOneExercise;
     private final DeleteOneExercise deleteOneExercise;
     private final GetAllExerciseCaseByUserId getAllExerciseCaseByUserId;
@@ -75,8 +79,35 @@ public class ExerciseController {
     }
 
     @GetMapping
-    public ResponseEntity<Set<DtoExercise>> findAll() throws NotFoundException {
+    public ResponseEntity<Set<DtoExercise>> findAll(
+            @ApiIgnore @RequestAttribute(name = "userId")
+            @Pattern(regexp = "^\\d+$", message = "id has to be an integer")
+            @Min(value = 1, message = "id has to be equal or more than 1") String userId,
+            @RequestParam(name = "is_creator") Optional<Boolean> isCreator,
+            @RequestParam(name = "is_valid") Optional<Boolean> isValid,
+            @RequestParam(name = "with_logged_user_code") Optional<Boolean> withLoggedUserCode
+    ) throws NotFoundException {
         var allExercise = findAllExercises.execute();
+
+        if (isCreator.isPresent()) {
+            allExercise = filterExercisesByCreator.execute(allExercise, Long.parseLong(userId));
+        }
+
+        if (isValid.isPresent()) {
+            allExercise = allExercise.stream()
+                    .peek(dtoExercise -> {
+                        var filteredCases =dtoExercise.getCases().stream()
+                                .filter(curCase -> curCase.getIsValid().equals(isValid.get()))
+                                .collect(Collectors.toSet());
+                        dtoExercise.setCases(filteredCases);
+                    })
+                    .filter(dtoExercise -> !dtoExercise.getCases().isEmpty())
+                    .collect(Collectors.toSet());;
+        }
+
+        if (withLoggedUserCode.isPresent()) {
+            allExercise = addLoggedUserCodeAllExercises.execute(allExercise, Long.parseLong(userId));
+        }
         return ok(allExercise);
     }
 
