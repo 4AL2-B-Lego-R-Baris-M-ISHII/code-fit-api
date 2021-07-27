@@ -76,6 +76,13 @@ public class DockerCompileRunner implements CompileRunner {
         String launchScriptPath = getFilePath(folderTmpPath, "launch.sh");
         String scriptContent = scriptCompilerContent.getScriptByLanguage(language, mainFile, compilerConfig);
         fileWriter.writeContentToFile(scriptContent, launchScriptPath);
+        var changeToExecutableFileCommand = new String[]{"chmod", "777", launchScriptPath};
+        try {
+            processHelper.launchCommandProcess(changeToExecutableFileCommand);
+        } catch (Exception ex) {
+            System.err.printf("Problem launch chmod : %s\n", ex.getMessage());
+        }
+
     }
 
 
