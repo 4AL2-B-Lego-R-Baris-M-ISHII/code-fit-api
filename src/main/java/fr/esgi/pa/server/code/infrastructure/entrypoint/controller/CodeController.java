@@ -50,7 +50,8 @@ public class CodeController {
                 request.getCodeContent()
         );
         if (!request.getToCompile()) {
-            return created(getUri(codeId))
+            var uri = getUri(codeId);
+            return created(uri)
                     .header("Access-Control-Expose-Headers", "Location")
                     .build();
         }

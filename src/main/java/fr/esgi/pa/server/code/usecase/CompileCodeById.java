@@ -68,6 +68,7 @@ public class CompileCodeById {
             var contentToCompile = getContentToCompile(foundCode, exerciseTest);
             var result = currentCompiler.compile(contentToCompile, foundLanguage);
             result.setTestId(exerciseTest.getId());
+            result.setPosition(exerciseTest.getPosition());
             listCodeResult.add(result);
         }
         return listCodeResult.stream()
