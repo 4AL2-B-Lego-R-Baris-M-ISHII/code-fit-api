@@ -11,6 +11,7 @@ import fr.esgi.pa.server.exercise_case.infrastructure.entrypoint.request.SaveExe
 import fr.esgi.pa.server.exercise_case.usecase.CreateExerciseCase;
 import fr.esgi.pa.server.exercise_case.usecase.DeleteOneExerciseCase;
 import fr.esgi.pa.server.exercise_case.usecase.GetOneExerciseCase;
+import fr.esgi.pa.server.exercise_case.usecase.PrepareExerciseCaseForUser;
 import fr.esgi.pa.server.helper.JsonHelper;
 import fr.esgi.pa.server.language.core.Language;
 import fr.esgi.pa.server.language.core.LanguageName;
@@ -55,6 +56,9 @@ class ExerciseCaseControllerTest {
 
     @MockBean
     private GetAllExerciseCaseByUserId mockGetAllExerciseCaseByUserId;
+
+    @MockBean
+    private PrepareExerciseCaseForUser mockPrepareExerciseCaseForUser;
 
     @DisplayName("POST /api/exercise-case")
     @Nested
@@ -300,6 +304,33 @@ class ExerciseCaseControllerTest {
 
             var contentAsString = mockMvc.perform(
                     get("/api/exercise-case/123")
+                            .requestAttr("userId", "1")
+            ).andExpect(status().isOk())
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
+            assertThat(contentAsString).isNotNull();
+            assertThat(contentAsString).isNotBlank();
+            var response = JsonHelper.jsonToObject(contentAsString, DtoExerciseCase.class);
+            assertThat(response).isEqualTo(expectedDto);
+        }
+
+        @WithMockUser(username = "toto", password = "toto", roles = "USER")
+        @Test
+        void when_request_contain_param_logged_user_should_set_usecase_with_logged_user_boolean() throws Exception {
+            var expectedDto = new DtoExerciseCase()
+                    .setId(123L)
+                    .setLanguage(new Language().setId(3L).setLanguageName(LanguageName.JAVA8).setFileExtension("java"))
+                    .setTests(Set.of(
+                            new DtoExerciseTest().setId(2L).setContent("test content")
+                    ))
+                    .setSolution("solution")
+                    .setIsValid(false)
+                    .setStartContent("start content");
+            when(mockGetOneExerciseCase.execute(1L, 123L)).thenReturn(expectedDto);
+
+            var contentAsString = mockMvc.perform(
+                    get("/api/exercise-case/123?with_logged_user_code=true")
                             .requestAttr("userId", "1")
             ).andExpect(status().isOk())
                     .andReturn()
