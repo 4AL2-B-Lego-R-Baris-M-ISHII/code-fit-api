@@ -21,6 +21,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 import java.net.URI;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -39,6 +40,7 @@ public class ExerciseCaseController {
     private final DeleteOneExerciseCase deleteOneExerciseCase;
     private final ExerciseTestAdapter exerciseTestAdapter;
     private final GetAllExerciseCaseByUserId getAllExerciseCaseByUserId;
+    private final PrepareExerciseCaseForUser prepareExerciseCaseForUser;
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -98,9 +100,14 @@ public class ExerciseCaseController {
             @Pattern(regexp = "^\\d+$", message = "id has to be an integer")
             @Min(value = 1, message = "id has to be equal or more than 1") String userId,
             @PathVariable("id")
-            @Min(value = 1, message = "id has to be equal or more than 1") Long exerciseCaseId
+            @Min(value = 1, message = "id has to be equal or more than 1") Long exerciseCaseId,
+            @RequestParam(name = "not_admin") Optional<Boolean> notAdmin
     ) throws NotFoundException, ForbiddenException {
         var dtoExerciseCase = getOneExerciseCase.execute(Long.valueOf(userId), exerciseCaseId);
+
+        if (notAdmin.isPresent()) {
+            dtoExerciseCase = prepareExerciseCaseForUser.execute(Long.valueOf(userId), dtoExerciseCase, notAdmin.get());
+        }
         return ok(dtoExerciseCase);
     }
 
