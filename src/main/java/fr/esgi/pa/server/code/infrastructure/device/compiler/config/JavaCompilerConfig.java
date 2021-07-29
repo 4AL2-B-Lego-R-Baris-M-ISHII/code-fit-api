@@ -8,7 +8,7 @@ import java.io.File;
 @Data
 @Configuration
 public class JavaCompilerConfig implements CompilerConfig {
-    private final String folderPath = "device" + File.separator +
+    private final String folderPath = System.getProperty("user.dir")+"/device" + File.separator +
             "compiler" + File.separator +
             "java_compiler";
     private final String folderTmpPath = folderPath + File.separator + "tmp";

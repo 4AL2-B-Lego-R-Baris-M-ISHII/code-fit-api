@@ -6,7 +6,7 @@ import java.io.File;
 
 @Configuration
 public class CCompilerConfig implements CompilerConfig{
-    private final String folderPath = "device" + File.separator +
+    private final String folderPath = System.getProperty("user.dir")+"/device" + File.separator +
             "compiler" + File.separator +
             "c_compiler";
     private final String folderTmpPath = folderPath + File.separator + "tmp";
